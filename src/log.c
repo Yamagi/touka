@@ -6,6 +6,7 @@
 
 #include <assert.h>
 #include <limits.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,80 +23,118 @@ FILE *logfile;
 
 // --------
 
-void
-errmsg(const char *func, int line, const char *msg)
+static int
+logtypetostr(logtype type, char *str, size_t len)
 {
-	char entry[1024];
-	char timestr[32];
-	time_t tmp;
-	struct tm *t;
+	int ret = 0;
 
-	assert(logfile);
-	assert(msg);
-	assert(strlen(msg) < 896);
-	tmp = time(NULL);
-
- 	if ((t = localtime(&tmp)) == NULL)
+	switch (type)
 	{
-		perror("PANIC: Couldn't get local time");
-		exit(1);
+		case LOG_INFO:
+			strncpy(str, "INFO", len);
+			break;
+
+		case LOG_WARN:
+			strncpy(str, "WARN", len);
+			break;
+
+		case LOG_ERROR:
+			strncpy(str, "ERROR", len);
+			break;
+
+		default:
+			strncpy(str, "UNKNOWN", len);
+			ret = -1;
+			break;
 	}
 
-	strftime(timestr, sizeof(timestr), "%m-%d-%Y %H:%M:%S", t);
-
-#ifdef NDEBUG
-	snprintf(entry, sizeof(entry), "%s [ERROR]: %s\n", timestr, msg);
-#else
-	snprintf(entry, sizeof(entry), "%s [ERROR] (%s:%i): %s\n", timestr, func, line, msg);
-#endif
-
-	if ((fwrite(entry, strlen(entry), 1, logfile)) != 1)
-	{
-		perror("PANIC: Couldn't log error message");
-		exit(1);
-	}
-
-	fflush(logfile);
-
-#ifndef NDEBUG
-	fprintf(stderr, "%s\n", msg);
-#endif
+	return ret;
 }
 
 void
-infomsg(const char *func, int line, const char *msg)
+logger(logtype type, const char *func, int line, const char *fmt, ...)
 {
-	char entry[1024];
-	char timestr[32];
-	time_t tmp;
+	char *inpmsg = NULL;
+	char *logmsg = NULL;
+	char msgtime[32];
+	char status[32];
+	size_t msglen;
 	struct tm *t;
+	time_t tmp;
+	va_list args;
 
-	assert(logfile);
-	assert(msg);
-	assert(strlen(msg) < 896);
+	// 256 is enough room for the prepended stuff
+	va_start(args, fmt);
+	msglen = vsnprintf(NULL, 0, fmt, args) + 256;
+	va_end(args);
+
+    if ((inpmsg = malloc(msglen)) == NULL)
+	{
+		perror("PANIC: malloc() failed");
+		goto error;
+	}
+
+    if ((logmsg = malloc(msglen)) == NULL)
+	{
+		perror("PANIC: malloc() failed");
+		goto error;
+	}
+
+	// Format the message
+	va_start(args, fmt);
+	vsnprintf(inpmsg, msglen, fmt, args);
+	va_end(args);
+
+	// Time
 	tmp = time(NULL);
 
 	if ((t = localtime(&tmp)) == NULL)
 	{
 		perror("PANIC: Couldn't get local time");
-		exit(1);
+		quit(1);
 	}
 
-	strftime(timestr, sizeof(timestr), "%m-%d-%Y %H:%M:%S", t);
+	strftime(msgtime, sizeof(msgtime), "%m-%d-%Y %H:%M:%S", t);
 
+	// Status
+	if (logtypetostr(type, status, sizeof(status)) != 0)
+	{
+		fprintf(stderr, "PANIC: Unknown logtype\n");
+		goto error;
+	}
+
+	// Prepend informational stuff
 #ifdef NDEBUG
-	snprintf(entry, sizeof(entry), "%s [INFO]: %s\n", timestr, msg);
+	snprintf(logmsg, msglen, "%s [%s]: %s\n", msgtime, status, inpmsg);
 #else
-	snprintf(entry, sizeof(entry), "%s [INFO] (%s:%i): %s\n", timestr, func, line, msg);
+	snprintf(logmsg, msglen, "%s [%s] (%s:%i): %s\n", msgtime, status, func, line, inpmsg);
 #endif
 
-	if ((fwrite(entry, strlen(entry), 1, logfile)) != 1)
+	// Write it
+	if ((fwrite(logmsg, strlen(logmsg), 1, logfile)) != 1)
 	{
-		perror("PANIC: Couldn't log info message");
-		exit(1);
+		perror("PANIC: Couldn't log error message");
+		quit(1);
 	}
 
 	fflush(logfile);
+
+#ifndef NDEBUG
+	if (type == LOG_ERROR)
+	{
+		fprintf(stderr, "%s", logmsg);
+	}
+#endif
+
+	free(inpmsg);
+	free(logmsg);
+
+	return;
+
+error:
+	free(inpmsg);
+	free(logmsg);
+	quit(1);
 }
 
 void
@@ -115,7 +154,7 @@ initlog(const char *path, const char *name, int seg)
 		if (!S_ISDIR(sb.st_mode))
 		{
 			printf("PANIC: %s is not a directory\n", path);
-			exit(1);
+			quit(1);
 		}
 	}
 	else
@@ -145,7 +184,7 @@ initlog(const char *path, const char *name, int seg)
 		if ((rename(oldfile, newfile)) != 0)
 		{
 			perror("PANIC: Couldn't rotate log files");
-			exit(1);
+			quit(1);
 		}
 	}
 
@@ -158,14 +197,14 @@ initlog(const char *path, const char *name, int seg)
 		if ((rename(oldfile, newfile)) != 0)
 		{
 			perror("PANIC: Couldn't rotate log files");
-			exit(1);
+			quit(1);
 		}
 	}
 
 	if ((logfile = fopen(oldfile, "w")) == NULL)
 	{
 		perror("PANIC: Couldn't create log file");
-		exit(1);
+		quit(1);
 	}
 }
 
@@ -179,7 +218,7 @@ closelog(void)
 		if ((fclose(logfile)) != 0)
 		{
 			perror("PANIC: Couldn't close log file");
-			exit(1);
+			quit(1);
 		}
 
 		logfile = NULL;

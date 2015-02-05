@@ -25,3 +25,6 @@
 
 // Version number
 #define VERSION "0.1"
+
+// Copyright year
+#define YEAR "2015"

@@ -11,3 +11,11 @@
  * dir: Directory to create.
  */
 void recursive_mkdir(const char *dir);
+
+/*
+ * Terminates the program and returns
+ * the status code 'ret'.
+ *
+ * ret: Status code to return
+ */
+void quit(int ret);

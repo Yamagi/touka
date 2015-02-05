@@ -1,40 +1,42 @@
 /*
  * This is a small log file handler. Currently only
- * two log levels are supported:
- *  - INFO:  Normal messages
- *  - ERROR: Error messages
+ * three log levels are supported:
+ *  - LOG_INFO:  Normal messages
+ *  - LOG_WARN:  Warnings
+ *  - LOG_ERROR: Error messages
  *
  *  When the code is build without NDEBUG the function name
  *  and the line number of the caller are printed. Also ERROR
  *  messages are echoed to stderr.
  *
  *  Before the log file handler can be used it must be
- *  initialized with initlog(). Initializing rotates the
- *  existing log files. When the program is terminated
+ *  initialized by calling initlog(). Initializing the handler
+ *  rotates the existing log files. When the program is terminated
  *  the log handler must be closed with closelog().
  */
 
 /*
- * Logs an error message. If NDEBUG is not set,
- * the error message is echoed to stderr and the
- * name and line number of the caller are added.
- *
- * func: Name of the calling function
- * line: Line number of the calling statement
- * msg:  Message to print. 896 characters maximum
+ * Possible log states
  */
-void errmsg(const char *func, int line, const char *msg);
+typedef enum
+{
+	LOG_INFO,
+	LOG_WARN,
+	LOG_ERROR
+} logtype;
 
 /*
- * Logs an info message. If NDEBUG is not set, the
- * error message is echoed to stderr and the name
- * and line number of the caller are added.
+ * Logs an message. If NDEBUG is not set and type is
+ * LOG_ERROR, the error message is echoed to stderr.
+ * All messages will have the calling function and
+ * line added.
  *
- * func: Name of the calling function
- * line: Line number of the calling statement
- * msg:  Message to print. 896 characters maximum
+ * type: Type if message
+ * func: Calling function
+ * line: Line of caller
+ * fmt:  Print format
  */
-void infomsg(const char *func, int line, const char *msg);
+void logger(logtype type, const char *func, int line, const char *fmt, ...);
 
 /*
  * Initialize the log file. May be called only once.
@@ -51,12 +53,17 @@ void initlog(const char *path, const char *name, int seg);
 void closelog(void);
 
 /*
- * 	Convenience macro to errmsg()
+ * 	Convenience macro for infos
  */
-#define log_err(M) errmsg(__func__, __LINE__, M)
+#define log_info(F, ...) logger(LOG_INFO, __func__, __LINE__, F, __VA_ARGS__)
 
 /*
- * 	Convenience macro to infomsg()
+ * 	Convenience macro for warnings
  */
-#define log_info(M) infomsg(__func__, __LINE__, M)
+#define log_warn(F, ...) logger(LOG_WARN, __func__, __LINE__, F, __VA_ARGS__)
+
+/*
+ * 	Convenience macro for errors
+ */
+#define log_error(F, ...) logger(LOG_ERROS, __func__, __LINE__, F, __VA_ARGS__)
 

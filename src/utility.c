@@ -10,6 +10,8 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include "log.h"
+
 // --------
 
 void
@@ -32,7 +34,7 @@ recursive_mkdir(const char *dir)
 		if (*p == '/')
 		{
 			*p = 0;
-            
+
 			if ((mkdir(tmp, 0700)) != 0)
 			{
 				if (errno != EEXIST)
@@ -55,3 +57,11 @@ recursive_mkdir(const char *dir)
 		}
 	}
 }
+
+void
+quit(int ret)
+{
+	closelog();
+	exit(0);
+}
+

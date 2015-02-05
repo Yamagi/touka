@@ -15,14 +15,6 @@
 #include "touka.h"
 #include "utility.h"
 
-void
-quit(void)
-{
-	closelog();
-
-	exit(0);
-}
-
 int
 main(int argc, char *argv[])
 {
@@ -52,13 +44,11 @@ main(int argc, char *argv[])
 	initlog(logdir, LOGNAME, LOGNUM);
 
 	snprintf(logbuf, sizeof(logbuf), "This it %s %s.", APPNAME, VERSION);
-	log_info(logbuf);
+	log_info("This is %s %s, (c) %s %s", APPNAME, VERSION, YEAR, AUTHOR);
+	log_info("This binary was build on %s.", __DATE__);
 
-	snprintf(logbuf, sizeof(logbuf), "(c) 2015 %s.", AUTHOR);
-	log_info(logbuf);
-
-
-    quit();
+	// Terminate
+    quit(0);
 
 	// Never reached
 	return 0;
