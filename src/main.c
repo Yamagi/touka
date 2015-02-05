@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 
 #include "log.h"
-#include "touka.h"
+#include "main.h"
 #include "utility.h"
 
 int
