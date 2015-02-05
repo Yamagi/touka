@@ -1,5 +1,14 @@
 # The compile flags
-CFLAGS := -std=c99 -Wall -Werror -pedantic -Os
+CFLAGS := -MMD -std=c99 -Wall -Werror -pedantic -Os
+
+# ----
+
+# Debugging
+ifdef NDEBUG
+CFLAGS = -DNDEBUG
+else
+CFLAGS += -g
+endif
 
 # ----
 
