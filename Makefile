@@ -50,7 +50,8 @@ touka:
 # Objects
 OBJS_ = \
 	src/log.o \
-	src/main.o
+	src/main.o \
+	src/utility.o
 
 # Buildpath
 OBJS = $(patsubst %,build/%,$(OBJS_))

@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 
 #include "log.h"
+#include "utility.h"
 
 // --------
 
@@ -107,6 +108,20 @@ initlog(const char *path, const char *name, int seg)
 
 	assert(!logfile);
 	assert(seg < 99);
+
+	// Create directory
+	if ((stat(path, &sb)) == 0)
+	{
+		if (!S_ISDIR(sb.st_mode))
+		{
+			printf("PANIC: %s is not a directory\n", path);
+			exit(1);
+		}
+	}
+	else
+	{
+		recursive_mkdir(path);
+	}
 
     // Rotate logs
 	for (i = seg; i >= 0; i--)
