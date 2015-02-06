@@ -3,6 +3,11 @@ CFLAGS := -MMD -std=c99 -Wall -Werror -pedantic -Os
 
 # ----
 
+# The linker flags
+LDFLAGS = -lncurses
+
+# ----
+
 # Debugging
 ifdef NDEBUG
 CFLAGS = -DNDEBUG
@@ -49,6 +54,7 @@ touka:
 
 # Objects
 OBJS_ = \
+	src/curses.o \
 	src/log.o \
 	src/main.o \
 	src/utility.o
@@ -69,4 +75,4 @@ DEPS = $(OBJS:.o=.d)
 # Link touka
 release/touka: $(OBJS)
 	@echo "===> LD $@"
-	$(Q)$(CC) $(OBJS) -o $@
+	$(Q)$(CC) $(OBJS) $(LDFLAGS) -o $@

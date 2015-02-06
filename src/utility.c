@@ -10,6 +10,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include "curses.h"
 #include "log.h"
 
 // --------
@@ -61,7 +62,21 @@ recursive_mkdir(const char *dir)
 void
 quit(int ret)
 {
+	static int recursive = 0;
+
+	if (recursive)
+	{
+		printf("Recursive!\n");
+		exit(1);
+	}
+	else
+	{
+		recursive++;
+	}
+
+	curses_quit();
 	closelog();
+
 	exit(0);
 }
 

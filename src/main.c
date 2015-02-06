@@ -7,13 +7,29 @@
  */
 
 #include <limits.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 
+#include "curses.h"
 #include "log.h"
 #include "main.h"
 #include "utility.h"
+
+// --------
+
+void
+quit_atexit(void)
+{
+	quit(1);
+}
+
+void
+signalhandler(int sig)
+{
+	quit(0);
+}
 
 int
 main(int argc, char *argv[])
@@ -23,10 +39,17 @@ main(int argc, char *argv[])
 	char logdir[PATH_MAX];
 	struct stat sb;
 
+	// Clean aborts
+	//atexit(quit_atexit);
+
+	// Signal handler
+	signal(SIGINT, signalhandler);
+	signal(SIGTERM, signalhandler);
+
+	// Create home directory
 	snprintf(homedir, sizeof(homedir), "%s/%s", getenv("HOME"), HOMEDIR);
 	snprintf(logdir, sizeof(logdir), "%s/%s", homedir, LOGDIR);
 
-	// Create home directory
 	if ((stat(homedir, &sb)) == 0)
 	{
 		if (!S_ISDIR(sb.st_mode))
@@ -46,6 +69,12 @@ main(int argc, char *argv[])
 	snprintf(logbuf, sizeof(logbuf), "This it %s %s.", APPNAME, VERSION);
 	log_info("This is %s %s, (c) %s %s", APPNAME, VERSION, YEAR, AUTHOR);
 	log_info("This binary was build on %s.", __DATE__);
+
+	// Initialize TUI
+	curses_init();
+
+	curses_update();
+	curses_input("Touka: ");
 
 	// Terminate
     quit(0);
