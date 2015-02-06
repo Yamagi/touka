@@ -19,6 +19,15 @@
 
 // --------
 
+static void
+mainloop(void)
+{
+	while (1)
+	{
+		curses_input("Touka: ");
+	}
+}
+
 void
 quit_atexit(void)
 {
@@ -73,8 +82,8 @@ main(int argc, char *argv[])
 	// Initialize TUI
 	curses_init();
 
-	curses_update();
-	curses_input("Touka: ");
+	// Loop forever
+	mainloop();
 
 	// Terminate
     quit(0);

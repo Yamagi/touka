@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "curses.h"
+#include "input.h"
 #include "log.h"
 
 // --------
@@ -65,6 +66,7 @@ curses_init(void)
     // Main window
 	text = newwin(LINES - 2, COLS, 0, 0);
 	wbkgd(text, COLOR_PAIR(PAIR_TEXT));
+	scrollok(text, TRUE);
 
 	// Status
 	status = newwin(1, COLS, LINES - 2, 0);
@@ -74,6 +76,12 @@ curses_init(void)
 	input = newwin(1, COLS, LINES - 1, 0);
 	wbkgd(input, COLOR_PAIR(PAIR_INPUT));
 	keypad(input, TRUE);
+
+	// Update everything
+	wnoutrefresh(input);
+	wnoutrefresh(status);
+	wnoutrefresh(text);
+	doupdate();
 
 	log_info("%s", "Curses initialized");
 }
@@ -88,11 +96,13 @@ curses_input(const char *prompt)
 	int x, y;
 
 	// Show prompt
-	move(LINES - 1, 0);
+	wmove(input, 0, 0);
+	wclrtoeol(input);
 	waddstr(input, prompt);
 
 	while ((key = wgetch(input)) != ERR)
 	{
+
 		switch (key)
 		{
 			// Break on enter / return
@@ -146,6 +156,7 @@ curses_input(const char *prompt)
 				break;
 		}
 
+  		// Update after each key stroke
         wnoutrefresh(input);
 		doupdate();
 
@@ -155,7 +166,9 @@ curses_input(const char *prompt)
 		}
 	}
 
+    // Send to frontend
 	log_info("User input: %s", buffer);
+	process_input(buffer);
 }
 
 void
@@ -169,13 +182,12 @@ curses_quit(void)
 }
 
 void
-curses_update(void)
+curses_text(const char *string)
 {
-	wnoutrefresh(stdscr);
-	wnoutrefresh(input);
-	wnoutrefresh(status);
-	wnoutrefresh(text);
+	waddstr(text, string);
 
+	// Update
+	wnoutrefresh(text);
 	doupdate();
 }
 
