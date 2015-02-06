@@ -55,6 +55,7 @@ touka:
 # Objects
 OBJS_ = \
 	src/curses.o \
+	src/input.o \
 	src/log.o \
 	src/main.o \
 	src/utility.o
