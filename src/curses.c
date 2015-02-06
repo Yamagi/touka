@@ -24,6 +24,9 @@
 #define KEY_CR 13
 #define KEY_DEL 127
 
+// Number of characters the input is scrolled
+#define SCROLLOFF 5
+
 // --------
 
 // Colorpairs
@@ -92,13 +95,24 @@ curses_init(void)
 void
 curses_input(const char *prompt)
 {
-	char buffer[1024] = {0};
-	int cnt = 0;
-	int fin = 0;
+	char buffer[1024];
+	char *tmp;
+	int begin;
+	int chars;
+	int fin;
+	int i;
 	int key;
+	int num;
+    int position;
+	int start;
 	int x, y;
 
-	// Show prompt
+	memset(buffer, '\0', sizeof(buffer));
+	chars = 0;
+	fin = 0;
+	position = 0;
+	start = 0;
+
 	wmove(input, 0, 0);
 	wclrtoeol(input);
 	waddstr(input, prompt);
@@ -108,58 +122,263 @@ curses_input(const char *prompt)
 
 		switch (key)
 		{
-			// Break on enter / return
+			// Process input
 			case KEY_ENTER:
 			case KEY_LF:
 			case KEY_CR:
 				fin = 1;
 				break;
 
-			// Backspace deletes
-			case KEY_BACKSPACE:
-			case KEY_DEL:
-			case KEY_DC:
-				// Get cursor position.
-				getyx(input, y, x);
 
-				// Move it backwards, but not into the prompt
-				if (strlen(prompt) == x)
+			// Move cursor left
+			case KEY_LEFT:
+				if (position <= 0)
 				{
 					break;
 				}
-				else
+
+				if (start == position)
 				{
-					wmove(input, y, x - 1);
+					start -= SCROLLOFF;
+
+					wmove(input, 0, strlen(prompt));
+					wclrtoeol(input);
+
+					for (i = 0; i < COLS - strlen(prompt); i++)
+					{
+						waddch(input, buffer[start + i]);
+					}
+
+					wmove(input, 0, strlen(prompt) + SCROLLOFF);
 				}
 
-				// And delete the character
-				wdelch(input);
-
-				// Delete from buffer
-                buffer[cnt - 1] = '\0';
-				cnt--;
+				getyx(input, y, x);
+				wmove(input, y, x - 1);
+				position--;
 
 				break;
 
-			default:
-				// Do not overflow
-				if (cnt == (sizeof(buffer) - 2))
+
+			// Move cursor to the start
+			case KEY_HOME:
+				if (position <= 0)
 				{
 					break;
 				}
 
-				// Only ASCII chars are processed
+				position = 0;
+				start = 0;
+
+				wmove(input, 0, strlen(prompt));
+				wclrtoeol(input);
+
+				for (i = 0; i < COLS - strlen(prompt)
+					   && buffer[start + i] != '\0'; i++)
+				{
+					waddch(input, buffer[start + i]);
+				}
+
+				wmove(input, 0, strlen(prompt));
+
+				break;
+
+
+			// Move cursor right
+			case KEY_RIGHT:
+				if (position >= chars)
+				{
+					break;
+				}
+
+				getyx(input, y, x);
+
+				if (x == (COLS - 1))
+				{
+					start += SCROLLOFF;
+
+                    wmove(input, 0, strlen(prompt));
+					wclrtoeol(input);
+
+                    for (i = 0; i < COLS - strlen(prompt)
+						   && buffer[start + i] != '\0'; i++)
+					{
+						waddch(input, buffer[start + i]);
+					}
+
+					// 1 for the cursor
+                    wmove(input, 0, COLS - SCROLLOFF - 1);
+				}
+
+				getyx(input, y, x);
+				wmove(input, y, x + 1);
+				position++;
+
+				break;
+
+
+			// Move cursor to the end
+			case KEY_END:
+				if (position >= chars)
+				{
+					break;
+				}
+
+				num = COLS - strlen(prompt) - SCROLLOFF - 1;
+				begin = chars - num < 0 ? 0 : chars - num;
+
+				wmove(input, 0, strlen(prompt));
+				wclrtoeol(input);
+
+				for (i = 0; i <= num && buffer[begin + i] != '\0'; i++)
+				{
+					waddch(input, buffer[begin + i]);
+				}
+
+				position = chars;
+
+				break;
+
+
+			// Delete character right of the cursor
+			case KEY_BACKSPACE:
+			case KEY_DEL:
+				if (position == 0)
+				{
+					break;
+				}
+
+                if (position == chars)
+				{
+					getyx(input, y, x);
+					wmove(input, y, x - 1);
+					position--;
+
+					wdelch(input);
+					buffer[position] = '\0';
+					chars--;
+				}
+				else
+				{
+					getyx(input, y, x);
+					wmove(input, y, x - 1);
+					position--;
+
+					wdelch(input);
+					tmp = buffer + position;
+
+					while (*tmp != '\0')
+					{
+						*tmp = *(tmp + 1);
+						tmp++;
+					}
+
+					chars--;
+				}
+
+				getyx(input, y, x);
+				wclrtoeol(input);
+
+				for (i = 0; i < COLS - x && buffer[position + i] != '\0'; i++)
+				{
+					waddch(input, buffer[position + i]);
+				}
+
+				wmove(input, y, x);
+
+				break;
+
+
+			// Delete character under the cursor
+			case KEY_DC:
+				if (position == chars)
+				{
+					break;
+				}
+
+				getyx(input, y, x);
+				wdelch(input);
+
+				tmp = buffer + position;
+
+				while (*tmp != '\0')
+				{
+					*tmp = *(tmp + 1);
+					tmp++;
+				}
+
+				chars--;
+
+				getyx(input, y, x);
+				wclrtoeol(input);
+
+				for (i = 0; i < COLS - x && buffer[position + i] != '\0'; i++)
+				{
+					waddch(input, buffer[position + i]);
+				}
+
+				wmove(input, y, x);
+
+				break;
+
+
+             // Normal ASCII input
+			default:
+				if (position == (sizeof(buffer) - 1))
+				{
+					break;
+				}
+
 				if ((key >= 31) && (key <= 126))
 				{
-					waddch(input, key);
-					buffer[cnt] = key;
-					cnt++;
+					getyx(input, y, x);
+
+                    if (x == COLS - 1)
+					{
+						start += SCROLLOFF;
+
+						wmove(input, 0, strlen(prompt));
+						wclrtoeol(input);
+
+						// 1 for the cursor
+						for (i = 0; i < COLS - strlen(prompt)
+								- SCROLLOFF - 1; i++)
+						{
+							waddch(input, buffer[start + i]);
+						}
+					}
+
+					if (position == chars)
+					{
+						waddch(input, key);
+						buffer[position] = key;
+						position++;
+						chars++;
+					}
+					else
+					{
+						getyx(input, y, x);
+						winsch(input, key);
+
+						/* This is a hack. Normaly the character
+						   is inserted under the cursor. Move the
+						   cursor one character to the right to
+						   simulate the expected behavior. */
+						wmove(input, y, x + 1);
+
+                        for (i = chars; i >= position; i--)
+						{
+							buffer[i + 1] = buffer[i];
+						}
+
+						buffer[position] = key;
+						position++;
+						chars++;
+					}
 				}
 
 				break;
 		}
 
-  		// Update after each key stroke
         wnoutrefresh(input);
 		doupdate();
 
@@ -169,7 +388,6 @@ curses_input(const char *prompt)
 		}
 	}
 
-    // Send to frontend
 	log_info("User input: %s", buffer);
 	process_input(buffer);
 }
