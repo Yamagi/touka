@@ -40,7 +40,7 @@ main(int argc, char *argv[])
 	struct stat sb;
 
 	// Clean aborts
-	//atexit(quit_atexit);
+	atexit(quit_atexit);
 
 	// Signal handler
 	signal(SIGINT, signalhandler);

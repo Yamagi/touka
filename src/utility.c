@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/stat.h>
 
 #include "curses.h"
@@ -77,6 +78,6 @@ quit(int ret)
 	curses_quit();
 	closelog();
 
-	exit(0);
+	_exit(0);
 }
 
