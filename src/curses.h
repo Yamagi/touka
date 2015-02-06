@@ -5,6 +5,14 @@
  */
 
 /*
+ * Highlight state:
+ *  - COLOR_NORM: White on black
+ *  - COLOR_HIGH: Green on Black
+ */
+#define COLOR_NORM 0
+#define COLOR_HIGH 1
+
+/*
  * Initializes ncurses.
  */
 void curses_init(void);
@@ -29,4 +37,4 @@ void curses_quit(void);
  *
  * string: Text to print
  */
-void curses_text(const char *string);
+void curses_text(int highlight, const char *fmt, ...);

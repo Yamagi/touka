@@ -4,11 +4,14 @@
  */
 
 #include <ncurses.h>
+#include <stdarg.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "curses.h"
 #include "input.h"
 #include "log.h"
+#include "utility.h"
 
 // --------
 
@@ -26,7 +29,7 @@
 // Colorpairs
 enum
 {
-	PAIR_HIGHLIGHT,
+	PAIR_HIGHLIGHT = 1,
 	PAIR_INPUT,
 	PAIR_STATUS,
 	PAIR_TEXT
@@ -65,7 +68,7 @@ curses_init(void)
 
     // Main window
 	text = newwin(LINES - 2, COLS, 0, 0);
-	wbkgd(text, COLOR_PAIR(PAIR_TEXT));
+	wbkgd(text, COLOR_PAIR(PAIR_HIGHLIGHT));
 	scrollok(text, TRUE);
 
 	// Status
@@ -182,12 +185,44 @@ curses_quit(void)
 }
 
 void
-curses_text(const char *string)
+curses_text(int highlight, const char *fmt, ...)
 {
-	waddstr(text, string);
+	char *msg;
+	size_t len;
+	va_list args;
+
+	// Determine length
+	va_start(args, fmt);
+	len = vsnprintf(NULL, 0, fmt, args) + 1;
+	va_end(args);
+
+	if ((msg = malloc(len)) == NULL)
+	{
+		perror("PANIC: Couldn't allocate memory");
+		quit(1);
+	}
+
+	// Format the message
+	va_start(args, fmt);
+	vsnprintf(msg, len, fmt, args);
+	va_end(args);
+
+	// Print it
+	if (highlight)
+	{
+		wattron(text, COLOR_PAIR(PAIR_HIGHLIGHT));
+	}
+	else
+	{
+		wattron(text, COLOR_PAIR(PAIR_TEXT));
+	}
+
+	waddstr(text, msg);
 
 	// Update
 	wnoutrefresh(text);
 	doupdate();
+
+	free(msg);
 }
 

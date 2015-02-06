@@ -1,5 +1,5 @@
 /*
- * Special macros:
+ * Special macros and some global stuff:
  *  - Application name
  *  - Version number
  *  - etc.
@@ -28,3 +28,8 @@
 
 // Copyright year
 #define YEAR "2015"
+
+// -----
+
+// If not zero the mainloop is left
+extern int break_mainloop;

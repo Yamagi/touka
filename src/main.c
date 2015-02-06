@@ -19,12 +19,21 @@
 
 // --------
 
+int break_mainloop;
+
+// --------
+
 static void
 mainloop(void)
 {
 	while (1)
 	{
 		curses_input("Touka: ");
+
+		if (break_mainloop)
+		{
+			break;
+		}
 	}
 }
 
