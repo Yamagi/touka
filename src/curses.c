@@ -25,7 +25,10 @@
 #define KEY_DEL 127
 
 // Number of characters the input is scrolled
-#define SCROLLOFF 5
+#define HSCROLLOFF 5
+
+// Number of lines the text window is scrolled
+#define VSCROLLOFF 5
 
 // --------
 
@@ -42,6 +45,57 @@ enum
 static WINDOW *input;
 static WINDOW *status;
 static WINDOW *text;
+
+// How many lines have we scrolled up?
+static int scrolled;
+
+// --------
+
+/*
+ * Scrolls the text window up (positiv
+ * offset) or down (negativ offset).
+ *
+ * offset: Number of lines to scroll
+ */
+static void
+curses_scroll(int offset)
+{
+	int x, y;
+
+	getyx(text, y, x);
+
+	// No scrollback buffer until now
+	if (y < LINES - 3)
+	{
+		return;
+	}
+
+	// Clamp scroll up
+	if ((y - LINES + 2 - 1 - scrolled <= 0)
+			&& (offset > 0))
+	{
+		return;
+	}
+
+	// Clamp scroll down
+	if (scrolled + offset < 0)
+	{
+		scrolled = 0;
+	}
+	else
+	{
+		scrolled += offset;
+	}
+
+	/* Scrolls the text window. The math is:
+		y:        cursor position
+		LINES:    Window height
+		+2:	      Compensate input and status line
+		-1:       Compensate cursor
+		scrolled: Scroll offset */
+	pnoutrefresh(text, y - LINES + 2 - 1 - scrolled, 0, 0, 0, LINES - 3, COLS);
+	doupdate();
+}
 
 // --------
 
@@ -67,7 +121,7 @@ curses_init(void)
 	init_pair(PAIR_HIGHLIGHT, COLOR_GREEN, COLOR_BLACK);
 	init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
 	init_pair(PAIR_STATUS, COLOR_CYAN, COLOR_BLUE);
-	init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_RED);
+	init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 
     // Main window
 	text = newpad(300, COLS);
@@ -130,6 +184,18 @@ curses_input(const char *prompt)
 				break;
 
 
+			// Scroll up
+			case KEY_PPAGE:
+				curses_scroll(VSCROLLOFF);
+				break;
+
+
+			// Scroll down
+			case KEY_NPAGE:
+				curses_scroll(-VSCROLLOFF);
+				break;
+
+
 			// Move cursor left
 			case KEY_LEFT:
 				if (position <= 0)
@@ -139,7 +205,7 @@ curses_input(const char *prompt)
 
 				if (start == position)
 				{
-					start -= SCROLLOFF;
+					start -= HSCROLLOFF;
 
 					wmove(input, 0, strlen(prompt));
 					wclrtoeol(input);
@@ -149,7 +215,7 @@ curses_input(const char *prompt)
 						waddch(input, buffer[start + i]);
 					}
 
-					wmove(input, 0, strlen(prompt) + SCROLLOFF);
+					wmove(input, 0, strlen(prompt) + HSCROLLOFF);
 				}
 
 				getyx(input, y, x);
@@ -194,7 +260,7 @@ curses_input(const char *prompt)
 
 				if (x == (COLS - 1))
 				{
-					start += SCROLLOFF;
+					start += HSCROLLOFF;
 
                     wmove(input, 0, strlen(prompt));
 					wclrtoeol(input);
@@ -206,7 +272,7 @@ curses_input(const char *prompt)
 					}
 
 					// 1 for the cursor
-                    wmove(input, 0, COLS - SCROLLOFF - 1);
+                    wmove(input, 0, COLS - HSCROLLOFF - 1);
 				}
 
 				getyx(input, y, x);
@@ -223,7 +289,7 @@ curses_input(const char *prompt)
 					break;
 				}
 
-				num = COLS - strlen(prompt) - SCROLLOFF - 1;
+				num = COLS - strlen(prompt) - HSCROLLOFF - 1;
 				begin = chars - num < 0 ? 0 : chars - num;
 
 				wmove(input, 0, strlen(prompt));
@@ -334,14 +400,14 @@ curses_input(const char *prompt)
 
                     if (x == COLS - 1)
 					{
-						start += SCROLLOFF;
+						start += HSCROLLOFF;
 
 						wmove(input, 0, strlen(prompt));
 						wclrtoeol(input);
 
 						// 1 for the cursor
 						for (i = 0; i < COLS - strlen(prompt)
-								- SCROLLOFF - 1; i++)
+								- HSCROLLOFF - 1; i++)
 						{
 							waddch(input, buffer[start + i]);
 						}
@@ -453,11 +519,12 @@ curses_text(int highlight, const char *fmt, ...)
 		   the pad, show the last filled lines. Math:
 		    y:     Cursor position.
 		    LINES: Screen height
-		    +3:    Compensate input und status lines
+		    +2:    Compensate input und status lines
 		    -1:    Compensate cursor height */
-		pnoutrefresh(text, y - LINES + 3 - 1, 0, 0, 0, LINES - 3, COLS);
+		pnoutrefresh(text, y - LINES + 2 - 1, 0, 0, 0, LINES - 3, COLS);
 	}
 
+	scrolled = 0;
 	doupdate();
 
 	free(msg);
