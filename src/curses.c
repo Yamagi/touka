@@ -39,9 +39,9 @@ enum
 };
 
 // Curses windows
-WINDOW *input;
-WINDOW *status;
-WINDOW *text;
+static WINDOW *input;
+static WINDOW *status;
+static WINDOW *text;
 
 // --------
 
