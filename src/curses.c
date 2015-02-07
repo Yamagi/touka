@@ -67,11 +67,11 @@ curses_init(void)
 	init_pair(PAIR_HIGHLIGHT, COLOR_GREEN, COLOR_BLACK);
 	init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
 	init_pair(PAIR_STATUS, COLOR_CYAN, COLOR_BLUE);
-	init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
+	init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_RED);
 
     // Main window
-	text = newwin(LINES - 2, COLS, 0, 0);
-	wbkgd(text, COLOR_PAIR(PAIR_HIGHLIGHT));
+	text = newpad(300, COLS);
+	wbkgd(text, COLOR_PAIR(PAIR_TEXT));
 	scrollok(text, TRUE);
 
 	// Status
@@ -86,7 +86,7 @@ curses_init(void)
 	// Update everything
 	wnoutrefresh(input);
 	wnoutrefresh(status);
-	wnoutrefresh(text);
+	pnoutrefresh(text, 0, 0, 0, 0, LINES - 3, COLS);
 	doupdate();
 
 	log_info("%s", "Curses initialized");
@@ -406,6 +406,7 @@ void
 curses_text(int highlight, const char *fmt, ...)
 {
 	char *msg;
+	int x, y;
 	size_t len;
 	va_list args;
 
@@ -438,7 +439,25 @@ curses_text(int highlight, const char *fmt, ...)
 	waddstr(text, msg);
 
 	// Update
-	wnoutrefresh(text);
+	getyx(text, y, x);
+
+	if (y < LINES - 3)
+	{
+		/* If the cursor hasn't reached the bottom
+		   of the pad, just show it's beginning. */
+		pnoutrefresh(text, 0, 0, 0, 0, LINES - 3, COLS);
+	}
+	else
+	{
+		/* If the cursor has reached the bottom of
+		   the pad, show the last filled lines. Math:
+		    y:     Cursor position.
+		    LINES: Screen height
+		    +3:    Compensate input und status lines
+		    -1:    Compensate cursor height */
+		pnoutrefresh(text, y - LINES + 3 - 1, 0, 0, 0, LINES - 3, COLS);
+	}
+
 	doupdate();
 
 	free(msg);
