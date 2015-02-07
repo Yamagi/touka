@@ -1,5 +1,5 @@
 # The compile flags
-CFLAGS := -MMD -std=c99 -Wall -Werror -pedantic -Os
+CFLAGS := -MMD -std=c99 -Wall -Werror -pedantic
 
 # ----
 
@@ -10,9 +10,9 @@ LDFLAGS = -lncurses
 
 # Debugging
 ifdef NDEBUG
-CFLAGS = -DNDEBUG
+CFLAGS = -Os -DNDEBUG
 else
-CFLAGS += -g
+CFLAGS += -O0 -g
 endif
 
 # ----
