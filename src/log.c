@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,14 +20,22 @@
 
 // --------
 
-FILE *logfile;
+static FILE *logfile;
 
 // --------
 
-static int
+/*
+ * Converts a logtype to a human
+ * readable string.
+ *
+ * type: Logtype to convert
+ * str: String where the string is copied
+ * len: Length of string
+ */
+static int32_t
 logtypetostr(logtype type, char *str, size_t len)
 {
-	int ret = 0;
+	int8_t ret = 0;
 
 	switch (type)
 	{
@@ -51,8 +60,10 @@ logtypetostr(logtype type, char *str, size_t len)
 	return ret;
 }
 
+// --------
+
 void
-logger(logtype type, const char *func, int line, const char *fmt, ...)
+logger(logtype type, const char *func, int32_t line, const char *fmt, ...)
 {
 	char *inpmsg = NULL;
 	char *logmsg = NULL;
@@ -138,11 +149,11 @@ error:
 }
 
 void
-initlog(const char *path, const char *name, int seg)
+initlog(const char *path, const char *name, int32_t seg)
 {
 	char newfile[PATH_MAX];
 	char oldfile[PATH_MAX];
-	int i;
+	int32_t i;
 	struct stat sb;
 
 	assert(!logfile);

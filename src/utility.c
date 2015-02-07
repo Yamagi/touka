@@ -5,6 +5,7 @@
 
 #include <errno.h>
 #include <limits.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -61,9 +62,9 @@ recursive_mkdir(const char *dir)
 }
 
 void
-quit(int ret)
+quit(int32_t ret)
 {
-	static int recursive = 0;
+	static int32_t recursive = 0;
 
 	if (recursive)
 	{

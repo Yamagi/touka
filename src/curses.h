@@ -4,6 +4,11 @@
  * no global refresh cycle.
  */
 
+#ifndef CURSES_H_
+#define CURSES_H_
+
+#include <stdint.h>
+
 /*
  * Highlight state:
  *  - COLOR_NORM: White on black
@@ -37,4 +42,7 @@ void curses_quit(void);
  *
  * string: Text to print
  */
-void curses_text(int highlight, const char *fmt, ...);
+void curses_text(int8_t highlight, const char *fmt, ...);
+
+#endif // CURSES_H_
+

@@ -5,6 +5,11 @@
  *  - etc.
  */
 
+#ifndef MAIN_H_
+#define MAIN_H_
+
+#include <stdint.h>
+
 // Applicaction name
 #define APPNAME "Touka"
 
@@ -32,4 +37,7 @@
 // -----
 
 // If not zero the mainloop is left
-extern int break_mainloop;
+extern int8_t break_mainloop;
+
+#endif // MAIN_H_
+

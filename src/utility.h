@@ -4,6 +4,11 @@
  * fit anywhere else.
  */
 
+#ifndef UTILITY_H_
+#define UTILITY_H_
+
+#include <stdint.h>
+
 /*
  * Create a directory with all intermediate
  * directories as required.
@@ -18,4 +23,7 @@ void recursive_mkdir(const char *dir);
  *
  * ret: Status code to return
  */
-void quit(int ret);
+void quit(int32_t ret);
+
+#endif // UTILITY_H_
+

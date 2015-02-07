@@ -5,6 +5,7 @@
 
 #include <ncurses.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -47,7 +48,7 @@ static WINDOW *status;
 static WINDOW *text;
 
 // How many lines have we scrolled up?
-static int scrolled;
+static int32_t scrolled;
 
 // --------
 
@@ -58,9 +59,9 @@ static int scrolled;
  * offset: Number of lines to scroll
  */
 static void
-curses_scroll(int offset)
+curses_scroll(int32_t offset)
 {
-	int x, y;
+	int32_t x, y;
 
 	getyx(text, y, x);
 
@@ -151,15 +152,15 @@ curses_input(const char *prompt)
 {
 	char buffer[1024];
 	char *tmp;
-	int begin;
-	int chars;
-	int fin;
-	int i;
-	int key;
-	int num;
-    int position;
-	int start;
-	int x, y;
+	int8_t fin;
+	int16_t key;
+	int32_t begin;
+	int32_t chars;
+	int32_t i;
+	int32_t num;
+    int32_t position;
+	int32_t start;
+	int32_t x, y;
 
 	memset(buffer, '\0', sizeof(buffer));
 	chars = 0;
@@ -469,10 +470,10 @@ curses_quit(void)
 }
 
 void
-curses_text(int highlight, const char *fmt, ...)
+curses_text(int8_t highlight, const char *fmt, ...)
 {
 	char *msg;
-	int x, y;
+	int32_t x, y;
 	size_t len;
 	va_list args;
 

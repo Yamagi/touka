@@ -8,6 +8,7 @@
 
 #include <limits.h>
 #include <signal.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -19,7 +20,7 @@
 
 // --------
 
-int break_mainloop;
+int8_t break_mainloop;
 
 // --------
 
@@ -36,6 +37,8 @@ mainloop(void)
 		}
 	}
 }
+
+// --------
 
 void
 quit_atexit(void)

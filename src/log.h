@@ -15,6 +15,11 @@
  *  the log handler must be closed with closelog().
  */
 
+#ifndef LOGGER_H_
+#define LOGGER_H_
+
+#include <stdint.h>
+
 /*
  * Possible log states
  */
@@ -36,7 +41,7 @@ typedef enum
  * line: Line of caller
  * fmt:  Print format
  */
-void logger(logtype type, const char *func, int line, const char *fmt, ...);
+void logger(logtype type, const char *func, int32_t line, const char *fmt, ...);
 
 /*
  * Initialize the log file. May be called only once.
@@ -45,7 +50,7 @@ void logger(logtype type, const char *func, int line, const char *fmt, ...);
  * name: Name of the log file
  * seg: Number of segments to keep. Maximum is 99
  */
-void initlog(const char *path, const char *name, int seg);
+void initlog(const char *path, const char *name, int32_t seg);
 
 /*
  * Closes the log file. May be called several times.
@@ -69,4 +74,6 @@ void closelog(void);
  */
 #define log_error(F) logger(LOG_ERROS, __func__, __LINE__, F)
 #define log_error_f(F, ...) logger(LOG_ERROS, __func__, __LINE__, F, __VA_ARGS__)
+
+#endif // LOG_H_
 
