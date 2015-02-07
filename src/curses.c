@@ -102,7 +102,7 @@ curses_scroll(int offset)
 void
 curses_init(void)
 {
-	log_info("%s", "Initializing ncurses");
+	log_info("Initializing ncurses");
 
 	// Initialize ncurses
 	initscr();
@@ -114,7 +114,7 @@ curses_init(void)
 
 	if (!can_change_color())
 	{
-		log_warn("%s", "Terminal cannot change colors");
+		log_warn("Terminal cannot change colors");
 	}
 
 	// And now the Colors
@@ -143,7 +143,7 @@ curses_init(void)
 	pnoutrefresh(text, 0, 0, 0, 0, LINES - 3, COLS);
 	doupdate();
 
-	log_info("%s", "Curses initialized");
+	log_info("Curses initialized");
 }
 
 void
@@ -454,7 +454,7 @@ curses_input(const char *prompt)
 		}
 	}
 
-	log_info("User input: %s", buffer);
+	log_info_f("User input: %s", buffer);
 	process_input(buffer);
 }
 
