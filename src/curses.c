@@ -31,6 +31,9 @@
 // Number of lines the text window is scrolled
 #define VSCROLLOFF 5
 
+// Number of lines in the scrollback buffer
+#define SCROLLBACK 1024
+
 // --------
 
 // Colorpairs
@@ -51,6 +54,37 @@ static WINDOW *text;
 static int32_t scrolled;
 
 // --------
+
+static void
+curses_resize(void)
+{
+    log_info("Terminal resize detected");
+
+	// Alter stdscr, otherwise pads will break
+    wresize(stdscr, LINES, COLS);
+	wclear(stdscr);
+	wnoutrefresh(stdscr);
+
+	// Main window
+	wresize(text, SCROLLBACK, COLS);
+	wclear(text);
+	pnoutrefresh(text, 0, 0, 0, 0, LINES - 3, COLS);
+
+	// Status
+	wresize(status, 1, COLS);
+	mvwin(status, LINES - 2, 0);
+	wclear(status);
+	wnoutrefresh(status);
+
+	// Input
+	wresize(input, 1, COLS);
+	mvwin(input, LINES - 1, 0);
+	wclear(input);
+	wnoutrefresh(input);
+
+	doupdate();
+	log_info_f("New terminal size is: %ix%i", LINES, COLS);
+}
 
 /*
  * Scrolls the text window up (positiv
@@ -91,7 +125,7 @@ curses_scroll(int32_t offset)
 	/* Scrolls the text window. The math is:
 		y:        cursor position
 		LINES:    Window height
-		+2:	      Compensate input and status line
+		+2:		  Compensate input and status line
 		-1:       Compensate cursor
 		scrolled: Scroll offset */
 	pnoutrefresh(text, y - LINES + 2 - 1 - scrolled, 0, 0, 0, LINES - 3, COLS);
@@ -118,6 +152,8 @@ curses_init(void)
 		log_warn("Terminal cannot change colors");
 	}
 
+	log_info_f("Terminal size is: %i:%i", LINES, COLS);
+
 	// And now the Colors
 	init_pair(PAIR_HIGHLIGHT, COLOR_GREEN, COLOR_BLACK);
 	init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
@@ -125,7 +161,7 @@ curses_init(void)
 	init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 
     // Main window
-	text = newpad(300, COLS);
+	text = newpad(SCROLLBACK, COLS);
 	wbkgd(text, COLOR_PAIR(PAIR_TEXT));
 	scrollok(text, TRUE);
 
@@ -139,6 +175,7 @@ curses_init(void)
 	keypad(input, TRUE);
 
 	// Update everything
+	wnoutrefresh(stdscr);
 	wnoutrefresh(input);
 	wnoutrefresh(status);
 	pnoutrefresh(text, 0, 0, 0, 0, LINES - 3, COLS);
@@ -182,6 +219,17 @@ curses_input(const char *prompt)
 			case KEY_LF:
 			case KEY_CR:
 				fin = 1;
+				break;
+
+
+			// Terminal was resized
+			case KEY_RESIZE:
+				curses_resize();
+
+				wmove(input, 0, 0);
+				wclrtoeol(input);
+				waddstr(input, prompt);
+
 				break;
 
 
@@ -518,10 +566,10 @@ curses_text(int8_t highlight, const char *fmt, ...)
 	{
 		/* If the cursor has reached the bottom of
 		   the pad, show the last filled lines. Math:
-		    y:     Cursor position.
-		    LINES: Screen height
-		    +2:    Compensate input und status lines
-		    -1:    Compensate cursor height */
+			y:     Cursor position.
+			LINES: Screen height
+			+2:    Compensate input und status lines
+			-1:    Compensate cursor height */
 		pnoutrefresh(text, y - LINES + 2 - 1, 0, 0, 0, LINES - 3, COLS);
 	}
 
