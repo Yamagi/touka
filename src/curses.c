@@ -230,6 +230,25 @@ curses_input(const char *prompt)
 				wclrtoeol(input);
 				waddstr(input, prompt);
 
+				start = strlen(buffer) - (COLS - 1 - strlen(prompt));
+				start = start < 0 ? 0 : start;
+
+				for (i = 0; i < COLS - strlen(prompt)
+						&& buffer[start + i] != '\0'; i++)
+				{
+					waddch(input, buffer[start + i]);
+				}
+
+				if (position > start)
+				{
+					getyx(input, y, x);
+					wmove(input, y, strlen(prompt) + position - start);
+				}
+				else
+				{
+					position = chars;
+				}
+
 				break;
 
 
