@@ -55,10 +55,10 @@ typedef struct
 {
 	char *msg;
 	int highlight;
-} replay;
+} repl_msg;
 
 // Linked list for replay buffer
-list *replay_buffer;
+list *repl_buf;
 
 // Curses windows
 static WINDOW *input;
@@ -74,7 +74,7 @@ static int32_t scrolled;
  * Callback for the replay buffer destruction.
  */
 void
-curses_replay_callbk(replay *repl)
+curses_replay_callback(repl_msg *repl)
 {
 	free(repl->msg);
 }
@@ -111,7 +111,7 @@ curses_resize(void)
 {
 	int32_t x, y;
 	listnode *cur;
-	replay *rep;
+	repl_msg *rep;
 
 	// Alter stdscr, otherwise pads will break
     wresize(stdscr, LINES, COLS);
@@ -134,7 +134,7 @@ curses_resize(void)
 	wnoutrefresh(input);
 
 	// Replay text
-	cur = replay_buffer->first;
+	cur = repl_buf->first;
 
 	while (cur)
 	{
@@ -214,7 +214,7 @@ curses_init(void)
 {
 	log_info("Initializing ncurses");
 
-	replay_buffer = list_create();
+	repl_buf = list_create();
 
 	// Initialize ncurses
 	initscr();
@@ -610,7 +610,7 @@ curses_quit(void)
 	delwin(text);
 	endwin();
 
-	list_destroy(replay_buffer, curses_replay_callbk);
+	list_destroy(repl_buf, curses_replay_callback);
 }
 
 void
@@ -618,7 +618,7 @@ curses_text(int8_t highlight, const char *fmt, ...)
 {
 	char *msg;
 	int32_t x, y;
-	replay *rep;
+	repl_msg *rep;
 	size_t len;
 	va_list args;
 
@@ -662,7 +662,7 @@ curses_text(int8_t highlight, const char *fmt, ...)
 	doupdate();
 
 	// Save to replay buffer
-	if ((rep = malloc(sizeof(replay))) == NULL)
+	if ((rep = malloc(sizeof(repl_msg))) == NULL)
 	{
 		perror("PANIC: Couldn't allocate memory");
 		quit(1);
@@ -670,11 +670,11 @@ curses_text(int8_t highlight, const char *fmt, ...)
 
 	rep->msg = msg;
 	rep->highlight = highlight;
-	list_push(replay_buffer, rep);
+	list_push(repl_buf, rep);
 
-	while (replay_buffer->count > REPLAY)
+	while (repl_buf->count > REPLAY)
 	{
-		rep = list_shift(replay_buffer);
+		rep = list_shift(repl_buf);
 
 		free(rep->msg);
         free(rep);
