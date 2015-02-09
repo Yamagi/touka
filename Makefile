@@ -1,3 +1,8 @@
+# Detect platform
+OS := $(shell uname -s)
+
+# ----
+
 # The compile flags
 CFLAGS := -MMD -std=c99 -Wall -Werror -pedantic
 
@@ -5,6 +10,14 @@ CFLAGS := -MMD -std=c99 -Wall -Werror -pedantic
 
 # The linker flags
 LDFLAGS = -lncurses
+
+# ----
+
+# Special pathes
+ifeq ($(OS),FreeBSD)
+INCLUDE := -I/usr/local/include
+LIBPATH := -L/usr/local/lib
+endif
 
 # ----
 
@@ -29,7 +42,7 @@ endif
 build/%.o: %.c
 	@echo "===> CC $<"
 	$(Q)mkdir -p $(@D)
-	$(Q)$(CC) -c $(CFLAGS) -o $@ $<
+	$(Q)$(CC) -c $(INCLUDE) $(CFLAGS) -o $@ $<
 
 # ----
 
@@ -75,6 +88,13 @@ DEPS = $(OBJS:.o=.d)
 # ----
 
 # Link touka
+ifndef NDEBUG
 release/touka: $(OBJS)
 	@echo "===> LD $@"
-	$(Q)$(CC) $(OBJS) $(LDFLAGS) -o $@
+	$(Q)$(CC) $(OBJS) $(LIBPATH) $(LDFLAGS) -o $@
+else
+release/touka: $(OBJS)
+	@echo "===> LD $@"
+	$(Q)$(CC) $(OBJS) $(LIBPATH) $(LDFLAGS) -o $@
+	$(Q)strip $@
+endif
