@@ -41,7 +41,7 @@ typedef enum
  * line: Line of caller
  * fmt:  Print format
  */
-void logger(logtype type, const char *func, int32_t line, const char *fmt, ...);
+void log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...);
 
 /*
  * Initialize the log file. May be called only once.
@@ -50,30 +50,30 @@ void logger(logtype type, const char *func, int32_t line, const char *fmt, ...);
  * name: Name of the log file
  * seg: Number of segments to keep. Maximum is 99
  */
-void initlog(const char *path, const char *name, int32_t seg);
+void log_init(const char *path, const char *name, int32_t seg);
 
 /*
  * Closes the log file. May be called several times.
  */
-void closelog(void);
+void log_close(void);
 
 /*
  * 	Convenience macros for infos
  */
-#define log_info(F) logger(LOG_INFO, __func__, __LINE__, F)
-#define log_info_f(F, ...) logger(LOG_INFO, __func__, __LINE__, F, __VA_ARGS__)
+#define log_info(F) log_insert(LOG_INFO, __func__, __LINE__, F)
+#define log_info_f(F, ...) log_insert(LOG_INFO, __func__, __LINE__, F, __VA_ARGS__)
 
 /*
  * 	Convenience macro for warnings
  */
-#define log_warn(F) logger(LOG_WARN, __func__, __LINE__, F)
-#define log_warn_f(F, ...) logger(LOG_WARN, __func__, __LINE__, F, __VA_ARGS__)
+#define log_warn(F) log_insert(LOG_WARN, __func__, __LINE__, F)
+#define log_warn_f(F, ...) log_insert(LOG_WARN, __func__, __LINE__, F, __VA_ARGS__)
 
 /*
  * 	Convenience macro for errors
  */
-#define log_error(F) logger(LOG_ERROS, __func__, __LINE__, F)
-#define log_error_f(F, ...) logger(LOG_ERROS, __func__, __LINE__, F, __VA_ARGS__)
+#define log_error(F) log_insert(LOG_ERROS, __func__, __LINE__, F)
+#define log_error_f(F, ...) log_insert(LOG_ERROS, __func__, __LINE__, F, __VA_ARGS__)
 
 #endif // LOG_H_
 

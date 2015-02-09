@@ -15,7 +15,7 @@
  *
  * dir: Directory to create.
  */
-void recursive_mkdir(const char *dir);
+void util_rmkdir(const char *dir);
 
 /*
  * Terminates the program and returns

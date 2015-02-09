@@ -18,7 +18,7 @@
 // --------
 
 void
-recursive_mkdir(const char *dir)
+util_rmkdir(const char *dir)
 {
 	char *p;
 	char tmp[PATH_MAX];
@@ -77,7 +77,7 @@ quit(int32_t ret)
 	}
 
 	curses_quit();
-	closelog();
+	log_close();
 
 	_exit(0);
 }

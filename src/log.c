@@ -33,7 +33,7 @@ static FILE *logfile;
  * len: Length of string
  */
 static int32_t
-logtypetostr(logtype type, char *str, size_t len)
+log_typetostr(logtype type, char *str, size_t len)
 {
 	int8_t ret = 0;
 
@@ -63,7 +63,7 @@ logtypetostr(logtype type, char *str, size_t len)
 // --------
 
 void
-logger(logtype type, const char *func, int32_t line, const char *fmt, ...)
+log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 {
 	char *inpmsg = NULL;
 	char *logmsg = NULL;
@@ -108,7 +108,7 @@ logger(logtype type, const char *func, int32_t line, const char *fmt, ...)
 	strftime(msgtime, sizeof(msgtime), "%m-%d-%Y %H:%M:%S", t);
 
 	// Status
-	if (logtypetostr(type, status, sizeof(status)) != 0)
+	if (log_typetostr(type, status, sizeof(status)) != 0)
 	{
 		fprintf(stderr, "PANIC: Unknown logtype\n");
 		goto error;
@@ -149,7 +149,7 @@ error:
 }
 
 void
-initlog(const char *path, const char *name, int32_t seg)
+log_init(const char *path, const char *name, int32_t seg)
 {
 	char newfile[PATH_MAX];
 	char oldfile[PATH_MAX];
@@ -170,7 +170,7 @@ initlog(const char *path, const char *name, int32_t seg)
 	}
 	else
 	{
-		recursive_mkdir(path);
+		util_rmkdir(path);
 	}
 
     // Rotate logs
@@ -220,7 +220,7 @@ initlog(const char *path, const char *name, int32_t seg)
 }
 
 void
-closelog(void)
+log_close(void)
 {
 	if (logfile)
 	{

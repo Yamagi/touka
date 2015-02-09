@@ -81,11 +81,11 @@ main(int argc, char *argv[])
 	}
 	else
 	{
-		recursive_mkdir(homedir);
+		util_rmkdir(homedir);
 	}
 
 	// Bring up logging
-	initlog(logdir, LOGNAME, LOGNUM);
+	log_init(logdir, LOGNAME, LOGNUM);
 
 	snprintf(logbuf, sizeof(logbuf), "This it %s %s.", APPNAME, VERSION);
 	log_info_f("This is %s %s, (c) %s %s", APPNAME, VERSION, YEAR, AUTHOR);
