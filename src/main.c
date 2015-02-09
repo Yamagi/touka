@@ -93,6 +93,7 @@ main(int argc, char *argv[])
 
 	// Initialize TUI
 	curses_init();
+	curses_status("Cool status message :)");
 
 	// Loop forever
 	mainloop();

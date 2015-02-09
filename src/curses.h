@@ -38,6 +38,14 @@ void curses_input(const char *prompt);
 void curses_quit(void);
 
 /*
+ * Prints text to the status bar. The text
+ * is cut off at terminal width.
+ *
+ * msg: Text to print
+ */
+void curses_status(const char *msg);
+
+/*
  * Prints a string into the main window.
  *
  * string: Text to print

@@ -68,6 +68,9 @@ static WINDOW *text;
 // How many lines have we scrolled up?
 static int32_t scrolled;
 
+// Caches the current status message
+char status_line[256];
+
 // --------
 
 /*
@@ -154,6 +157,7 @@ curses_resize(void)
 		-1:       Compensate cursor
 		scrolled: Scroll offset */
 	pnoutrefresh(text, y - LINES + 2 - 1 - scrolled, 0, 0, 0, LINES - 3, COLS);
+	curses_status(status_line);
 
 	doupdate();
 
@@ -233,7 +237,7 @@ curses_init(void)
 
 	init_pair(PAIR_HIGHLIGHT, COLOR_GREEN, COLOR_BLACK);
 	init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
-	init_pair(PAIR_STATUS, COLOR_CYAN, COLOR_BLUE);
+	init_pair(PAIR_STATUS, COLOR_BLACK, COLOR_BLUE);
 	init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 
     // Main window
@@ -611,6 +615,24 @@ curses_quit(void)
 	endwin();
 
 	list_destroy(repl_buf, curses_replay_callback);
+}
+
+void
+curses_status(const char *msg)
+{
+	int32_t i;
+
+    wmove(status, 0, 0);
+
+	for (i = 0; i < COLS && msg[i] != '\0'; i++)
+	{
+		waddch(status, msg[i]);
+	}
+
+	stpncpy(status_line, msg, sizeof(status_line));
+
+    wnoutrefresh(status);
+	doupdate();
 }
 
 void
