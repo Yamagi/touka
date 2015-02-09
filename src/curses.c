@@ -41,6 +41,12 @@
 
 // --------
 
+// Colors
+enum
+{
+	COLOR_STAT_GREY = 17
+};
+
 // Colorpairs
 enum
 {
@@ -142,7 +148,6 @@ curses_resize(void)
 	while (cur)
 	{
 		rep = cur->data;
-		log_info_f("Replay: %i, %s", rep->highlight, rep->msg);
 		curses_print(rep->highlight, rep->msg);
 		cur = cur->next;
 	}
@@ -161,8 +166,8 @@ curses_resize(void)
 
 	doupdate();
 
-    log_info("Terminal resize detected");
-	log_info_f("New terminal size is: %ix%i", LINES, COLS);
+	log_info("Terminal resize detected.");
+	log_info_f("New terminal size is: %ix%i.", LINES, COLS);
 }
 
 /*
@@ -216,7 +221,7 @@ curses_scroll(int32_t offset)
 void
 curses_init(void)
 {
-	log_info("Initializing ncurses");
+	log_info("Initializing ncurses.");
 
 	repl_buf = list_create();
 
@@ -230,15 +235,24 @@ curses_init(void)
 
 	if (!can_change_color())
 	{
-		log_warn("Terminal cannot change colors");
+		log_warn("Terminal cannot change colors. Using unfancy standard color.");
+
+		init_pair(PAIR_HIGHLIGHT, COLOR_GREEN, COLOR_BLACK);
+		init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
+		init_pair(PAIR_STATUS, COLOR_CYAN, COLOR_BLUE);
+		init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
+	}
+	else
+	{
+		init_color(COLOR_STAT_GREY, 679, 669, 578);
+
+		init_pair(PAIR_HIGHLIGHT, COLOR_YELLOW, COLOR_BLACK);
+		init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
+		init_pair(PAIR_STATUS, COLOR_BLACK, COLOR_STAT_GREY);
+		init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 	}
 
-	log_info_f("Terminal size is: %i:%i", LINES, COLS);
-
-	init_pair(PAIR_HIGHLIGHT, COLOR_GREEN, COLOR_BLACK);
-	init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
-	init_pair(PAIR_STATUS, COLOR_BLACK, COLOR_BLUE);
-	init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
+	log_info_f("Terminal size is: %i:%i.", LINES, COLS);
 
     // Main window
 	text = newpad(SCROLLBACK, COLS);
@@ -261,7 +275,7 @@ curses_init(void)
 	pnoutrefresh(text, 0, 0, 0, 0, LINES - 3, COLS);
 	doupdate();
 
-	log_info("Curses initialized");
+	log_info("Curses initialized.");
 }
 
 void
@@ -602,7 +616,7 @@ curses_input(const char *prompt)
 		}
 	}
 
-	log_info_f("User input: %s", buffer);
+	log_info_f("User input: %s.", buffer);
 	process_input(buffer);
 }
 
