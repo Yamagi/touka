@@ -14,6 +14,8 @@
 #include "log.h"
 #include "utility.h"
 
+#include "data/linkedlist.h"
+
 // --------
 
 /*
@@ -32,7 +34,10 @@
 #define VSCROLLOFF 5
 
 // Number of lines in the scrollback buffer
-#define SCROLLBACK 1024
+#define SCROLLBACK 512
+
+// Number of events to be replayed at resize
+#define REPLAY (SCROLLBACK * 64)
 
 // --------
 
@@ -45,6 +50,16 @@ enum
 	PAIR_TEXT
 };
 
+// One message saved for replay
+typedef struct
+{
+	char *msg;
+	int highlight;
+} replay;
+
+// Linked list for replay buffer
+list *replay_buffer;
+
 // Curses windows
 static WINDOW *input;
 static WINDOW *status;
@@ -55,10 +70,39 @@ static int32_t scrolled;
 
 // --------
 
+/*
+ * Prints text into the main window.
+ *
+ * highlight: Highlight status of the text
+ * msg: Test to print
+ */
+static void
+curses_print(int8_t highlight, const char *msg)
+{
+	// Set highlight status
+	if (highlight)
+	{
+		wattron(text, COLOR_PAIR(PAIR_HIGHLIGHT));
+	}
+	else
+	{
+		wattron(text, COLOR_PAIR(PAIR_TEXT));
+	}
+
+	// Print
+	waddstr(text, msg);
+}
+
+/*
+ * Called at terminal resize. Resizes all
+ * windows and replays their content.
+ */
 static void
 curses_resize(void)
 {
-    log_info("Terminal resize detected");
+	int32_t x, y;
+	listnode *cur;
+	replay *rep;
 
 	// Alter stdscr, otherwise pads will break
     wresize(stdscr, LINES, COLS);
@@ -68,7 +112,6 @@ curses_resize(void)
 	// Main window
 	wresize(text, SCROLLBACK, COLS);
 	wclear(text);
-	pnoutrefresh(text, 0, 0, 0, 0, LINES - 3, COLS);
 
 	// Status
 	wresize(status, 1, COLS);
@@ -82,7 +125,32 @@ curses_resize(void)
 	wclear(input);
 	wnoutrefresh(input);
 
+	// Replay text
+	cur = replay_buffer->first;
+
+	while (cur)
+	{
+		rep = cur->data;
+		log_info_f("Replay: %i, %s", rep->highlight, rep->msg);
+		curses_print(rep->highlight, rep->msg);
+		cur = cur->next;
+	}
+
+	getyx(text, y, x);
+
+	/* Scrolls the text window to the same position
+	 * as before. The math is:
+		y:        cursor position
+		LINES:    Window height
+		+2:		  Compensate input and status line
+		-1:       Compensate cursor
+		scrolled: Scroll offset */
+	pnoutrefresh(text, y - LINES + 2 - 1 - scrolled, 0, 0, 0, LINES - 3, COLS);
+
+	// Repaint everything
 	doupdate();
+
+    log_info("Terminal resize detected");
 	log_info_f("New terminal size is: %ix%i", LINES, COLS);
 }
 
@@ -146,6 +214,9 @@ curses_init(void)
 	cbreak();
 	nonl();
 	noecho();
+
+	// Replay buffer
+	replay_buffer = listcreate();
 
 	if (!can_change_color())
 	{
@@ -541,6 +612,7 @@ curses_text(int8_t highlight, const char *fmt, ...)
 {
 	char *msg;
 	int32_t x, y;
+	replay *rep;
 	size_t len;
 	va_list args;
 
@@ -560,17 +632,8 @@ curses_text(int8_t highlight, const char *fmt, ...)
 	vsnprintf(msg, len, fmt, args);
 	va_end(args);
 
-	// Print it
-	if (highlight)
-	{
-		wattron(text, COLOR_PAIR(PAIR_HIGHLIGHT));
-	}
-	else
-	{
-		wattron(text, COLOR_PAIR(PAIR_TEXT));
-	}
-
-	waddstr(text, msg);
+	// Print
+	curses_print(highlight, msg);
 
 	// Update
 	getyx(text, y, x);
@@ -595,6 +658,23 @@ curses_text(int8_t highlight, const char *fmt, ...)
 	scrolled = 0;
 	doupdate();
 
-	free(msg);
+	// Save to replay buffer
+	if ((rep = malloc(sizeof(replay))) == NULL)
+	{
+		perror("PANIC: Couldn't allocate memory");
+		quit(1);
+	}
+
+	rep->msg = msg;
+	rep->highlight = highlight;
+	listpush(replay_buffer, rep);
+
+	while (replay_buffer->count > REPLAY)
+	{
+		rep = listshift(replay_buffer);
+
+		free(rep->msg);
+        free(rep);
+	}
 }
 
