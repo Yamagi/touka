@@ -16,7 +16,7 @@
 #include <sys/stat.h>
 
 #include "log.h"
-#include "utility.h"
+#include "util.h"
 
 // --------
 

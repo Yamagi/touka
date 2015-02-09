@@ -72,7 +72,7 @@ OBJS_ = \
 	src/input.o \
 	src/log.o \
 	src/main.o \
-	src/utility.o
+	src/util.o
 
 # Buildpath
 OBJS = $(patsubst %,build/%,$(OBJS_))

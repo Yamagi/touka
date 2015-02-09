@@ -16,7 +16,7 @@
 #include "curses.h"
 #include "log.h"
 #include "main.h"
-#include "utility.h"
+#include "util.h"
 
 // --------
 

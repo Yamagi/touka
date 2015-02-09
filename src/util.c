@@ -14,6 +14,7 @@
 
 #include "curses.h"
 #include "log.h"
+#include "util.h"
 
 // --------
 

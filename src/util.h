@@ -4,8 +4,8 @@
  * fit anywhere else.
  */
 
-#ifndef UTILITY_H_
-#define UTILITY_H_
+#ifndef UTIL_H_
+#define UTIL_H_
 
 #include <stdint.h>
 
@@ -25,5 +25,5 @@ void util_rmkdir(const char *dir);
  */
 void quit(int32_t ret);
 
-#endif // UTILITY_H_
+#endif // UTIL_H_
 

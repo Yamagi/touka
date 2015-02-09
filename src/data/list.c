@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 #include "list.h"
-#include "../utility.h"
+#include "../util.h"
 
 // --------
 

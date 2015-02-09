@@ -12,7 +12,7 @@
 #include "curses.h"
 #include "input.h"
 #include "log.h"
-#include "utility.h"
+#include "util.h"
 
 #include "data/list.h"
 
