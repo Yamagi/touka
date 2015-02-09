@@ -54,6 +54,7 @@ touka:
 
 # Objects
 OBJS_ = \
+	src/data/linkedlist.o \
 	src/curses.o \
 	src/input.o \
 	src/log.o \

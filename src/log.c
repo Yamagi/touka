@@ -81,13 +81,13 @@ logger(logtype type, const char *func, int32_t line, const char *fmt, ...)
 
     if ((inpmsg = malloc(msglen)) == NULL)
 	{
-		perror("PANIC: malloc() failed");
+		perror("PANIC: Couldn't allocate memory");
 		goto error;
 	}
 
     if ((logmsg = malloc(msglen)) == NULL)
 	{
-		perror("PANIC: malloc() failed");
+		perror("PANIC: Couldn't allocate memory");
 		goto error;
 	}
 
