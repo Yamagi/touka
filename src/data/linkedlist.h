@@ -8,7 +8,7 @@
 #define LINKEDLIST_H_
 
 /*
- * One node in the list.
+ * One node in a list.
  */
 typedef struct listnode
 {
@@ -30,7 +30,7 @@ typedef struct list
 /*
  * Creates a new list.
  */
-list *listcreate(void);
+list *list_create(void);
 
 /*
  * Destroys a list. All elements (including
@@ -43,7 +43,7 @@ list *listcreate(void);
  * lheader: List to destroy
  * callback: Optional callback function
  */
-void listdestroy(list *lheader, void (*callback)());
+void list_destroy(list *lheader, void (*callback)());
 
 /*
  * Creates an new element and
@@ -51,26 +51,26 @@ void listdestroy(list *lheader, void (*callback)());
  *
  * data: Data to append
  */
-void listpush(list *lheader, void *data);
+void list_push(list *lheader, void *data);
 
 /*
  * Returns the last elements data
  * and removes the element.
  */
-void *listpop(list *lheader);
+void *list_pop(list *lheader);
 
 /* Creates an new element and
  * unshifts it into the list.
  *
  * data: Data to unshift
  */
-void listunshift(list *lheader, void *data);
+void list_unshift(list *lheader, void *data);
 
 /*
  * Returns the first elements data
  * and removes the data.
  */
-void *listshift(list *lheader);
+void *list_shift(list *lheader);
 
 #endif // LINKEDLIST_H_
 

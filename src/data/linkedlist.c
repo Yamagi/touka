@@ -13,7 +13,7 @@
 // --------
 
 list
-*listcreate(void)
+*list_create(void)
 {
 	list *new;
 
@@ -27,7 +27,7 @@ list
 }
 
 void
-listdestroy(list *lheader, void (*callback)())
+list_destroy(list *lheader, void (*callback)())
 {
 	listnode *cur;
 
@@ -68,7 +68,7 @@ listdestroy(list *lheader, void (*callback)())
 // --------
 
 void
-listpush(list *lheader, void *data)
+list_push(list *lheader, void *data)
 {
 	listnode *new;
 
@@ -99,7 +99,7 @@ listpush(list *lheader, void *data)
 }
 
 void
-*listpop(list *lheader)
+*list_pop(list *lheader)
 {
 	listnode *cur;
 	void *data;
@@ -128,7 +128,7 @@ void
 }
 
 void
-listunshift(list *lheader, void *data)
+list_unshift(list *lheader, void *data)
 {
 	listnode *new;
 
@@ -159,7 +159,7 @@ listunshift(list *lheader, void *data)
 }
 
 void
-*listshift(list *lheader)
+*list_shift(list *lheader)
 {
 	listnode *cur;
 	void *data;

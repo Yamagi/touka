@@ -214,7 +214,7 @@ curses_init(void)
 {
 	log_info("Initializing ncurses");
 
-	replay_buffer = listcreate();
+	replay_buffer = list_create();
 
 	// Initialize ncurses
 	initscr();
@@ -608,10 +608,9 @@ curses_quit(void)
 	delwin(input);
 	delwin(status);
 	delwin(text);
-
 	endwin();
 
-	listdestroy(replay_buffer, curses_replay_callbk);
+	list_destroy(replay_buffer, curses_replay_callbk);
 }
 
 void
@@ -671,11 +670,11 @@ curses_text(int8_t highlight, const char *fmt, ...)
 
 	rep->msg = msg;
 	rep->highlight = highlight;
-	listpush(replay_buffer, rep);
+	list_push(replay_buffer, rep);
 
 	while (replay_buffer->count > REPLAY)
 	{
-		rep = listshift(replay_buffer);
+		rep = list_shift(replay_buffer);
 
 		free(rep->msg);
         free(rep);
