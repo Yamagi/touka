@@ -71,6 +71,17 @@ static int32_t scrolled;
 // --------
 
 /*
+ * Callback for the replay buffer destruction.
+ */
+void
+curses_replay_callbk(replay *repl)
+{
+	free(repl->msg);
+}
+
+// --------
+
+/*
  * Prints text into the main window.
  *
  * highlight: Highlight status of the text
@@ -79,7 +90,6 @@ static int32_t scrolled;
 static void
 curses_print(int8_t highlight, const char *msg)
 {
-	// Set highlight status
 	if (highlight)
 	{
 		wattron(text, COLOR_PAIR(PAIR_HIGHLIGHT));
@@ -89,7 +99,6 @@ curses_print(int8_t highlight, const char *msg)
 		wattron(text, COLOR_PAIR(PAIR_TEXT));
 	}
 
-	// Print
 	waddstr(text, msg);
 }
 
@@ -109,7 +118,6 @@ curses_resize(void)
 	wclear(stdscr);
 	wnoutrefresh(stdscr);
 
-	// Main window
 	wresize(text, SCROLLBACK, COLS);
 	wclear(text);
 
@@ -147,7 +155,6 @@ curses_resize(void)
 		scrolled: Scroll offset */
 	pnoutrefresh(text, y - LINES + 2 - 1 - scrolled, 0, 0, 0, LINES - 3, COLS);
 
-	// Repaint everything
 	doupdate();
 
     log_info("Terminal resize detected");
@@ -207,6 +214,8 @@ curses_init(void)
 {
 	log_info("Initializing ncurses");
 
+	replay_buffer = listcreate();
+
 	// Initialize ncurses
 	initscr();
 	clear();
@@ -215,9 +224,6 @@ curses_init(void)
 	nonl();
 	noecho();
 
-	// Replay buffer
-	replay_buffer = listcreate();
-
 	if (!can_change_color())
 	{
 		log_warn("Terminal cannot change colors");
@@ -225,7 +231,6 @@ curses_init(void)
 
 	log_info_f("Terminal size is: %i:%i", LINES, COLS);
 
-	// And now the Colors
 	init_pair(PAIR_HIGHLIGHT, COLOR_GREEN, COLOR_BLACK);
 	init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
 	init_pair(PAIR_STATUS, COLOR_CYAN, COLOR_BLUE);
@@ -605,6 +610,8 @@ curses_quit(void)
 	delwin(text);
 
 	endwin();
+
+	listdestroy(replay_buffer, curses_replay_callbk);
 }
 
 void
@@ -632,10 +639,7 @@ curses_text(int8_t highlight, const char *fmt, ...)
 	vsnprintf(msg, len, fmt, args);
 	va_end(args);
 
-	// Print
 	curses_print(highlight, msg);
-
-	// Update
 	getyx(text, y, x);
 
 	if (y < LINES - 3)

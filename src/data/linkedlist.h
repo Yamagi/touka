@@ -33,12 +33,17 @@ typedef struct list
 list *listcreate(void);
 
 /*
- * Destroys a list. All elements
- * (including *data) are freed.
+ * Destroys a list. All elements (including
+ * *data) are freed. If a callback function
+ * is provided, the contents of each element
+ * is passed to it before destruction. This
+ * can be used to destroy nested structs and
+ * other things.
  *
  * lheader: List to destroy
+ * callback: Optional callback function
  */
-void listdestroy(list *lheader);
+void listdestroy(list *lheader, void (*callback)());
 
 /*
  * Creates an new element and

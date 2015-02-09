@@ -27,7 +27,7 @@ list
 }
 
 void
-listdestroy(list *lheader)
+listdestroy(list *lheader, void (*callback)())
 {
 	listnode *cur;
 
@@ -49,6 +49,12 @@ listdestroy(list *lheader)
 		}
 
 		lheader->count--;
+
+		if (callback)
+		{
+			callback(cur->data);
+		}
+
 		free(cur);
 	}
 
