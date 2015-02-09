@@ -57,29 +57,50 @@ util_rmkdir(const char *dir)
 		if (errno != EEXIST)
 		{
 			perror("PANIC: Couldn't create directory");
-			exit(1);
+			quit_error();
 		}
 	}
 }
 
-void
+// --------
+
+/*
+ * Does the dirty work for our
+ * various quit functions.
+ */
+static void
 quit(int32_t ret)
 {
-	static int32_t recursive = 0;
+	static int32_t recursive;
 
 	if (recursive)
 	{
-		printf("Recursive!\n");
-		exit(1);
+		log_warn("Recursive shutdown detected.");
+		_exit(1);
 	}
 	else
 	{
 		recursive++;
 	}
 
+	// Shutdown TUI
 	curses_quit();
+
+	// Clase log handlers
 	log_close();
 
-	_exit(0);
+	_exit(ret);
+}
+
+void
+quit_error(void)
+{
+	quit(1);
+}
+
+void
+quit_success(void)
+{
+	quit(1);
 }
 

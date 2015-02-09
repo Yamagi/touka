@@ -17,13 +17,17 @@
  */
 void util_rmkdir(const char *dir);
 
+// ----
+
 /*
- * Terminates the program and returns
- * the status code 'ret'.
- *
- * ret: Status code to return
+ * Shuts the application down and returns 1.
  */
-void quit(int32_t ret);
+void quit_error(void);
+
+/*
+ * Shuts the application down and returns 0.
+ */
+void quit_success(void);
 
 #endif // UTIL_H_
 

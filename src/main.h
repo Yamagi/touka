@@ -34,10 +34,5 @@
 // Copyright year
 #define YEAR "2015"
 
-// -----
-
-// If not zero the mainloop is left
-extern int8_t break_mainloop;
-
 #endif // MAIN_H_
 

@@ -666,7 +666,7 @@ curses_text(int8_t highlight, const char *fmt, ...)
 	if ((msg = malloc(len)) == NULL)
 	{
 		perror("PANIC: Couldn't allocate memory");
-		quit(1);
+		quit_error();
 	}
 
 	// Format the message
@@ -701,7 +701,7 @@ curses_text(int8_t highlight, const char *fmt, ...)
 	if ((rep = malloc(sizeof(repl_msg))) == NULL)
 	{
 		perror("PANIC: Couldn't allocate memory");
-		quit(1);
+		quit_error();
 	}
 
 	rep->msg = msg;

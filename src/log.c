@@ -102,7 +102,7 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 	if ((t = localtime(&tmp)) == NULL)
 	{
 		perror("PANIC: Couldn't get local time");
-		quit(1);
+		quit_error();
 	}
 
 	strftime(msgtime, sizeof(msgtime), "%m-%d-%Y %H:%M:%S", t);
@@ -125,7 +125,7 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 	if ((fwrite(logmsg, strlen(logmsg), 1, logfile)) != 1)
 	{
 		perror("PANIC: Couldn't log error message");
-		quit(1);
+		quit_error();
 	}
 
 	fflush(logfile);
@@ -145,7 +145,7 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 error:
 	free(inpmsg);
 	free(logmsg);
-	quit(1);
+	quit_error();
 }
 
 void
@@ -165,7 +165,7 @@ log_init(const char *path, const char *name, int32_t seg)
 		if (!S_ISDIR(sb.st_mode))
 		{
 			printf("PANIC: %s is not a directory\n", path);
-			quit(1);
+			quit_error();
 		}
 	}
 	else
@@ -195,7 +195,7 @@ log_init(const char *path, const char *name, int32_t seg)
 		if ((rename(oldfile, newfile)) != 0)
 		{
 			perror("PANIC: Couldn't rotate log files");
-			quit(1);
+			quit_error();
 		}
 	}
 
@@ -208,14 +208,14 @@ log_init(const char *path, const char *name, int32_t seg)
 		if ((rename(oldfile, newfile)) != 0)
 		{
 			perror("PANIC: Couldn't rotate log files");
-			quit(1);
+			quit_error();
 		}
 	}
 
 	if ((logfile = fopen(oldfile, "w")) == NULL)
 	{
 		perror("PANIC: Couldn't create log file");
-		quit(1);
+		quit_error();
 	}
 }
 
@@ -229,7 +229,7 @@ log_close(void)
 		if ((fclose(logfile)) != 0)
 		{
 			perror("PANIC: Couldn't close log file");
-			quit(1);
+			quit_error();
 		}
 
 		logfile = NULL;

@@ -20,36 +20,21 @@
 
 // --------
 
-int8_t break_mainloop;
-
-// --------
-
 static void
 mainloop(void)
 {
 	while (1)
 	{
 		curses_input("Touka: ");
-
-		if (break_mainloop)
-		{
-			break;
-		}
 	}
 }
 
 // --------
 
 void
-quit_atexit(void)
-{
-	quit(1);
-}
-
-void
 signalhandler(int sig)
 {
-	quit(0);
+	quit_success();
 }
 
 int
@@ -61,7 +46,7 @@ main(int argc, char *argv[])
 	struct stat sb;
 
 	// Clean aborts
-	atexit(quit_atexit);
+	atexit(quit_success);
 
 	// Signal handler
 	signal(SIGINT, signalhandler);
@@ -99,7 +84,7 @@ main(int argc, char *argv[])
 	mainloop();
 
 	// Terminate
-    quit(0);
+    quit_success();
 
 	// Never reached
 	return 0;

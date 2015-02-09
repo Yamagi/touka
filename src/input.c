@@ -7,13 +7,14 @@
 
 #include "curses.h"
 #include "main.h"
+#include "util.h"
 
 // ---------
 
 static void
 quit_cmd(void)
 {
-	break_mainloop = 1;
+	quit_success();
 }
 
 static void
