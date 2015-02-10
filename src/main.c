@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 
 #include "curses.h"
+#include "input.h"
 #include "log.h"
 #include "main.h"
 #include "util.h"
@@ -79,6 +80,9 @@ main(int argc, char *argv[])
 	// Initialize TUI
 	curses_init();
 	curses_status("Cool status message :)");
+
+	// Initialize input
+	input_init();
 
 	// Loop forever
 	mainloop();

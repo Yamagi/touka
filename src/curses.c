@@ -617,7 +617,7 @@ curses_input(const char *prompt)
 	}
 
 	log_info_f("User input: %s.", buffer);
-	process_input(buffer);
+	input_process(buffer);
 }
 
 void
