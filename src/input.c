@@ -11,6 +11,7 @@
 #include "curses.h"
 #include "input.h"
 #include "main.h"
+#include "log.h"
 #include "util.h"
 #include "data/darray.h"
 
@@ -30,6 +31,35 @@ darray *input_cmds;
 // ---------
 
 static void
+cmd_help(char *msg)
+{
+	int32_t i;
+	int32_t len;
+	input_cmd *cur;
+
+	len = 0;
+
+	for (i = 0; i < input_cmds->elements; i++)
+	{
+		cur = darray_get(input_cmds, i);
+
+		if (strlen(cur->name) > len)
+		{
+			len = strlen(cur->name);
+		}
+	}
+
+	curses_text(COLOR_NORM, "%-*s %s\n", len + 1, "Command", "Description");
+	curses_text(COLOR_NORM, "%-*s %s\n", len + 1, "-------", "-----------");
+
+	for (i = 0; i < input_cmds->elements; i++)
+	{
+		cur = darray_get(input_cmds, i);
+		curses_text(COLOR_NORM, "%-*s %s\n", len + 1, cur->name, cur->help);
+	}
+}
+
+static void
 cmd_quit(char *msg)
 {
 	quit_success();
@@ -44,6 +74,21 @@ cmd_version(char *msg)
 
 // ---------
 
+int32_t
+input_sort_callback(const void *msg1, const void *msg2)
+{
+	const input_cmd *a;
+	const input_cmd *b;
+	int32_t ret;
+
+	a = *(const input_cmd **)msg1;
+	b = *(const input_cmd **)msg2;
+
+	ret = strcmp(a->name, b->name);
+
+	return ret;
+}
+
 static void
 input_register(const char *name, const char *help, void (*callback)(char *msg))
 {
@@ -55,7 +100,7 @@ input_register(const char *name, const char *help, void (*callback)(char *msg))
 
 	if (!input_cmds)
 	{
-		input_cmds = darray_create(sizeof(input_cmd));
+		input_cmds = darray_create();
 	}
 
 	if ((new = malloc(sizeof(input_cmd))) == NULL)
@@ -69,6 +114,7 @@ input_register(const char *name, const char *help, void (*callback)(char *msg))
 	new->callback = callback;
 
 	darray_push(input_cmds, new);
+	darray_sort(input_cmds, input_sort_callback);
 }
 
 // ---------
@@ -76,8 +122,10 @@ input_register(const char *name, const char *help, void (*callback)(char *msg))
 void
 input_init(void)
 {
+	input_register("help", "Prints this help", cmd_help);
 	input_register("quit", "Exits the application", cmd_quit);
 	input_register("version", "Prints the version number", cmd_version);
+
 }
 
 void
