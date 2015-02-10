@@ -145,8 +145,8 @@ list_unshift(list *lheader, void *data)
 
 	if (!lheader->first)
 	{
-		lheader->first = NULL;
-		lheader->last = NULL;
+		lheader->first = new;
+		lheader->last = new;
 	}
 	else
 	{
