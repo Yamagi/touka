@@ -15,7 +15,6 @@ typedef struct darray
 {
 	int32_t elements;
 	int32_t end;
-	size_t size;
 	void **data;
 
 } darray;
@@ -25,7 +24,7 @@ typedef struct darray
  *
  * size: Size of one element
  */
-darray *darray_create(size_t size);
+darray *darray_create(void);
 
 /*
  * Destroys a dynamic array. When the
@@ -36,7 +35,7 @@ darray *darray_create(size_t size);
  * array: Dynamic array to destroy
  * callback: Optional callback function
  */
-void darray_destroy(darray *array, void (*callback)());
+void darray_destroy(darray *array, void (*callback)(char *data));
 
 /*
  * Adds an element to the end if the

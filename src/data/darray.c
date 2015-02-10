@@ -32,11 +32,11 @@ darray_resize(darray *array)
 
 	if (array->elements == array->end)
 	{
-		new = array->elements * 2 * array->size;
+		new = (array->elements * sizeof(void *)) * sizeof(void *);
 	}
 	else if (array->end - array->elements > array->end / 2)
 	{
-		new = array->end / 2;
+		new = (array->end * sizeof(void *)) / 2;
 	}
 	else
 	{
@@ -55,7 +55,7 @@ darray_resize(darray *array)
 // ----
 
 darray
-*darray_create(size_t size)
+*darray_create(void)
 {
 	darray *new;
 
@@ -65,11 +65,10 @@ darray
 		quit_error();
 	}
 
-	new->elements = INT_ELEMENTS;
-	new->end = 0;
-	new->size = size;
+	new->elements = 0;
+	new->end = INT_ELEMENTS;
 
-	if ((new->data = malloc(size * INT_ELEMENTS)) == NULL)
+	if ((new->data = malloc(sizeof(void *) * INT_ELEMENTS)) == NULL)
 	{
 		perror("PANIC: Couldn't allocate memory");
 		quit_error();
@@ -79,15 +78,22 @@ darray
 }
 
 void
-darray_destroy(darray *array, void (*callback)())
+darray_destroy(darray *array, void (*callback)(char *msg))
 {
 	int i;
 
 	assert(array);
 
-    for (i = array->elements; i > 0; i--)
+    for (i = array->elements - 1; i > 0; i--)
 	{
-		callback(darray_get(array, i));
+		if (callback)
+		{
+			callback(darray_get(array, i));
+		}
+		else
+		{
+			free(darray_get(array, i));
+		}
 	}
 
 	free(array->data);
@@ -101,7 +107,7 @@ darray_push(darray *array, void *data)
 	assert(array);
 	assert(data);
 
-	array->data[array->elements + 1] = data;
+	array->data[array->elements] = data;
 	array->elements++;
 
 	darray_resize(array);
@@ -115,7 +121,7 @@ void
 	assert(array);
     assert(array->elements);
 
-	data = array->data[array->elements];
+	data = array->data[array->elements - 1];
 	array->elements--;
 
 	darray_resize(array);
@@ -127,7 +133,7 @@ void
 *darray_get(darray *array, int32_t element)
 {
 	assert(array);
-	assert(array->elements >= element);
+	assert(array->elements > element);
 
 	return array->data[element];
 }
