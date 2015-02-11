@@ -180,6 +180,12 @@ input_history_prev(void)
 }
 
 void
+input_history_reset(void)
+{
+	position = history->first;
+}
+
+void
 input_init(void)
 {
 	log_info("Initializing input.");

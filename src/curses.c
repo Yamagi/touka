@@ -25,6 +25,7 @@
  */
 #define KEY_LF 10
 #define KEY_CR 13
+#define KEY_ESC 27
 #define KEY_DEL 127
 
 // Number of characters the input is scrolled
@@ -345,6 +346,21 @@ curses_input(const char *prompt)
 
 				break;
 
+
+			// Delete current line
+			case KEY_ESC:
+				wmove(input, 0, strlen(prompt));
+				wclrtoeol(input);
+
+				memset(buffer, 0, sizeof(buffer));
+				start = 0;
+				position = 0;
+
+				input_history_reset();
+
+				break;
+
+
 			// History up
 			case KEY_UP:
 				tmp = input_history_next();
@@ -397,7 +413,6 @@ curses_input(const char *prompt)
 
 					position = chars;
 				}
-
 
 
 			// Scroll up

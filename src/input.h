@@ -20,6 +20,11 @@ char *input_history_next(void);
 char *input_history_prev(void);
 
 /*
+ * Resets the history state.
+ */
+void input_history_reset(void);
+
+/*
  * Initializes the input subsystem.
  * The main purpose of this function
  * is to register our input cmds.
