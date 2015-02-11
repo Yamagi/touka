@@ -8,6 +8,18 @@
 #define INPUT_H_
 
 /*
+ * Returns the next string in the history.
+ * If no string is found NULL is returned.
+ */
+char *input_history_next(void);
+
+/*
+ * Returns the previous string in the history.
+ * Is no string is found NULL is returned.
+ */
+char *input_history_prev(void);
+
+/*
  * Initializes the input subsystem.
  * The main purpose of this function
  * is to register our input cmds.

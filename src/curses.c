@@ -345,6 +345,60 @@ curses_input(const char *prompt)
 
 				break;
 
+			// History up
+			case KEY_UP:
+				tmp = input_history_next();
+
+				if (tmp)
+				{
+					memset(buffer, 0, sizeof(buffer));
+					strncpy(buffer, tmp, sizeof(buffer));
+
+					start = strlen(buffer) - (COLS - 1 - strlen(prompt));
+					start = start < 0 ? 0 : start;
+					chars = strlen(buffer);
+
+					wmove(input, 0, strlen(prompt));
+					wclrtoeol(input);
+
+					for (i = 0; i < COLS - strlen(prompt)
+							&& buffer[start + i] != '\0'; i++)
+					{
+						waddch(input, buffer[start + i]);
+					}
+
+					position = chars;
+				}
+
+				break;
+
+
+			// History down
+			case KEY_DOWN:
+				tmp = input_history_prev();
+
+				if (tmp)
+				{
+					memset(buffer, 0, sizeof(buffer));
+					strncpy(buffer, tmp, sizeof(buffer));
+
+					start = strlen(buffer) - (COLS - 1 - strlen(prompt));
+					start = start < 0 ? 0 : start;
+					chars = strlen(buffer);
+
+					wmove(input, 0, strlen(prompt));
+					wclrtoeol(input);
+
+					for (i = 0; i < COLS - strlen(prompt)
+							&& buffer[start + i] != '\0'; i++)
+					{
+						waddch(input, buffer[start + i]);
+					}
+
+					position = chars;
+				}
+
+
 
 			// Scroll up
 			case KEY_PPAGE:

@@ -14,6 +14,12 @@
 #include "log.h"
 #include "util.h"
 #include "data/darray.h"
+#include "data/list.h"
+
+// ---------
+
+// History size
+#define HISTSIZE 512
 
 // ---------
 
@@ -26,7 +32,13 @@ typedef struct input_cmd
 } input_cmd;
 
 // Holds all input command
-darray *input_cmds;
+static darray *input_cmds;
+
+// The history
+static list *history;
+
+// Current position in the history
+static listnode *position;
 
 // ---------
 
@@ -89,6 +101,8 @@ input_sort_callback(const void *msg1, const void *msg2)
 	return ret;
 }
 
+// ---------
+
 static void
 input_register(const char *name, const char *help, void (*callback)(char *msg))
 {
@@ -119,13 +133,64 @@ input_register(const char *name, const char *help, void (*callback)(char *msg))
 
 // ---------
 
+char *
+input_history_next(void)
+{
+	char *data;
+
+	if (position)
+	{
+		data = position->data;
+		position = position->next;
+
+		return data;
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+char *
+input_history_prev(void)
+{
+	// Special case for last element
+	if (history->first && !position)
+	{
+		position = history->last;
+
+		return position->prev->data;
+	}
+
+	if (position->prev)
+	{
+		position = position->prev;
+
+		if (position->prev)
+		{
+			return position->prev->data;
+		}
+		else
+		{
+			position = position->next;
+		}
+	}
+
+	return NULL;
+}
+
 void
 input_init(void)
 {
+	log_info("Initializing input.");
+
+	// Register commands
 	input_register("help", "Prints this help", cmd_help);
 	input_register("quit", "Exits the application", cmd_quit);
 	input_register("version", "Prints the version number", cmd_version);
 
+	// Initialize history
+	history = list_create();
 }
 
 void
@@ -154,6 +219,16 @@ input_process(char *cmd)
 	// Echo the input
 	curses_text(COLOR_HIGH, "> ");
 	curses_text(COLOR_NORM, "%s\n", cmd);
+
+	// And put into history
+	list_unshift(history, strdup(cmd));
+
+	while (history->count > HISTSIZE)
+	{
+		list_pop(history);
+	}
+
+	position = history->first;
 
 	// Ignore comments
 	if (cmd[0] == '#')
