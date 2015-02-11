@@ -101,6 +101,6 @@ quit_error(void)
 void
 quit_success(void)
 {
-	quit(1);
+	quit(0);
 }
 
