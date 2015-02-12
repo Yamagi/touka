@@ -23,6 +23,7 @@
  * around 1985. So let's define some of the
  * most common special keys ourself.
  */
+#define KEY_TAB 9
 #define KEY_LF 10
 #define KEY_CR 13
 #define KEY_ESC 27
@@ -357,12 +358,14 @@ curses_input(const char *prompt)
 				position = 0;
 
 				input_history_reset();
+				input_complete_reset();
 
 				break;
 
 
 			// History up
 			case KEY_UP:
+				input_complete_reset();
 				tmp = input_history_next();
 
 				if (tmp)
@@ -391,6 +394,7 @@ curses_input(const char *prompt)
 
 			// History down
 			case KEY_DOWN:
+				input_complete_reset();
 				tmp = input_history_prev();
 
 				if (tmp)
@@ -413,6 +417,37 @@ curses_input(const char *prompt)
 
 					position = chars;
 				}
+
+				break;
+
+
+			// Tab completion
+			case KEY_TAB:
+				input_history_reset();
+				tmp = input_complete(buffer);
+
+				if (tmp)
+				{
+					memset(buffer, 0, sizeof(buffer));
+					strncpy(buffer, tmp, sizeof(buffer));
+
+					start = strlen(buffer) - (COLS - 1 - strlen(prompt));
+					start = start < 0 ? 0 : start;
+					chars = strlen(buffer);
+
+					wmove(input, 0, strlen(prompt));
+					wclrtoeol(input);
+
+					for (i = 0; i < COLS - strlen(prompt)
+							&& buffer[start + i] != '\0'; i++)
+					{
+						waddch(input, buffer[start + i]);
+					}
+
+					position = chars;
+				}
+
+				break;
 
 
 			// Scroll up

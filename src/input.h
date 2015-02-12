@@ -2,6 +2,10 @@
  * Input processing and sub commands. This code is
  * mostly responsible for calling the approriate
  * functions according to user input.
+ *
+ * Additionally a simple(!) history and simple tab
+ * completions are provided. History and completions
+ * are mutual exklusiv, starting one resets the other.
  */
 
 #ifndef INPUT_H_
@@ -23,6 +27,19 @@ char *input_history_prev(void);
  * Resets the history state.
  */
 void input_history_reset(void);
+
+/*
+ * Returns all matching completions for
+ * the input string.
+ *
+ * msg: What the user has typed so far
+ */
+char *input_complete(char *msg);
+
+/*
+ * Resets the completion state.
+ */
+void input_complete_reset(void);
 
 /*
  * Initializes the input subsystem.

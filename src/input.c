@@ -37,11 +37,21 @@ static darray *input_cmds;
 // The history
 static list *history;
 
-// Current position in the history
-static listnode *position;
+// Current hist_position in the history
+static listnode *hist_position;
+
+// Current hist_position for tab completes
+static int32_t tab_position;
+
+// Buffers the completion stub
+static char *tab_stub;
 
 // ---------
 
+/*
+ * Prints a list with all commands and
+ * their associated help texts.
+ */
 static void
 cmd_help(char *msg)
 {
@@ -71,12 +81,18 @@ cmd_help(char *msg)
 	}
 }
 
+/*
+ * Shuts the application down.
+ */
 static void
 cmd_quit(char *msg)
 {
 	quit_success();
 }
 
+/* 
+ * Prints the version number and copyright.
+ */
 static void
 cmd_version(char *msg)
 {
@@ -86,6 +102,9 @@ cmd_version(char *msg)
 
 // ---------
 
+/*
+ * Callback function to qsort for the command darray.
+ */
 int32_t
 input_sort_callback(const void *msg1, const void *msg2)
 {
@@ -103,6 +122,13 @@ input_sort_callback(const void *msg1, const void *msg2)
 
 // ---------
 
+/*
+ * Registers a new command.
+ *
+ * name: Name of the command
+ * help: A short help text
+ * callback: Callback function for that command
+ */
 static void
 input_register(const char *name, const char *help, void (*callback)(char *msg))
 {
@@ -138,10 +164,10 @@ input_history_next(void)
 {
 	char *data;
 
-	if (position)
+	if (hist_position)
 	{
-		data = position->data;
-		position = position->next;
+		data = hist_position->data;
+		hist_position = hist_position->next;
 
 		return data;
 	}
@@ -154,25 +180,30 @@ input_history_next(void)
 char *
 input_history_prev(void)
 {
-	// Special case for last element
-	if (history->first && !position)
+	if (!history->first)
 	{
-		position = history->last;
-
-		return position->prev->data;
+		return NULL;
 	}
 
-	if (position->prev)
+	// Special case for last element
+	if (history->first && !hist_position)
 	{
-		position = position->prev;
+		hist_position = history->last;
 
-		if (position->prev)
+		return hist_position->prev->data;
+	}
+
+	if (hist_position->prev)
+	{
+		hist_position = hist_position->prev;
+
+		if (hist_position->prev)
 		{
-			return position->prev->data;
+			return hist_position->prev->data;
 		}
 		else
 		{
-			position = position->next;
+			hist_position = hist_position->next;
 		}
 	}
 
@@ -182,7 +213,45 @@ input_history_prev(void)
 void
 input_history_reset(void)
 {
-	position = history->first;
+	hist_position = history->first;
+}
+
+char *
+input_complete(char *msg)
+{
+	input_cmd *cur;
+
+	if (!tab_stub)
+	{
+		tab_stub = strdup(msg);
+	}
+
+	if (tab_position >= input_cmds->elements)
+	{
+		tab_position = 0;
+	}
+
+	while (tab_position < input_cmds->elements)
+	{
+		cur = darray_get(input_cmds, tab_position);
+		tab_position++;
+
+		if (!strncmp(cur->name, tab_stub, strlen(tab_stub)))
+		{
+			return (char *)cur->name;
+		}
+	}
+
+	return NULL;
+}
+
+void
+input_complete_reset(void)
+{
+	free(tab_stub);
+
+	tab_stub = NULL;
+	tab_position = 0;
 }
 
 void
@@ -222,6 +291,12 @@ input_process(char *cmd)
 		len--;
 	}
 
+	// Don't process null commands
+	if (!strlen(cmd))
+	{
+		return;
+	}
+
 	// Echo the input
 	curses_text(COLOR_HIGH, "> ");
 	curses_text(COLOR_NORM, "%s\n", cmd);
@@ -234,7 +309,8 @@ input_process(char *cmd)
 		list_pop(history);
 	}
 
-	position = history->first;
+	input_history_reset();
+	input_complete_reset();
 
 	// Ignore comments
 	if (cmd[0] == '#')
