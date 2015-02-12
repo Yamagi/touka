@@ -18,11 +18,6 @@
 
 // ---------
 
-// History size
-#define HISTSIZE 512
-
-// ---------
-
 // Represents one input command
 typedef struct input_cmd
 {

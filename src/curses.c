@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "curses.h"
+#include "main.h"
 #include "input.h"
 #include "log.h"
 #include "util.h"
@@ -28,15 +29,6 @@
 #define KEY_CR 13
 #define KEY_ESC 27
 #define KEY_DEL 127
-
-// Number of characters the input is scrolled
-#define HSCROLLOFF 5
-
-// Number of lines the text window is scrolled
-#define VSCROLLOFF 5
-
-// Number of lines in the scrollback buffer
-#define SCROLLBACK 512
 
 // Number of events to be replayed at resize
 #define REPLAY (SCROLLBACK * 64)
@@ -77,7 +69,7 @@ static WINDOW *text;
 static int32_t scrolled;
 
 // Caches the current status message
-char status_line[256];
+char status_line[STATUSBAR];
 
 // --------
 
@@ -283,7 +275,7 @@ curses_init(void)
 void
 curses_input(const char *prompt)
 {
-	char buffer[1024];
+	char buffer[INPUTBUF];
 	char *tmp;
 	int8_t fin;
 	int16_t key;
