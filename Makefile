@@ -68,6 +68,7 @@ touka:
 # Objects
 OBJS_ = \
 	src/data/darray.o \
+	src/data/hashmap.o \
 	src/data/list.o \
 	src/curses.o \
 	src/input.o \
