@@ -236,6 +236,21 @@ input_complete(char *msg)
 		cur = darray_get(input_cmds, tab_position);
 		tab_position++;
 
+		// Stub changed
+		if (strncmp(msg, tab_stub, strlen(tab_stub)))
+		{
+			free(tab_stub);
+
+			tab_stub = strdup(msg);
+			tab_position = 0;
+		}
+
+		// Exact match -> next one please
+		if (!strcmp(cur->name, msg))
+		{
+			continue;
+		}
+
 		if (!strncmp(cur->name, tab_stub, strlen(tab_stub)))
 		{
 			return (char *)cur->name;
