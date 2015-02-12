@@ -55,5 +55,10 @@ void input_init(void);
  */
 void input_process(char *input);
 
+/*
+ * Shuts the input subsystem down.
+ */
+void input_quit(void);
+
 #endif // INPUT_H_
 

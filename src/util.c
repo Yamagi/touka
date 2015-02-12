@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 
 #include "curses.h"
+#include "input.h"
 #include "log.h"
 #include "util.h"
 
@@ -86,7 +87,10 @@ quit(int32_t ret)
 	// Shutdown TUI
 	curses_quit();
 
-	// Clase log handlers
+	// Shutdown input subsystem
+	input_quit();
+
+	// Close log handlers
 	log_close();
 
 	_exit(ret);

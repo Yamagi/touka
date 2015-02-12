@@ -103,6 +103,15 @@ cmd_version(char *msg)
 // ---------
 
 /*
+ * Callback to destroy the history.
+ */
+void
+input_history_destroy(char *data)
+{
+	free(data);
+}
+
+/*
  * Callback function to qsort for the command darray.
  */
 int32_t
@@ -286,6 +295,7 @@ input_init(void)
 void
 input_process(char *cmd)
 {
+	char *tmp;
 	char *token;
 	input_cmd *cur;
 	int32_t i;
@@ -321,7 +331,8 @@ input_process(char *cmd)
 
 	while (history->count > HISTSIZE)
 	{
-		list_pop(history);
+		tmp = list_pop(history);
+		free(tmp);
 	}
 
 	input_history_reset();
@@ -354,5 +365,12 @@ input_process(char *cmd)
 
 	// Empty line after each cmd-output
 	curses_text(COLOR_NORM, "\n");
+}
+
+void
+input_quit(void)
+{
+	list_destroy(history, input_history_destroy);
+	darray_destroy(input_cmds, NULL);
 }
 
