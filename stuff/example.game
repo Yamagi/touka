@@ -1,0 +1,31 @@
+#GAME: Touka Example Game
+#AUTHOR: Yamagi Burmeister
+#DATE: 02/13/2015
+#UID: TEG1
+
+----
+
+#ROOM: Testroom
+#ALIAS: Test-Room
+#ALIAS: Testroom1
+
+Dies ist die Beschreibung eines Testraumes. Ueber mehrere Zeilen, um
+sicher zu sein, dass der Zeilenumbruch sauber funktioniert. Bla, Bla.
+Und noch ein Umbruch.
+
+----
+
+#ITEM: Testitem
+#ALIAS: Test-Item
+#ALIAS: Testitem1
+
+Beschreibung des Testitems. Dieses muss eigentlich ueber mehrere Zeilen,
+denn der schlaue Coder nutzt eh den gleichen Code fuer alle Objekte.
+Aber dennoch, tut ja niemanden weh.
+
+----
+
+Dies ist eine Beispielszene. Sie spielt im Raum Testroom, in dem ein
+einsames Testitem liegt und darauf wartet von uns aufgenommen zu werden.
+
+----
