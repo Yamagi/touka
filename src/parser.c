@@ -1,3 +1,9 @@
+/*
+ * parser.c:
+ *  - Parses the game file:
+ *    - Header
+ */
+
 #define _WITH_GETLINE
 
 #include <assert.h>
