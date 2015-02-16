@@ -80,6 +80,7 @@ void
 curses_replay_callback(repl_msg *repl)
 {
 	free(repl->msg);
+	free(repl);
 }
 
 // --------

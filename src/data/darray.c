@@ -84,7 +84,7 @@ darray_destroy(darray *array, void (*callback)(char *msg))
 
 	assert(array);
 
-    for (i = array->elements - 1; i > 0; i--)
+    for (i = array->elements - 1; i >= 0; i--)
 	{
 		if (callback)
 		{
