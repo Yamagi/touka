@@ -11,10 +11,16 @@
 #include "game.h"
 #include "parser.h"
 #include "util.h"
+#include "data/hashmap.h"
+#include "data/list.h"
 
 // --------
 
+// Game header
 header *game_header;
+
+// Rooms
+hashmap *game_rooms;
 
 // --------
 
@@ -30,6 +36,11 @@ game_init(const char *file)
 			perror("PANIC: Couldn't allocate memory");
 			quit_error();
 		}
+	}
+
+	if (!game_rooms)
+	{
+		game_rooms = hashmap_create(128);
 	}
 
 	parser_game(file);

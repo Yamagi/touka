@@ -6,6 +6,9 @@
 #ifndef GAME_H_
 #define GAME_H_
 
+#include "data/hashmap.h"
+#include "data/list.h"
+
 /*
  * Header of the game file.
  */
@@ -19,6 +22,19 @@ typedef struct
 
 // Parsed game header
 extern header *game_header;
+
+/*
+ * Represents one room.
+ */
+typedef struct
+{
+	const char *name;
+	list *aliases;
+	list *words;
+} room;
+
+// Rooms
+extern hashmap *game_rooms;
 
 // --------
 

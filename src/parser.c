@@ -20,8 +20,9 @@
 
 // --------
 
-// We are parsing the header
+// What we are parsing?
 static uint8_t is_header;
+static uint8_t is_room;
 
 // Lines parsed so far
 static int32_t count;
@@ -178,7 +179,7 @@ parser_check_header(void)
 /*
  * Parses the game header.
  *
- * line: Line to parse
+ * tokens: Line to parse
  */
 static void
 parser_header(list *tokens)
@@ -246,11 +247,172 @@ parser_header(list *tokens)
 
 // --------
 
+/*
+ * Checks if a room was parsed successfull
+ *
+ * new: Room to be checked
+ */
+static void
+parser_check_room(room *new)
+{
+	assert(new);
+
+	if (!new->name)
+	{
+		parser_error();
+	}
+
+	if (!new->words)
+	{
+		parser_error();
+	}
+	else
+	{
+		if (!new->words->count)
+		{
+			parser_error();
+		}
+	}
+
+	if (!new->aliases)
+	{
+		log_info_f("Room: %s (0 aliases, %i words)", new->name,
+				new->words->count);
+	}
+	else
+	{
+		log_info_f("Room: %s (%i aliases, %i words)", new->name,
+				new->aliases->count, new->words->count);
+	}
+}
+
+/*
+ * Parses a room.
+ *
+ * tokens: Line to parse
+ */
+static void
+parser_room(list *tokens)
+{
+	char *cur;
+	int32_t i;
+	listnode *lnode;
+	static room *new;
+
+	assert(tokens);
+
+	if (!new)
+	{
+		if ((new = calloc(1, sizeof(room))) == NULL)
+		{
+			perror("PANIC: Couldn't allocate memory");
+			quit_error();
+		}
+	}
+
+	// Empty input line
+	if (!tokens->count)
+	{
+		if (new->words)
+		{
+			if (new->words->last)
+			{
+				if (strcmp(new->words->last->data, "\n"))
+				{
+					list_push(new->words, strdup("\n"));
+				}
+			}
+		}
+	}
+
+	while (tokens->count > 0)
+	{
+		cur = list_shift(tokens);
+
+		if (!strcmp(cur, "#ROOM:"))
+		{
+			if (new->name || new->words)
+			{
+				parser_error();
+			}
+
+			if (tokens->count != 1)
+			{
+				parser_error();
+			}
+
+			new->name = strdup(list_shift(tokens));
+		}
+		else if (!strcmp(cur, "#ALIAS:"))
+		{
+			if (new->words)
+			{
+				parser_error();
+			}
+
+			if (!new->aliases)
+			{
+				new->aliases = list_create();
+			}
+
+			list_push(new->aliases, parser_concat(tokens));
+		}
+		else if (!strcmp(cur, "----"))
+		{
+			if (new->words)
+			{
+				if (new->words->last)
+				{
+					if (!strcmp(new->words->last->data, "\n"))
+					{
+						free(list_pop(new->words));
+					}
+				}
+			}
+
+			parser_check_room(new);
+			hashmap_add(game_rooms, new->name, new);
+
+			// Aliases
+			if (new->words->first)
+			{
+				lnode = new->words->first;
+
+				for (i = 0; i < new->words->count; i++)
+				{
+					hashmap_add(game_rooms, lnode->data, new);
+					lnode = lnode->next;
+				}
+			}
+
+			is_room = 0;
+			new = NULL;
+		}
+		else
+		{
+			if (!new->words)
+			{
+				new->words = list_create();
+			}
+
+			list_push(new->words, strdup(cur));
+
+			for (i = 0; tokens->count > 0; i++)
+			{
+				list_push(new->words, strdup(list_shift(tokens)));
+			}
+		}
+	}
+}
+
+// --------
+
 void
 parser_game(const char *file)
 {
 	FILE *game;
 	char *line;
+	char *tmp;
 	size_t linecap;
 	ssize_t linelen;
 	struct stat sb;
@@ -287,17 +449,41 @@ parser_game(const char *file)
 		count++;
 		tokens = parser_tokenize(line);
 
-		// List's empty -> empty line
-		if (!tokens->count)
+		// What we are parsing?
+		if (!(is_header || is_room))
 		{
-			list_destroy(tokens, NULL);
-			continue;
+			if (tokens->count > 0)
+			{
+				tmp = list_shift(tokens);
+
+				if (!strcmp(tmp, "#ROOM:"))
+				{
+					is_room = 1;
+					list_unshift(tokens, tmp);
+				}
+				else
+				{
+					//parser_error();
+				}
+			}
+			else
+			{
+				continue;
+			}
 		}
 
 		// Header
 		if (is_header)
 		{
 			parser_header(tokens);
+			continue;
+		}
+
+		// Room
+		if (is_room)
+		{
+			parser_room(tokens);
+			continue;
 		}
 
 		list_destroy(tokens, NULL);
