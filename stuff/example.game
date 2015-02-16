@@ -5,13 +5,23 @@
 
 ----
 
-#ROOM: Testroom
+#ROOM: testroom1
 #ALIAS: Test-Room
 #ALIAS: Testroom1
 
 Dies ist die Beschreibung eines Testraumes. Ueber mehrere Zeilen, um
 sicher zu sein, dass der Zeilenumbruch sauber funktioniert. Bla, Bla.
 Und noch ein Umbruch.
+
+
+Leerzeilen sind hingegen volle Zeilenumbrüche, werden also in den Stream
+kodiert. Mal schauen ob dieser hier tut.
+
+----
+
+#ROOM: testroom2
+
+Eine kurze Testbeschreibung eines zweiten Raumes ohne Aliases.
 
 ----
 

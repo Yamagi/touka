@@ -111,6 +111,7 @@ cmd_room(char *msg)
 	listnode *lnode;
 	room *r;
 
+	// No room given
 	if (!msg)
 	{
 		curses_text(COLOR_NORM, "USAGE: room roomname");
@@ -119,11 +120,13 @@ cmd_room(char *msg)
 
 	if ((req = strsep(&msg, " ")) == NULL)
 	{
+		// Something given, but no room
 		curses_text(COLOR_NORM, "USAGE: room roomname");
 		return;
 	}
 	else
 	{
+		// More than one room given
 		if (strsep(&msg, " "))
 		{
 			curses_text(COLOR_NORM, "USAGE: room roomname");
@@ -133,12 +136,17 @@ cmd_room(char *msg)
 
 	if ((r = hashmap_get(game_rooms, req)) == NULL)
 	{
+		// Room doesn't exists
 		curses_text(COLOR_NORM, "No such room: %s\n", req);
 		return;
 	}
 
+#ifndef NDEBUG
+
+	// Print room name
 	curses_text(COLOR_HIGH, "%s", r->name);
 
+	// Print aliases
 	if (r->aliases)
 	{
 		if (r->aliases->first)
@@ -164,6 +172,9 @@ cmd_room(char *msg)
 
 	curses_text(COLOR_NORM, ":\n");
 
+#endif // NDEBUG
+
+	// Print description
 	lnode = r->words->first;
 
 	for (i = 0; i < r->words->count; i++)
