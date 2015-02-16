@@ -169,7 +169,7 @@ parser_check_header(void)
 	}
 
 	log_info("Game specifications are:");
-	log_info_f("Name:   %s", game_header->game);
+	log_info_f("Game:   %s", game_header->game);
 	log_info_f("Author: %s", game_header->author);
 	log_info_f("Date:   %s", game_header->date);
 	log_info_f("UID:    %s", game_header->uid);
@@ -208,7 +208,6 @@ parser_header(list *tokens)
 			}
 
 			game_header->author = parser_concat(tokens);
-			log_info_f("AUTHOR: %s", game_header->author);
 		}
 		else if (!strcmp(cur, "#DATE:"))
 		{
@@ -226,7 +225,7 @@ parser_header(list *tokens)
 				parser_error();
 			}
 
-			game_header->uid = list_shift(tokens);
+			game_header->uid = strdup(list_shift(tokens));
 		}
 		else if (!strcmp(cur, "----"))
 		{

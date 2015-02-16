@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "curses.h"
+#include "game.h"
 #include "input.h"
 #include "main.h"
 #include "log.h"
@@ -74,6 +75,20 @@ cmd_help(char *msg)
 		cur = darray_get(input_cmds, i);
 		curses_text(COLOR_NORM, "%-*s %s\n", len + 1, cur->name, cur->help);
 	}
+}
+
+/*
+ * Prints game info.
+ */
+static void
+cmd_info(char *msg)
+{
+	curses_text(COLOR_NORM, "Attribute  Value\n");
+	curses_text(COLOR_NORM, "---------  -----\n");
+	curses_text(COLOR_NORM, "Game       %s\n", game_header->game);
+	curses_text(COLOR_NORM, "Author     %s\n", game_header->author);
+	curses_text(COLOR_NORM, "Date       %s\n", game_header->date);
+	curses_text(COLOR_NORM, "UID        %s\n", game_header->uid);
 }
 
 /*
@@ -280,6 +295,7 @@ input_init(void)
 
 	// Register commands
 	input_register("help", "Prints this help", cmd_help);
+	input_register("info", "Prints informations about the current game", cmd_info);
 	input_register("quit", "Exits the application", cmd_quit);
 	input_register("version", "Prints the version number", cmd_version);
 
