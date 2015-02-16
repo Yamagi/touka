@@ -365,7 +365,14 @@ input_process(char *cmd)
 void
 input_quit(void)
 {
-	list_destroy(history, input_history_destroy);
-	darray_destroy(input_cmds, NULL);
+	if (history)
+	{
+		list_destroy(history, input_history_destroy);
+	}
+
+	if (input_cmds)
+	{
+		darray_destroy(input_cmds, NULL);
+	}
 }
 

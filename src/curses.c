@@ -724,7 +724,10 @@ curses_quit(void)
 	delwin(text);
 	endwin();
 
-	list_destroy(repl_buf, curses_replay_callback);
+	if (repl_buf)
+	{
+		list_destroy(repl_buf, curses_replay_callback);
+	}
 }
 
 void
