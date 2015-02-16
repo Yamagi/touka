@@ -72,7 +72,11 @@ static char
 		memset(string + oldlen, 0, len - oldlen);
 
 		strlcat(string, cur, len);
-		strlcat(string, " ", len);
+
+		if (tokens->count > 0)
+		{
+			strlcat(string, " ", len);
+		}
 	}
 
 	return string;
