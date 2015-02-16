@@ -94,6 +94,11 @@ curses_replay_callback(repl_msg *repl)
 static void
 curses_print(int8_t highlight, const char *msg)
 {
+	char *first;
+	char *last;
+	int32_t i;
+	int32_t x, y;
+
 	if (highlight)
 	{
 		wattron(text, COLOR_PAIR(PAIR_HIGHLIGHT));
@@ -101,6 +106,42 @@ curses_print(int8_t highlight, const char *msg)
 	else
 	{
 		wattron(text, COLOR_PAIR(PAIR_TEXT));
+	}
+
+    getyx(text, y, x);
+
+	// Split line
+	if (COLS - x < strlen(msg))
+	{
+		first = strdup(msg);
+		last = NULL;
+
+		for (i = strlen(first); i >= 0; i--)
+		{
+			if (first[i] == ' ')
+			{
+				if (i < COLS - x)
+				{
+					first[i] = '\0';
+					last = first + i + 1;
+
+					break;
+				}
+			}
+		}
+
+		if (last)
+		{
+			waddstr(text, first);
+			waddstr(text, "\n");
+			waddstr(text, last);
+
+			return;
+		}
+		else
+		{
+			waddstr(text, "\n");
+		}
 	}
 
 	waddstr(text, msg);
