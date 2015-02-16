@@ -9,7 +9,8 @@
 #define PARSER_H_
 
 /*
- * Parses a game file.
+ * Parses a game file. Must be called after game_init()
+ * since it filles the games internal data structures.
  *
  * file: File to parse
  */

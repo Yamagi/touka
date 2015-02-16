@@ -183,15 +183,6 @@ parser_header(list *tokens)
 
 	assert(tokens);
 
-	if (!game_header)
-	{
-		if ((game_header = calloc(1, sizeof(game_header))) == NULL)
-		{
-			perror("PANIC: Couldn't allocate memory");
-			quit_error();
-		}
-	}
-
 	while (tokens->count > 0)
 	{
 		cur = list_shift(tokens);

@@ -20,5 +20,12 @@ typedef struct
 // Parsed game header
 header *game_header;
 
+// --------
+
+/*
+ * Initializes the game.
+ */
+void game_init(void);
+
 #endif // GAME_H_
 

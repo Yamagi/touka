@@ -71,6 +71,7 @@ OBJS_ = \
 	src/data/hashmap.o \
 	src/data/list.o \
 	src/curses.o \
+	src/game.o \
 	src/input.o \
 	src/log.o \
 	src/main.o \
