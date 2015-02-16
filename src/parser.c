@@ -256,16 +256,14 @@ parser_game(const char *file)
 
 	if ((stat(file, &sb)) != 0)
 	{
-		if (!S_ISREG(sb.st_mode))
-		{
-			printf("PANIC: %s ist not a regular file\n", file);
-			quit_error();
-		}
-		else
-		{
-			printf("PANIC: %s doesn't exists\n", file);
-			quit_error();
-		}
+		printf("PANIC: %s doesn't exists\n", file);
+		quit_error();
+	}
+
+	if (!S_ISREG(sb.st_mode))
+	{
+		printf("PANIC: %s ist not a regular file\n", file);
+		quit_error();
 	}
 
 	if ((game = fopen(file, "r")) == NULL)

@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 
 #include "curses.h"
+#include "game.h"
 #include "input.h"
 #include "log.h"
 #include "main.h"
@@ -76,6 +77,16 @@ main(int argc, char *argv[])
 	snprintf(logbuf, sizeof(logbuf), "This it %s %s.", APPNAME, VERSION);
 	log_info_f("This is %s %s, (c) %s %s", APPNAME, VERSION, YEAR, AUTHOR);
 	log_info_f("This binary was build on %s.", __DATE__);
+
+	// Check cmd arguments
+	if (argc != 2)
+	{
+		fprintf(stderr, "USAGE: %s /path/to/game\n", argv[0]);
+		quit_error();
+	}
+
+	// Load the game
+	game_init(argv[1]);
 
 	// Initialize TUI
 	curses_init();

@@ -25,7 +25,7 @@ header *game_header;
 /*
  * Initializes the game.
  */
-void game_init(void);
+void game_init(const char *file);
 
 #endif // GAME_H_
 
