@@ -24,18 +24,3 @@ kodiert. Mal schauen ob dieser hier tut.
 Eine kurze Testbeschreibung eines zweiten Raumes ohne Aliases.
 
 ----
-
-#ITEM: Testitem
-#ALIAS: Test-Item
-#ALIAS: Testitem1
-
-Beschreibung des Testitems. Dieses muss eigentlich ueber mehrere Zeilen,
-denn der schlaue Coder nutzt eh den gleichen Code fuer alle Objekte.
-Aber dennoch, tut ja niemanden weh.
-
-----
-
-Dies ist eine Beispielszene. Sie spielt im Raum Testroom, in dem ein
-einsames Testitem liegt und darauf wartet von uns aufgenommen zu werden.
-
-----
