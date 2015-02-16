@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 
 #include "curses.h"
+#include "game.h"
 #include "input.h"
 #include "log.h"
 #include "util.h"
@@ -83,6 +84,9 @@ quit(int32_t ret)
 	{
 		recursive++;
 	}
+
+	// Shutdown game
+	game_quit();
 
 	// Shutdown TUI
 	curses_quit();

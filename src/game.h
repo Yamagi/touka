@@ -18,7 +18,7 @@ typedef struct
 } header;
 
 // Parsed game header
-header *game_header;
+extern header *game_header;
 
 // --------
 
@@ -26,6 +26,11 @@ header *game_header;
  * Initializes the game.
  */
 void game_init(const char *file);
+
+/*
+ * Shuts the game down.
+ */
+void game_quit(void);
 
 #endif // GAME_H_
 

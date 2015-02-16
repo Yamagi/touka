@@ -204,6 +204,7 @@ parser_header(list *tokens)
 			}
 
 			game_header->author = parser_concat(tokens);
+			log_info_f("AUTHOR: %s", game_header->author);
 		}
 		else if (!strcmp(cur, "#DATE:"))
 		{
