@@ -468,6 +468,7 @@ parser_game(const char *file)
 			}
 			else
 			{
+				list_destroy(tokens, NULL);
 				continue;
 			}
 		}
@@ -476,14 +477,12 @@ parser_game(const char *file)
 		if (is_header)
 		{
 			parser_header(tokens);
-			continue;
 		}
 
 		// Room
 		if (is_room)
 		{
 			parser_room(tokens);
-			continue;
 		}
 
 		list_destroy(tokens, NULL);
