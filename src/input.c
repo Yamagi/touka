@@ -100,6 +100,89 @@ cmd_quit(char *msg)
 	quit_success();
 }
 
+/*
+ * Descripes a room
+ */
+static void
+cmd_room(char *msg)
+{
+	char *req;
+	int32_t i;
+	listnode *lnode;
+	room *r;
+
+	if (!msg)
+	{
+		curses_text(COLOR_NORM, "USAGE: room roomname");
+		return;
+	}
+
+	if ((req = strsep(&msg, " ")) == NULL)
+	{
+		curses_text(COLOR_NORM, "USAGE: room roomname");
+		return;
+	}
+	else
+	{
+		if (strsep(&msg, " "))
+		{
+			curses_text(COLOR_NORM, "USAGE: room roomname");
+			return;
+		}
+	}
+
+	if ((r = hashmap_get(game_rooms, req)) == NULL)
+	{
+		curses_text(COLOR_NORM, "No such room: %s\n", req);
+		return;
+	}
+
+	curses_text(COLOR_HIGH, "%s", r->name);
+
+	if (r->aliases)
+	{
+		if (r->aliases->first)
+		{
+			lnode = r->aliases->first;
+		}
+
+		curses_text(COLOR_NORM, " (");
+
+		for (i = 0; i < r->aliases->count; i++)
+		{
+			if (i)
+			{
+				curses_text(COLOR_NORM, ", ");
+			}
+
+			curses_text(COLOR_HIGH, lnode->data);
+			lnode = lnode->next;
+		}
+
+		curses_text(COLOR_NORM, ")");
+	}
+
+	curses_text(COLOR_NORM, ":\n");
+
+	lnode = r->words->first;
+
+	for (i = 0; i < r->words->count; i++)
+	{
+		if (!strcmp(lnode->data, "\n") || i == r->words->count - 1)
+		{
+			curses_text(COLOR_NORM, lnode->data);
+		}
+		else
+		{
+			curses_text(COLOR_NORM, "%s ", lnode->data);
+		}
+
+		lnode = lnode->next;
+	}
+
+	curses_text(COLOR_NORM, "\n");
+}
+
 /* 
  * Prints the version number and copyright.
  */
@@ -297,6 +380,7 @@ input_init(void)
 	input_register("help", "Prints this help", cmd_help);
 	input_register("info", "Prints informations about the current game", cmd_info);
 	input_register("quit", "Exits the application", cmd_quit);
+	input_register("room", "Descripes a room", cmd_room);
 	input_register("version", "Prints the version number", cmd_version);
 
 	// Initialize history
