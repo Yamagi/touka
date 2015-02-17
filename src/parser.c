@@ -363,7 +363,7 @@ parser_room(list *tokens)
 			{
 				if (new->words->last)
 				{
-					if (!strcmp(new->words->last->data, "\n"))
+					while (!strcmp(new->words->last->data, "\n"))
 					{
 						free(list_pop(new->words));
 					}
