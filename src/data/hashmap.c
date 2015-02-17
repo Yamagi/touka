@@ -11,6 +11,7 @@
 
 #include "darray.h"
 #include "hashmap.h"
+#include "list.h"
 #include "../util.h"
 
 // --------
@@ -107,6 +108,39 @@ hashmap_destroy(hashmap *map, void (callback)(void *data))
 
 	free(map->data);
 	free(map);
+}
+
+list
+*hashmap_to_list(hashmap *map)
+{
+	darray *cur;
+	hashnode *node;
+	int32_t i, j;
+	list *content;
+
+	assert(map);
+
+	content = list_create();
+
+	for (i = 0; i < map->buckets; i++)
+	{
+		if (map->data[i])
+		{
+			cur = map->data[i];
+
+			for (j = 0; j < cur->elements; j++)
+			{
+				node = darray_get(cur, j);
+
+				if (!node->is_alias)
+				{
+					list_push(content, node->data);
+				}
+			}
+		}
+	}
+
+	return content;
 }
 
 void

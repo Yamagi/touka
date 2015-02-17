@@ -5,6 +5,8 @@
 #include <stdint.h>
 
 #include "darray.h"
+#include "list.h"
+#include "list.h"
 
 #define ALIAS 1
 #define MAIN 0
@@ -39,6 +41,15 @@ hashmap *hashmap_create(int32_t buckets);
  * callback: Optional callback
  */
 void hashmap_destroy(hashmap *map, void (callback)(void *data));
+
+/*
+ * Returns a list with all elements
+ * of the hashmap. The list is not
+ * sorted.
+ *
+ * map: Map to create the list from
+ */
+list *hashmap_to_list(hashmap *map);
 
 /*
  * Adds an element to the hashmap.

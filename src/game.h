@@ -61,5 +61,10 @@ void game_quit(void);
  */
 void game_room_describe(const char *key);
 
+/*
+ * Prints a list of all rooms.
+ */
+void game_rooms_list(void);
+
 #endif // GAME_H_
 

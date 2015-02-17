@@ -171,3 +171,85 @@ game_room_describe(const char *key)
 	curses_text(COLOR_NORM, "\n");
 
 }
+
+void
+game_rooms_list(void)
+{
+	int32_t i;
+	int32_t len;
+	list *data;
+	listnode *node;
+	room *cur;
+
+	data = hashmap_to_list(game_rooms);
+	len = 0;
+
+	if (data)
+	{
+		if (data->first)
+		{
+			node = data->first;
+
+			while (node)
+			{
+				cur = node->data;
+
+#ifdef NDEBUG
+				if (!cur->seen && !cur->mentioned)
+				{
+					node = node->next;
+
+					continue;
+				}
+#endif
+
+				if (strlen(cur->name) > len)
+				{
+					len = strlen(cur->name);
+				}
+
+				node = node->next;
+			}
+		}
+	}
+
+	if (len < strlen("Name"))
+	{
+		len = strlen("Name");
+	}
+
+	curses_text(COLOR_NORM, "%-*s %-*s %s\n", len + 1, "Name", 6, "State", "Description");
+	curses_text(COLOR_NORM, "%-*s %-*s %s\n", len + 1, "----", 6, "-----", "-----------");
+
+	for (i = 0; i <= data->count; i++)
+	{
+		cur = list_shift(data);
+
+#ifdef NDEBUG
+		if (!cur->seen && !cur->mentioned)
+		{
+			continue;
+		}
+#endif
+
+		curses_text(COLOR_NORM, "%-*s", len + 2, cur->name);
+
+        if (cur->seen)
+		{
+			curses_text(COLOR_NORM, "%-*s", 7, "S");
+		}
+		else if (cur->mentioned)
+		{
+			curses_text(COLOR_NORM, "%-*s", 7, "M");
+		}
+		else
+		{
+			curses_text(COLOR_NORM, "%-*s", 7, "-");
+		}
+
+		curses_text(COLOR_NORM, "%s\n", cur->descr);
+	}
+
+	list_destroy(data, NULL);
+}
+

@@ -106,10 +106,9 @@ cmd_quit(char *msg)
 static void
 cmd_room(char *msg)
 {
-	// No room given
 	if (!msg)
 	{
-		return;
+		game_rooms_list();
 	}
 	else
 	{
