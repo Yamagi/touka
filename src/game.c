@@ -24,6 +24,40 @@ hashmap *game_rooms;
 
 // --------
 
+/*
+ * Callback to destroy the room hashmap.
+ *
+ * data: Room to destroy
+ */
+static void
+game_room_callback(void *data)
+{
+	room *r;
+
+	assert(data);
+
+    r = data;
+
+	if (r->name)
+	{
+		free((char *)r->name);
+	}
+
+	if (r->aliases)
+	{
+		list_destroy(r->aliases, NULL);
+	}
+
+	if (r->words)
+	{
+		list_destroy(r->words, NULL);
+	}
+
+	free(r);
+}
+
+// --------
+
 void
 game_init(const char *file)
 {
@@ -58,6 +92,11 @@ game_quit(void)
 
 		free(game_header);
 		game_header = NULL;
+	}
+
+	if (game_rooms)
+	{
+		hashmap_destroy(game_rooms, game_room_callback);
 	}
 }
 

@@ -304,7 +304,7 @@ parser_add_room(room *new)
 		log_warn_f("There's already a room with name or alias %s", new->name);
 	}
 
-	hashmap_add(game_rooms, new->name, new);
+	hashmap_add(game_rooms, new->name, new, MAIN);
 
 	// Aliases
 	if (new->words->first)
@@ -318,7 +318,7 @@ parser_add_room(room *new)
 				log_warn_f("There's already a room with name or alias %s", new->name);
 			}
 
-			hashmap_add(game_rooms, lnode->data, new);
+			hashmap_add(game_rooms, lnode->data, new, ALIAS);
 			lnode = lnode->next;
 		}
 	}

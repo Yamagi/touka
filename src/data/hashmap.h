@@ -6,11 +6,15 @@
 
 #include "darray.h"
 
+#define ALIAS 1
+#define MAIN 0
+
 typedef struct
 {
 	const char *key;
 	uint32_t hash;
 	void *data;
+	int8_t is_alias;
 } hashnode;
 
 typedef struct
@@ -34,7 +38,7 @@ hashmap *hashmap_create(int32_t buckets);
  * map: Map to destroy
  * callback: Optional callback
  */
-void hashmap_destroy(hashmap *map, void (*callback)(void *data));
+void hashmap_destroy(hashmap *map, void (callback)(void *data));
 
 /*
  * Adds an element to the hashmap.
@@ -43,7 +47,7 @@ void hashmap_destroy(hashmap *map, void (*callback)(void *data));
  * key: Key
  * data: Data
  */
-void hashmap_add(hashmap *map, const char *key, void *data);
+void hashmap_add(hashmap *map, const char *key, void *data, int8_t alias);
 
 /*
  * Retrieves an element from the hashmap.

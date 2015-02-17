@@ -54,6 +54,10 @@ list_destroy(list *lheader, void (*callback)())
 		{
 			callback(cur->data);
 		}
+		else
+		{
+			free(cur->data);
+		}
 
 		free(cur);
 	}

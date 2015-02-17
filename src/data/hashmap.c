@@ -67,7 +67,7 @@ hashmap
 }
 
 void
-hashmap_destroy(hashmap *map, void (*callback)(void *data))
+hashmap_destroy(hashmap *map, void (callback)(void *data))
 {
 	darray *array;
 	hashnode *node;
@@ -85,13 +85,17 @@ hashmap_destroy(hashmap *map, void (*callback)(void *data))
 			{
 				node = darray_pop(array);
 
-				if (callback)
+				// Contents isn't freed on aliases
+				if (!node->is_alias)
 				{
-					callback(node->data);
-				}
-				else
-				{
-					free(node->data);
+					if (callback)
+					{
+						callback(node->data);
+					}
+					else
+					{
+						free(node->data);
+					}
 				}
 
 				free(node);
@@ -101,11 +105,12 @@ hashmap_destroy(hashmap *map, void (*callback)(void *data))
 		}
 	}
 
+	free(map->data);
 	free(map);
 }
 
 void
-hashmap_add(hashmap *map, const char *key, void *data)
+hashmap_add(hashmap *map, const char *key, void *data, int8_t is_alias)
 {
 	hashnode *node;
 	int32_t bucket;
@@ -123,6 +128,7 @@ hashmap_add(hashmap *map, const char *key, void *data)
 	node->key = key;
 	node->data = data;
 	node->hash = hashmap_hash(key);
+	node->is_alias = is_alias;
 
 	bucket = node->hash % map->buckets;
 
