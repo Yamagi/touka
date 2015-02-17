@@ -31,6 +31,7 @@ extern header *game_header;
 typedef struct
 {
 	const char *name;
+	const char *descr;
 	list *aliases;
 	list *words;
 	int8_t mentioned;

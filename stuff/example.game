@@ -6,6 +6,7 @@
 ----
 
 #ROOM: testroom1
+#DESCR: Dies ist Testroom 1
 #ALIAS: Test-Room
 #ALIAS: Testroom1
 
@@ -20,6 +21,7 @@ kodiert. Mal schauen ob dieser hier tut.
 ----
 
 #ROOM: testroom2
+#DESCR: Und das hier is Testroom 2
 
 Eine kurze Testbeschreibung eines zweiten Raumes ohne Aliases.
 

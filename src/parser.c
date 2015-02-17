@@ -262,6 +262,11 @@ parser_check_room(room *new)
 		parser_error();
 	}
 
+	if (!new->descr)
+	{
+		parser_error();
+	}
+
 	if (!new->words)
 	{
 		parser_error();
@@ -379,6 +384,15 @@ parser_room(list *tokens)
 			}
 
 			new->name = strdup(list_shift(tokens));
+		}
+		else if (!strcmp(cur, "#DESCR:"))
+		{
+			if (new->words)
+			{
+				parser_error();
+			}
+
+			new->descr = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "#ALIAS:"))
 		{
