@@ -115,6 +115,7 @@ game_room_describe(const char *key)
 	{
 		// Room doesn't exists
 		curses_text(COLOR_NORM, "No such room: %s\n", key);
+
 		return;
 	}
 
@@ -148,6 +149,24 @@ game_room_describe(const char *key)
 	}
 
 	curses_text(COLOR_NORM, ":\n");
+
+#else
+
+	// Only the debug build shows not visited rooms
+
+	if (r->mentioned && !r->seen)
+	{
+		curses_text(COLOR_NORM, "Room %s was mentioned but not visited\n", key);
+
+		return;
+	}
+
+	if (!r->seen)
+	{
+		curses_text(COLOR_NORM, "No such room: %s\n", key);
+
+		return;
+	}
 
 #endif // NDEBUG
 

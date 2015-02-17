@@ -312,19 +312,22 @@ parser_add_room(room *new)
 	hashmap_add(game_rooms, new->name, new, MAIN);
 
 	// Aliases
-	if (new->words->first)
+	if (new->aliases)
 	{
-		lnode = new->words->first;
-
-		for (i = 0; i < new->words->count; i++)
+		if (new->aliases->first)
 		{
-			if ((test = hashmap_get(game_rooms, lnode->data)) != NULL)
-			{
-				log_warn_f("There's already a room with name or alias %s", new->name);
-			}
+			lnode = new->aliases->first;
 
-			hashmap_add(game_rooms, lnode->data, new, ALIAS);
-			lnode = lnode->next;
+			for (i = 0; i < new->aliases->count; i++)
+			{
+				if ((test = hashmap_get(game_rooms, lnode->data)) != NULL)
+				{
+					log_warn_f("There's already a room with name or alias %s", new->name);
+				}
+
+				hashmap_add(game_rooms, lnode->data, new, ALIAS);
+				lnode = lnode->next;
+			}
 		}
 	}
 }
