@@ -52,5 +52,13 @@ void game_init(const char *file);
  */
 void game_quit(void);
 
+/*
+ * Prints a room description into
+ * the text window. If an debug
+ * build, it's name and all aliases
+ * are printed too.
+ */
+void game_room_describe(const char *key);
+
 #endif // GAME_H_
 
