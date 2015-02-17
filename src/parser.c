@@ -287,6 +287,44 @@ parser_check_room(room *new)
 }
 
 /*
+ * Does some sanity checks and adds the
+ * room to the global room list.
+ */
+static void
+parser_add_room(room *new)
+{
+	listnode *lnode;
+	room *test;
+	int32_t i;
+
+	parser_check_room(new);
+
+    if ((test = hashmap_get(game_rooms, new->name)) != NULL)
+	{
+		log_warn_f("There's already a room with name or alias %s", new->name);
+	}
+
+	hashmap_add(game_rooms, new->name, new);
+
+	// Aliases
+	if (new->words->first)
+	{
+		lnode = new->words->first;
+
+		for (i = 0; i < new->words->count; i++)
+		{
+			if ((test = hashmap_get(game_rooms, lnode->data)) != NULL)
+			{
+				log_warn_f("There's already a room with name or alias %s", new->name);
+			}
+
+			hashmap_add(game_rooms, lnode->data, new);
+			lnode = lnode->next;
+		}
+	}
+}
+
+/*
  * Parses a room.
  *
  * tokens: Line to parse
@@ -296,7 +334,6 @@ parser_room(list *tokens)
 {
 	char *cur;
 	int32_t i;
-	listnode *lnode;
 	static room *new;
 
 	assert(tokens);
@@ -370,20 +407,7 @@ parser_room(list *tokens)
 				}
 			}
 
-			parser_check_room(new);
-			hashmap_add(game_rooms, new->name, new);
-
-			// Aliases
-			if (new->words->first)
-			{
-				lnode = new->words->first;
-
-				for (i = 0; i < new->words->count; i++)
-				{
-					hashmap_add(game_rooms, lnode->data, new);
-					lnode = lnode->next;
-				}
-			}
+			parser_add_room(new);
 
 			is_room = 0;
 			new = NULL;
