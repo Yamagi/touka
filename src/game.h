@@ -9,6 +9,8 @@
 #include "data/hashmap.h"
 #include "data/list.h"
 
+// --------
+
 /*
  * Header of the game file.
  */
@@ -31,6 +33,8 @@ typedef struct
 	const char *name;
 	list *aliases;
 	list *words;
+	int8_t mentioned;
+	int8_t seen;
 } room;
 
 // Rooms
