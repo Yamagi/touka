@@ -23,6 +23,7 @@
 // What we are parsing?
 static uint8_t is_header;
 static uint8_t is_room;
+static uint8_t is_scene;
 
 // Lines parsed so far
 static int32_t count;
@@ -448,6 +449,250 @@ parser_room(list *tokens)
 
 // --------
 
+/*
+ * Checks if a scene was parsed successfull.
+ *
+ * new: Room to be checked
+ */
+static void
+parser_check_scene(scene *new)
+{
+	assert(new);
+
+	if (!new->name)
+	{
+		parser_error();
+	}
+
+	if (!new->descr)
+	{
+		parser_error();
+	}
+
+	if (!new->words)
+	{
+		parser_error();
+	}
+	else
+	{
+		if (!new->words->count)
+		{
+			parser_error();
+		}
+	}
+
+	if (!new->next)
+	{
+		parser_error();
+	}
+	else
+	{
+		if (!new->next->elements)
+		{
+			parser_error();
+		}
+	}
+
+	if (!new->aliases)
+	{
+		log_info_f("Scene: %s (0 aliases, %i choices, %i words)",
+				new->name, new->next->elements, new->words->count);
+	}
+	else
+	{
+		log_info_f("Scene: %s (%i aliases, %i choices, %i words)",
+				new->name, new->aliases->count, new->next->elements,
+				new->words->count);
+	}
+}
+
+/*
+ * Does some sanity checks and adds the
+ * scene to the global scene list.
+ *
+ * new: Scene to add
+ */
+static void
+parser_add_scene(scene *new)
+{
+	listnode *lnode;
+	scene *test;
+	int32_t i;
+
+	parser_check_scene(new);
+
+    if ((test = hashmap_get(game_scenes, new->name)) != NULL)
+	{
+		log_warn_f("There's already a scene with name or alias %s", new->name);
+	}
+
+	hashmap_add(game_scenes, new->name, new, MAIN);
+
+	// Aliases
+	if (new->aliases)
+	{
+		if (new->aliases->first)
+		{
+			lnode = new->aliases->first;
+
+			for (i = 0; i < new->aliases->count; i++)
+			{
+				if ((test = hashmap_get(game_scenes, lnode->data)) != NULL)
+				{
+					log_warn_f("There's already a scene with name or alias %s", new->name);
+				}
+
+				hashmap_add(game_scenes, lnode->data, new, ALIAS);
+				lnode = lnode->next;
+			}
+		}
+	}
+}
+
+/*
+ * Parses a scene.
+ *
+ * tokens: Line to parse
+ */
+static void
+parser_scene(list *tokens)
+{
+	char *cur;
+	int32_t i;
+	static scene *new;
+
+	assert(tokens);
+
+	if (!new)
+	{
+		if ((new = calloc(1, sizeof(scene))) == NULL)
+		{
+			perror("PANIC: Couldn't allocate memory");
+			quit_error();
+		}
+	}
+
+	// Empty input line
+	if (!tokens->count)
+	{
+		if (new->words)
+		{
+			if (new->words->last)
+			{
+				if (strcmp(new->words->last->data, "\n"))
+				{
+					list_push(new->words, strdup("\n"));
+				}
+			}
+		}
+	}
+
+	while (tokens->count > 0)
+	{
+		cur = list_shift(tokens);
+
+		if (!strcmp(cur, "#SCENE:"))
+		{
+			if (new->name || new->words)
+			{
+				parser_error();
+			}
+
+			if (tokens->count != 1)
+			{
+				parser_error();
+			}
+
+			new->name = strdup(list_shift(tokens));
+		}
+		else if (!strcmp(cur, "#DESCR:"))
+		{
+			if (new->words)
+			{
+				parser_error();
+			}
+
+			new->descr = parser_concat(tokens);
+		}
+		else if (!strcmp(cur, "#ALIAS:"))
+		{
+			if (new->words)
+			{
+				parser_error();
+			}
+
+			if (!new->aliases)
+			{
+				new->aliases = list_create();
+			}
+
+			list_push(new->aliases, parser_concat(tokens));
+		}
+		else if (!strcmp(cur, "#ROOM:"))
+		{
+			if (new->words)
+			{
+				parser_error();
+			}
+
+			if (tokens->count != 1)
+			{
+				parser_error();
+			}
+
+			new->room = strdup(list_shift(tokens));
+		}
+		else if (!strcmp(cur, "#NEXT:"))
+		{
+			if (new->words)
+			{
+				parser_error();
+			}
+
+			if (!new->next)
+			{
+				new->next = darray_create();
+			}
+
+			darray_push(new->next, parser_concat(tokens));
+		}
+		else if (!strcmp(cur, "----"))
+		{
+			if (new->words)
+			{
+				if (new->words->last)
+				{
+					while (!strcmp(new->words->last->data, "\n"))
+					{
+						free(list_pop(new->words));
+					}
+				}
+			}
+
+			parser_add_scene(new);
+
+			is_scene = 0;
+			new = NULL;
+		}
+		else
+		{
+			if (!new->words)
+			{
+				new->words = list_create();
+			}
+
+			list_push(new->words, strdup(cur));
+
+			for (i = 0; tokens->count > 0; i++)
+			{
+				list_push(new->words, strdup(list_shift(tokens)));
+			}
+		}
+	}
+}
+
+// --------
+
 void
 parser_game(const char *file)
 {
@@ -491,7 +736,7 @@ parser_game(const char *file)
 		tokens = parser_tokenize(line);
 
 		// What we are parsing?
-		if (!(is_header || is_room))
+		if (!(is_header || is_room || is_scene))
 		{
 			if (tokens->count > 0)
 			{
@@ -500,6 +745,11 @@ parser_game(const char *file)
 				if (!strcmp(tmp, "#ROOM:"))
 				{
 					is_room = 1;
+					list_unshift(tokens, tmp);
+				}
+				if (!strcmp(tmp, "#SCENE:"))
+				{
+					is_scene = 1;
 					list_unshift(tokens, tmp);
 				}
 				else
@@ -524,6 +774,12 @@ parser_game(const char *file)
 		if (is_room)
 		{
 			parser_room(tokens);
+		}
+
+		// Scene
+		if (is_scene)
+		{
+			parser_scene(tokens);
 		}
 
 		list_destroy(tokens, NULL);

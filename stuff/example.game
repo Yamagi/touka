@@ -26,3 +26,27 @@ kodiert. Mal schauen ob dieser hier tut.
 Eine kurze Testbeschreibung eines zweiten Raumes ohne Aliases.
 
 ----
+
+#SCENE: testscene1
+#DESCR: A Testscene for testing the scene code
+#ALIAS: Test Scene 1
+#ALIAS: TS1
+#ROOM: testroom1
+#NEXT: testscene2
+#NEXT: END
+
+Eine tolle Testscene. Wieder eine Beschreibung ueber mehrere Zeilen um
+zu schauen, ob wir die Umbrueche korrekt parsen.
+
+Und wieder ist eine freie Zeile ein Zeilenumbruch im Spiel.
+
+----
+
+#SCENE: testscene2
+#DESCR: Eine zweite Testszene
+#ROOM: testroom2
+#NEXT: END
+
+Bla, Bla, Bla.
+
+----

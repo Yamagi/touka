@@ -41,6 +41,21 @@ typedef struct
 // Rooms
 extern hashmap *game_rooms;
 
+/*
+ * Represents one scene.
+ */
+typedef struct
+{
+	const char *name;
+	const char *descr;
+	const char *room;
+	list *aliases;
+	list *words;
+	darray *next;
+} scene;
+
+extern hashmap *game_scenes;
+
 // --------
 
 /*

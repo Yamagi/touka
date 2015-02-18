@@ -24,6 +24,9 @@ header *game_header;
 // Rooms
 hashmap *game_rooms;
 
+// Scenes
+hashmap *game_scenes;
+
 // --------
 
 /*
@@ -77,6 +80,11 @@ game_init(const char *file)
 	if (!game_rooms)
 	{
 		game_rooms = hashmap_create(128);
+	}
+
+	if (!game_scenes)
+	{
+		game_scenes = hashmap_create(128);
 	}
 
 	parser_game(file);
