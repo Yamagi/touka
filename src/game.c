@@ -11,6 +11,7 @@
 
 #include "curses.h"
 #include "game.h"
+#include "log.h"
 #include "parser.h"
 #include "util.h"
 #include "data/hashmap.h"
@@ -342,7 +343,7 @@ game_scene_next(uint32_t choice)
 
 			key = darray_get(current_scene->next, choice - 1);
 
-			if (strcmp(key, "END"))
+			if (!strcmp(key, "END"))
 			{
 				current_scene = NULL;
 				game_end = 1;
@@ -369,9 +370,9 @@ game_scene_next(uint32_t choice)
 				return -1;
 			}
 
-			key = darray_get(current_scene->next, choice - 1);
+			key = darray_get(current_scene->next, 0);
 
-			if (strcmp(key, "END"))
+			if (!strcmp(key, "END"))
 			{
 				current_scene = NULL;
 				game_end = 1;
@@ -487,3 +488,4 @@ game_quit(void)
 		hashmap_destroy(game_scenes, game_scene_destroy_callback);
 	}
 }
+
