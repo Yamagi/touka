@@ -4,6 +4,7 @@
  */
 
 #include <assert.h>
+#include <ctype.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -92,6 +93,53 @@ cmd_info(char *msg)
 }
 
 /*
+ * Advances to the next scene.
+ */
+static void
+cmd_next(char *msg)
+{
+	int32_t choice;
+
+	if (!msg)
+	{
+		if (game_scene_next(0) == -1)
+		{
+			return;
+		}
+	}
+	else
+	{
+		if (strlen(msg) != 1)
+		{
+			curses_text(COLOR_NORM, "Invalid choice");
+
+			return;
+		}
+		else
+		{
+			if (isdigit(msg[0]))
+			{
+				choice = atoi(&msg[0]);
+
+				if (!choice)
+				{
+					curses_text(COLOR_NORM, "Invalid choice");
+
+					return;
+				}
+
+				if (game_scene_next(choice) == -1)
+				{
+                    return;
+				}
+			}
+		}
+	}
+
+	game_scene_play();
+}
+
+/*
  * Shuts the application down.
  */
 static void
@@ -116,7 +164,7 @@ cmd_room(char *msg)
 	}
 }
 
-/* 
+/*
  * Prints the version number and copyright.
  */
 static void
@@ -312,6 +360,7 @@ input_init(void)
 	// Register commands
 	input_register("help", "Prints this help", cmd_help);
 	input_register("info", "Prints informations about the current game", cmd_info);
+	input_register("next", "Advances to the next scene", cmd_next);
 	input_register("quit", "Exits the application", cmd_quit);
 	input_register("room", "Descripes a room", cmd_room);
 	input_register("version", "Prints the version number", cmd_version);

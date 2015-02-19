@@ -27,6 +27,9 @@ hashmap *game_rooms;
 // Scenes
 hashmap *game_scenes;
 
+// Current scene
+scene *current_scene;
+
 // --------
 
 /*
@@ -336,5 +339,100 @@ game_rooms_list(void)
 	}
 
 	list_destroy(data, NULL);
+}
+
+int32_t
+game_scene_next(uint32_t choice)
+{
+	scene *tmp;
+
+	if (!current_scene)
+	{
+		if ((current_scene = hashmap_get(game_scenes, game_header->start)) == NULL)
+		{
+			fprintf(stderr, "PANIC: First scene %s doesn't exists\n", game_header->start);
+			quit_error();
+		}
+	}
+	else
+	{
+		if (choice)
+		{
+			if (current_scene->next->elements == 1)
+			{
+				curses_text(COLOR_NORM, "No choice possible");
+
+				return -1;
+			}
+			if (choice > current_scene->next->elements)
+			{
+				curses_text(COLOR_NORM, "Invalid choice");
+
+				return -1;
+			}
+
+			// TODO: End
+			tmp = hashmap_get(game_scenes, darray_get(current_scene->next, choice - 1));
+
+			if (!tmp)
+			{
+				fprintf(stderr, "PANIC: Scene %s doesn't exists\n", game_header->start);
+				quit_error();
+			}
+			else
+			{
+				current_scene = tmp;
+			}
+		}
+		else
+		{
+			if (current_scene->next->elements > 1)
+			{
+				curses_text(COLOR_NORM, "Make your choice\n");
+
+				return -1;
+			}
+
+			// TODO: End
+			tmp = hashmap_get(game_scenes, darray_get(current_scene->next, 0));
+
+			if (!tmp)
+			{
+				fprintf(stderr, "PANIC: Scene %s doesn't exists\n", game_header->start);
+				quit_error();
+			}
+			else
+			{
+				current_scene = tmp;
+			}
+		}
+	}
+
+	return 0;
+}
+
+void
+game_scene_play(void)
+{
+	int32_t i;
+	listnode *lnode;
+
+	lnode = current_scene->words->first;
+
+	for (i = 0; i < current_scene->words->count; i++)
+	{
+		if (!strcmp(lnode->data, "\n") || i == current_scene->words->count - 1)
+		{
+			curses_text(COLOR_NORM, lnode->data);
+		}
+		else
+		{
+			curses_text(COLOR_NORM, "%s ", lnode->data);
+		}
+
+		lnode = lnode->next;
+	}
+
+	curses_text(COLOR_NORM, "\n");
 }
 

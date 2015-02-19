@@ -53,6 +53,7 @@ typedef struct
 	list *aliases;
 	list *words;
 	darray *next;
+	int8_t visited;
 } scene;
 
 extern hashmap *game_scenes;
@@ -81,6 +82,21 @@ void game_room_describe(const char *key);
  * Prints a list of all rooms.
  */
 void game_rooms_list(void);
+
+/*
+ * Advances to the next scene. Either by
+ * users choice or to the only one. When
+ * the requested choice is not possible,
+ * -1 is returned.
+ *
+ * choice: Option to choose
+ */
+int32_t game_scene_next(uint32_t choice);
+
+/*
+ * Plays the current scene.
+ */
+void game_scene_play(void);
 
 #endif // GAME_H_
 
