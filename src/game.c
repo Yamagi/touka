@@ -400,6 +400,7 @@ game_scene_play(void)
 {
 	int32_t i;
 	listnode *lnode;
+	room *r;
 
 	if (!game_end && !current_scene)
 	{
@@ -415,6 +416,17 @@ game_scene_play(void)
 		return;
 	}
 
+	// Mark room as seen
+	if ((r = hashmap_get(game_rooms, current_scene->room)) == NULL)
+	{
+		fprintf(stderr, "PANIC: Room %s doesn't exist", current_scene->room);
+		quit_error();
+	}
+
+	r->mentioned= 1;
+	r->seen = 1;
+
+	// Print description
 	lnode = current_scene->words->first;
 
 	for (i = 0; i < current_scene->words->count; i++)
