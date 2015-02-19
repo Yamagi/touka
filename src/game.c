@@ -66,6 +66,53 @@ game_room_callback(void *data)
 	free(r);
 }
 
+/*
+ * Callback to destroy the scene hashmap.
+ *
+ * data: Scene to destroy
+ */
+static void
+game_scene_callback(void *data)
+{
+	scene *s;
+
+	assert(data);
+
+	s = data;
+
+	if (s->name)
+	{
+		free((char *)s->name);
+	}
+
+	if (s->descr)
+	{
+		free((char *)s->descr);
+	}
+
+	if (s->room)
+	{
+		free((char *)s->room);
+	}
+
+    if (s->aliases)
+	{
+		list_destroy(s->aliases, NULL);
+	}
+
+	if (s->words)
+	{
+		list_destroy(s->words, NULL);
+	}
+
+	if (s->next)
+	{
+		darray_destroy(s->next, NULL);
+	}
+
+	free(s);
+}
+
 // --------
 
 void
@@ -113,6 +160,11 @@ game_quit(void)
 	if (game_rooms)
 	{
 		hashmap_destroy(game_rooms, game_room_callback);
+	}
+
+	if (game_scenes)
+	{
+		hashmap_destroy(game_scenes, game_scene_callback);
 	}
 }
 
