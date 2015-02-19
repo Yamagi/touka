@@ -28,20 +28,20 @@ hashmap *game_rooms;
 hashmap *game_scenes;
 
 // Current scene
-scene *current_scene;
+static scene *current_scene;
 
 // Has the game ended?
-int8_t game_end;
+static int8_t game_end;
 
 // --------
 
 /*
- * Callback to destroy the room hashmap.
+ * Callback destroy a room.
  *
  * data: Room to destroy
  */
 static void
-game_room_callback(void *data)
+game_room_destroy_callback(void *data)
 {
 	room *r;
 
@@ -70,108 +70,6 @@ game_room_callback(void *data)
 	}
 
 	free(r);
-}
-
-/*
- * Callback to destroy the scene hashmap.
- *
- * data: Scene to destroy
- */
-static void
-game_scene_callback(void *data)
-{
-	scene *s;
-
-	assert(data);
-
-	s = data;
-
-	if (s->name)
-	{
-		free((char *)s->name);
-	}
-
-	if (s->descr)
-	{
-		free((char *)s->descr);
-	}
-
-	if (s->room)
-	{
-		free((char *)s->room);
-	}
-
-    if (s->aliases)
-	{
-		list_destroy(s->aliases, NULL);
-	}
-
-	if (s->words)
-	{
-		list_destroy(s->words, NULL);
-	}
-
-	if (s->next)
-	{
-		darray_destroy(s->next, NULL);
-	}
-
-	free(s);
-}
-
-// --------
-
-void
-game_init(const char *file)
-{
-	assert(file);
-
-	if (!game_header)
-	{
-		if ((game_header = calloc(1, sizeof(header))) == NULL)
-		{
-			perror("PANIC: Couldn't allocate memory");
-			quit_error();
-		}
-	}
-
-	if (!game_rooms)
-	{
-		game_rooms = hashmap_create(128);
-	}
-
-	if (!game_scenes)
-	{
-		game_scenes = hashmap_create(128);
-	}
-
-	parser_game(file);
-}
-
-void
-game_quit(void)
-{
-	if (game_header)
-	{
-		free((char *)game_header->game);
-		free((char *)game_header->author);
-		free((char *)game_header->date);
-		free((char *)game_header->uid);
-		free((char *)game_header->start);
-
-		free(game_header);
-		game_header = NULL;
-	}
-
-	if (game_rooms)
-	{
-		hashmap_destroy(game_rooms, game_room_callback);
-	}
-
-	if (game_scenes)
-	{
-		hashmap_destroy(game_scenes, game_scene_callback);
-	}
 }
 
 void
@@ -344,13 +242,68 @@ game_rooms_list(void)
 	list_destroy(data, NULL);
 }
 
-void
+// --------
+
+/*
+ * Callback to destroy a scene.
+ *
+ * data: Scene to destroy
+ */
+static void
+game_scene_destroy_callback(void *data)
+{
+	scene *s;
+
+	assert(data);
+
+	s = data;
+
+	if (s->name)
+	{
+		free((char *)s->name);
+	}
+
+	if (s->descr)
+	{
+		free((char *)s->descr);
+	}
+
+	if (s->room)
+	{
+		free((char *)s->room);
+	}
+
+    if (s->aliases)
+	{
+		list_destroy(s->aliases, NULL);
+	}
+
+	if (s->words)
+	{
+		list_destroy(s->words, NULL);
+	}
+
+	if (s->next)
+	{
+		darray_destroy(s->next, NULL);
+	}
+
+	free(s);
+}
+
+/*
+ * Prints a nice endscreen.
+ */
+static void
 game_scene_endscreen(void)
 {
 	curses_text(COLOR_NORM, "End-Screen Placeholder\n\n");
 }
 
-void
+/*
+ * prints a nice startscreen.
+ */
+static void
 game_scene_startscreen(void)
 {
 	curses_text(COLOR_NORM, "Start-Screen Placeholder\n\n");
@@ -480,3 +433,57 @@ game_scene_play(void)
 	curses_text(COLOR_NORM, "\n");
 }
 
+// --------
+
+void
+game_init(const char *file)
+{
+	assert(file);
+
+	if (!game_header)
+	{
+		if ((game_header = calloc(1, sizeof(header))) == NULL)
+		{
+			perror("PANIC: Couldn't allocate memory");
+			quit_error();
+		}
+	}
+
+	if (!game_rooms)
+	{
+		game_rooms = hashmap_create(128);
+	}
+
+	if (!game_scenes)
+	{
+		game_scenes = hashmap_create(128);
+	}
+
+	parser_game(file);
+}
+
+void
+game_quit(void)
+{
+	if (game_header)
+	{
+		free((char *)game_header->game);
+		free((char *)game_header->author);
+		free((char *)game_header->date);
+		free((char *)game_header->uid);
+		free((char *)game_header->start);
+
+		free(game_header);
+		game_header = NULL;
+	}
+
+	if (game_rooms)
+	{
+		hashmap_destroy(game_rooms, game_room_destroy_callback);
+	}
+
+	if (game_scenes)
+	{
+		hashmap_destroy(game_scenes, game_scene_destroy_callback);
+	}
+}
