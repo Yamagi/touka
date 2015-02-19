@@ -416,10 +416,10 @@ input_process(char *cmd)
 		len--;
 	}
 
-	// Don't process null commands
+	// Null command is an alias for "next"
 	if (!strlen(cmd))
 	{
-		return;
+		cmd = "next";
 	}
 
 	// Echo the input
