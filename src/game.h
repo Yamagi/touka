@@ -84,6 +84,16 @@ void game_room_describe(const char *key);
 void game_rooms_list(void);
 
 /*
+ * Shows the startscreen.
+ */
+void game_scene_endscreen(void);
+
+/*
+ * Shows the endscreen.
+ */
+void game_scene_startscreen(void);
+
+/*
  * Advances to the next scene. Either by
  * users choice or to the only one. When
  * the requested choice is not possible,

@@ -30,6 +30,9 @@ hashmap *game_scenes;
 // Current scene
 scene *current_scene;
 
+// Has the game ended?
+int8_t game_end;
+
 // --------
 
 /*
@@ -341,9 +344,22 @@ game_rooms_list(void)
 	list_destroy(data, NULL);
 }
 
+void
+game_scene_endscreen(void)
+{
+	curses_text(COLOR_NORM, "End-Screen Placeholder\n\n");
+}
+
+void
+game_scene_startscreen(void)
+{
+	curses_text(COLOR_NORM, "Start-Screen Placeholder\n\n");
+}
+
 int32_t
 game_scene_next(uint32_t choice)
 {
+	char *key;
 	scene *tmp;
 
 	if (!current_scene)
@@ -371,10 +387,17 @@ game_scene_next(uint32_t choice)
 				return -1;
 			}
 
-			// TODO: End
-			tmp = hashmap_get(game_scenes, darray_get(current_scene->next, choice - 1));
+			key = darray_get(current_scene->next, choice - 1);
 
-			if (!tmp)
+			if (strcmp(key, "END"))
+			{
+				current_scene = NULL;
+				game_end = 1;
+
+				return 0;
+			}
+
+			if ((tmp = hashmap_get(game_scenes, key)) == NULL)
 			{
 				fprintf(stderr, "PANIC: Scene %s doesn't exists\n", game_header->start);
 				quit_error();
@@ -393,10 +416,17 @@ game_scene_next(uint32_t choice)
 				return -1;
 			}
 
-			// TODO: End
-			tmp = hashmap_get(game_scenes, darray_get(current_scene->next, 0));
+			key = darray_get(current_scene->next, choice - 1);
 
-			if (!tmp)
+			if (strcmp(key, "END"))
+			{
+				current_scene = NULL;
+				game_end = 1;
+
+				return 0;
+			}
+
+			if ((tmp = hashmap_get(game_scenes, key)) == NULL)
 			{
 				fprintf(stderr, "PANIC: Scene %s doesn't exists\n", game_header->start);
 				quit_error();
@@ -416,6 +446,20 @@ game_scene_play(void)
 {
 	int32_t i;
 	listnode *lnode;
+
+	if (!game_end && !current_scene)
+	{
+		game_scene_startscreen();
+
+		return;
+	}
+
+	if (game_end)
+	{
+		game_scene_endscreen();
+
+		return;
+	}
 
 	lnode = current_scene->words->first;
 

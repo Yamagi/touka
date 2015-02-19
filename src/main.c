@@ -95,6 +95,9 @@ main(int argc, char *argv[])
 	// Initialize input
 	input_init();
 
+	// Show startscreen
+	game_scene_play();
+
 	// Loop forever
 	mainloop();
 
