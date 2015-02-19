@@ -177,15 +177,6 @@ cmd_version(char *msg)
 // ---------
 
 /*
- * Callback to destroy the history.
- */
-void
-input_history_destroy(char *data)
-{
-	free(data);
-}
-
-/*
  * Callback function to qsort for the command darray.
  */
 int32_t
@@ -202,8 +193,6 @@ input_sort_callback(const void *msg1, const void *msg2)
 
 	return ret;
 }
-
-// ---------
 
 /*
  * Registers a new command.
@@ -299,6 +288,8 @@ input_history_reset(void)
 	hist_position = history->first;
 }
 
+// ---------
+
 char *
 input_complete(char *msg)
 {
@@ -352,6 +343,8 @@ input_complete_reset(void)
 	tab_position = 0;
 }
 
+// ---------
+
 void
 input_init(void)
 {
@@ -368,6 +361,22 @@ input_init(void)
 	// Initialize history
 	history = list_create();
 }
+
+void
+input_quit(void)
+{
+	if (history)
+	{
+		list_destroy(history, NULL);
+	}
+
+	if (input_cmds)
+	{
+		darray_destroy(input_cmds, NULL);
+	}
+}
+
+// ---------
 
 void
 input_process(char *cmd)
@@ -444,17 +453,5 @@ input_process(char *cmd)
 	curses_text(COLOR_NORM, "\n");
 }
 
-void
-input_quit(void)
-{
-	if (history)
-	{
-		list_destroy(history, input_history_destroy);
-	}
 
-	if (input_cmds)
-	{
-		darray_destroy(input_cmds, NULL);
-	}
-}
 
