@@ -505,6 +505,10 @@ parser_check_scene(scene *new)
 		{
 			parser_error();
 		}
+		else if (new->next->elements > 9)
+		{
+			parser_error();
+		}
 	}
 
 	if (!new->aliases)
