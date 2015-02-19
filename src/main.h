@@ -50,5 +50,19 @@
 // Copyright year
 #define YEAR "2015"
 
+// --------
+
+// Bool false
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+// Bool true
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+// --------
+
 #endif // MAIN_H_
 

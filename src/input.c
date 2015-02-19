@@ -26,6 +26,7 @@ typedef struct input_cmd
 	const char *name;
 	const char *help;
 	void (*callback)(char *msg);
+	uint8_t alias;
 } input_cmd;
 
 // Holds all input command
@@ -74,6 +75,12 @@ cmd_help(char *msg)
 	for (i = 0; i < input_cmds->elements; i++)
 	{
 		cur = darray_get(input_cmds, i);
+
+        if (cur->alias)
+		{
+			continue;
+		}
+
 		curses_text(COLOR_NORM, "%-*s %s\n", len + 1, cur->name, cur->help);
 	}
 }
@@ -202,7 +209,7 @@ input_sort_callback(const void *msg1, const void *msg2)
  * callback: Callback function for that command
  */
 static void
-input_register(const char *name, const char *help, void (*callback)(char *msg))
+input_register(const char *name, const char *help, void (*callback)(char *msg), uint8_t alias)
 {
 	input_cmd *new;
 
@@ -224,6 +231,7 @@ input_register(const char *name, const char *help, void (*callback)(char *msg))
 	new->name = name;
 	new->help = help;
 	new->callback = callback;
+	new->alias = alias;
 
 	darray_push(input_cmds, new);
 	darray_sort(input_cmds, input_sort_callback);
@@ -319,6 +327,11 @@ input_complete(char *msg)
 			tab_position = 0;
 		}
 
+		if (cur->alias)
+		{
+			continue;
+		}
+
 		// Exact match -> next one please
 		if (!strcmp(cur->name, msg))
 		{
@@ -351,12 +364,13 @@ input_init(void)
 	log_info("Initializing input.");
 
 	// Register commands
-	input_register("help", "Prints this help", cmd_help);
-	input_register("info", "Prints informations about the current game", cmd_info);
-	input_register("next", "Advances to the next scene", cmd_next);
-	input_register("quit", "Exits the application", cmd_quit);
-	input_register("room", "Descripes a room", cmd_room);
-	input_register("version", "Prints the version number", cmd_version);
+	input_register("help", "Prints this help", cmd_help, FALSE);
+	input_register("info", "Prints informations about the current game", cmd_info, FALSE);
+	input_register("n", "Advances to the next scene", cmd_next, TRUE);
+	input_register("next", "Advances to the next scene", cmd_next, FALSE);
+	input_register("quit", "Exits the application", cmd_quit, FALSE);
+	input_register("room", "Descripes a room", cmd_room, FALSE);
+	input_register("version", "Prints the version number", cmd_version, FALSE);
 
 	// Initialize history
 	history = list_create();
