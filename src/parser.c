@@ -166,7 +166,12 @@ parser_check_header(void)
 	}
 	else if (!game_header->uid)
 	{
-		fprintf(stderr, "PANIC: No UID speicifid\n");
+		fprintf(stderr, "PANIC: No UID specified\n");
+		quit_error();
+	}
+	else if (!game_header->start)
+	{
+		fprintf(stderr, "PANIC: No starting scene specified\n");
 		quit_error();
 	}
 
@@ -228,6 +233,15 @@ parser_header(list *tokens)
 			}
 
 			game_header->uid = strdup(list_shift(tokens));
+		}
+		else if (!strcmp(cur, "#START:"))
+		{
+			if (tokens->count != 1)
+			{
+				parser_error();
+			}
+
+			game_header->start = strdup(list_shift(tokens));
 		}
 		else if (!strcmp(cur, "----"))
 		{

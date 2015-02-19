@@ -20,6 +20,7 @@ typedef struct
 	const char *author;
 	const char *date;
 	const char *uid;
+	const char *start;
 } header;
 
 // Parsed game header

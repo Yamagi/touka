@@ -48,6 +48,11 @@ game_room_callback(void *data)
 		free((char *)r->name);
 	}
 
+	if (r->descr)
+	{
+		free((char *)r->descr);
+	}
+
 	if (r->aliases)
 	{
 		list_destroy(r->aliases, NULL);
@@ -99,6 +104,7 @@ game_quit(void)
 		free((char *)game_header->author);
 		free((char *)game_header->date);
 		free((char *)game_header->uid);
+		free((char *)game_header->start);
 
 		free(game_header);
 		game_header = NULL;
