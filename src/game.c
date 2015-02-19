@@ -310,6 +310,80 @@ game_scene_startscreen(void)
 	curses_text(COLOR_NORM, "Start-Screen Placeholder\n\n");
 }
 
+void
+game_scene_list(void)
+{
+	int32_t i;
+	int32_t len_scene, len_room;
+	list *data;
+	listnode *node;
+	scene *cur;
+
+	data = hashmap_to_list(game_scenes);
+	len_scene = 0;
+	len_room = 0;
+
+	if (data)
+	{
+		if (data->first)
+		{
+			node = data->first;
+
+			while (node)
+			{
+				cur = node->data;
+
+#ifdef NDEBUG
+				if (!cur->visited)
+				{
+					node = node->next;
+
+					continue;
+				}
+#endif
+
+				if (strlen(cur->name) > len_scene)
+				{
+					len_scene = strlen(cur->name);
+				}
+
+				if (strlen(cur->room) > len_room)
+				{
+					len_room = strlen(cur->room);
+				}
+
+				node = node->next;
+			}
+		}
+	}
+
+	if (len_scene < strlen("Name"))
+	{
+		len_scene = strlen("Name");
+	}
+
+	curses_text(COLOR_NORM, "%-*s %-*s %s\n", len_scene + 1, "Name", len_room + 1, "Room", "Description");
+	curses_text(COLOR_NORM, "%-*s %-*s %s\n", len_scene + 1, "----", len_room + 1, "----", "-----------");
+
+	for (i = 0; i <= data->count; i++)
+	{
+		cur = list_shift(data);
+
+#ifdef NDEBUG
+		if (!cur->visited)
+		{
+			continue;
+		}
+#endif
+
+		curses_text(COLOR_NORM, "%-*s", len_scene + 2, cur->name);
+		curses_text(COLOR_NORM, "%-*s", len_room + 2, cur->room);
+		curses_text(COLOR_NORM, "%s\n", cur->descr);
+	}
+
+	list_destroy(data, NULL);
+}
+
 int32_t
 game_scene_next(uint32_t choice)
 {
@@ -396,13 +470,37 @@ game_scene_next(uint32_t choice)
 }
 
 void
-game_scene_play(void)
+game_scene_play(const char *key)
 {
 	int32_t i;
 	listnode *lnode;
 	room *r;
+	scene *s;
 
-	if (!game_end && !current_scene)
+	if (key)
+	{
+		if ((s = hashmap_get(game_scenes, key)) == NULL)
+		{
+			curses_text(COLOR_NORM, "No such room: %s\n", key);
+
+			return;
+		}
+
+#ifdef NDEBUG
+		if (!s->visited)
+		{
+			curses_text(COLOR_NORM, "No such room: %s\n", key);
+
+			return;
+		}
+#endif
+	}
+	else
+	{
+		s = current_scene;
+	}
+
+	if (!game_end && !s)
 	{
 		game_scene_startscreen();
 
@@ -417,9 +515,9 @@ game_scene_play(void)
 	}
 
 	// Mark room as seen
-	if ((r = hashmap_get(game_rooms, current_scene->room)) == NULL)
+	if ((r = hashmap_get(game_rooms, s->room)) == NULL)
 	{
-		fprintf(stderr, "PANIC: Room %s doesn't exist", current_scene->room);
+		fprintf(stderr, "PANIC: Room %s doesn't exist", s->room);
 		quit_error();
 	}
 
@@ -427,11 +525,11 @@ game_scene_play(void)
 	r->seen = 1;
 
 	// Print description
-	lnode = current_scene->words->first;
+	lnode = s->words->first;
 
-	for (i = 0; i < current_scene->words->count; i++)
+	for (i = 0; i < s->words->count; i++)
 	{
-		if (!strcmp(lnode->data, "\n") || i == current_scene->words->count - 1)
+		if (!strcmp(lnode->data, "\n") || i == s->words->count - 1)
 		{
 			curses_text(COLOR_NORM, lnode->data);
 		}

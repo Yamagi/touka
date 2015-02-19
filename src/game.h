@@ -96,7 +96,12 @@ int32_t game_scene_next(uint32_t choice);
 /*
  * Plays the current scene.
  */
-void game_scene_play(void);
+void game_scene_play(const char *key);
+
+/*
+ * Prints a list of all scenes.
+ */
+void game_scene_list(void);
 
 #endif // GAME_H_
 

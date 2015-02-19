@@ -143,7 +143,7 @@ cmd_next(char *msg)
 		}
 	}
 
-	game_scene_play();
+	game_scene_play(NULL);
 }
 
 /*
@@ -156,7 +156,7 @@ cmd_quit(char *msg)
 }
 
 /*
- * Descripes a room
+ * Descripes a room.
  */
 static void
 cmd_room(char *msg)
@@ -168,6 +168,22 @@ cmd_room(char *msg)
 	else
 	{
 		game_room_describe(msg);
+	}
+}
+
+/*
+ * Replays a scene.
+ */
+static void
+cmd_scene(char *msg)
+{
+	if (!msg)
+	{
+		game_scene_list();
+	}
+	else
+	{
+		game_scene_play(msg);
 	}
 }
 
@@ -370,6 +386,7 @@ input_init(void)
 	input_register("next", "Advances to the next scene", cmd_next, FALSE);
 	input_register("quit", "Exits the application", cmd_quit, FALSE);
 	input_register("room", "Descripes a room", cmd_room, FALSE);
+	input_register("scene", "Replays a scene", cmd_scene, FALSE);
 	input_register("version", "Prints the version number", cmd_version, FALSE);
 
 	// Initialize history
