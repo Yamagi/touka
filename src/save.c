@@ -1,11 +1,13 @@
 #define _WITH_GETLINE
 
 #include <assert.h>
+#include <dirent.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #include "curses.h"
 #include "game.h"
@@ -218,7 +220,7 @@ save_init(const char *homedir)
 	assert(game_header);
 	assert(homedir);
 
-	snprintf(savedir, sizeof(savedir), "%s/%s/%s", homedir, game_header->uid, "save");
+	snprintf(savedir, sizeof(savedir), "%s/%s/%s", homedir, "save", game_header->uid);
 
 	if ((stat(savedir, &sb)) == 0)
 	{
@@ -231,6 +233,42 @@ save_init(const char *homedir)
 	else
 	{
 		util_rmkdir(savedir);
+	}
+}
+
+void
+save_list(void)
+{
+	DIR *dir;
+	char buf[PATH_MAX];
+	struct dirent *cur;
+	struct stat sb;
+
+	if ((dir = opendir(savedir)) == NULL)
+	{
+		perror("PANIC: Couldn't open directory");
+		quit_error();
+	}
+
+	curses_text(COLOR_NORM, "Saves:\n");
+	curses_text(COLOR_NORM, "------\n");
+
+	while ((cur = readdir(dir)) != NULL)
+	{
+		snprintf(buf, sizeof(buf), "%s/%s", savedir, cur->d_name);
+		stat(buf, &sb);
+
+		if (S_ISREG(sb.st_mode))
+		{
+			if (strlen(cur->d_name) > strlen(".sav"))
+			{
+				if (!strcmp(&cur->d_name[strlen(cur->d_name) - strlen(".sav")], ".sav"))
+				{
+					snprintf(buf, strlen(".sav") + 1, "%s", cur->d_name);
+					curses_text(COLOR_NORM, "%s\n", buf);
+				}
+			}
+		}
 	}
 }
 

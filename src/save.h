@@ -11,6 +11,11 @@
 void save_init(const char *homedir);
 
 /*
+ * Prints a list of all available savegames.
+ */
+void save_list(void);
+
+/*
  * Load a savegame. If successfull 0 is
  * returned, otherwise -1.
  *

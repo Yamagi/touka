@@ -111,6 +111,10 @@ cmd_load(char *msg)
 		save_read(msg);
 		game_scene_play(NULL);
 	}
+	else
+	{
+		save_list();
+	}
 }
 
 /*
