@@ -8,6 +8,13 @@ CFLAGS := -MMD -std=c99 -Wall -Werror -pedantic
 
 # ----
 
+# GNU libc crap
+ifeq ($(OS),Linux)
+CFLAGS += -D_GNU_SOURCE
+endif
+
+# ----
+
 # The linker flags
 LDFLAGS = -lncurses
 
