@@ -1,3 +1,14 @@
+/*
+ * Code to save the game state into a file and
+ * load it back at a later time. Also available
+ * savegame files can be listed.
+ *
+ * Since the save games are written in plain
+ * text and parsed at load, they shouled be
+ * portable between engine versions and even
+ * operating systems or platforms.
+ */
+
 #ifndef SAVE_H_
 #define SAVE_H_
 

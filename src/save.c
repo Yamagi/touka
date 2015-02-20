@@ -1,3 +1,12 @@
+/*
+ * save.c
+ * ------
+ *
+ * Code to save the game state into a file and
+ * load it back at a later time. Also available
+ * savegame files can be listed.
+ */
+
 #define _WITH_GETLINE
 
 #include <assert.h>
@@ -22,6 +31,66 @@
 static char savedir[PATH_MAX];
 
 // --------
+
+void
+save_init(const char *homedir)
+{
+	struct stat sb;
+
+	assert(game_header);
+	assert(homedir);
+
+	snprintf(savedir, sizeof(savedir), "%s/%s/%s", homedir, "save", game_header->uid);
+
+	if ((stat(savedir, &sb)) == 0)
+	{
+		if (!S_ISDIR(sb.st_mode))
+		{
+			printf("PANIC: %s is not a directory\n", savedir);
+			exit(1);
+		}
+	}
+	else
+	{
+		util_rmkdir(savedir);
+	}
+}
+
+void
+save_list(void)
+{
+	DIR *dir;
+	char buf[PATH_MAX];
+	struct dirent *cur;
+	struct stat sb;
+
+	if ((dir = opendir(savedir)) == NULL)
+	{
+		perror("PANIC: Couldn't open directory");
+		quit_error();
+	}
+
+	curses_text(COLOR_NORM, "Saves:\n");
+	curses_text(COLOR_NORM, "------\n");
+
+	while ((cur = readdir(dir)) != NULL)
+	{
+		snprintf(buf, sizeof(buf), "%s/%s", savedir, cur->d_name);
+		stat(buf, &sb);
+
+		if (S_ISREG(sb.st_mode))
+		{
+			if (strlen(cur->d_name) > strlen(".sav"))
+			{
+				if (!strcmp(&cur->d_name[strlen(cur->d_name) - strlen(".sav")], ".sav"))
+				{
+					snprintf(buf, strlen(".sav") + 1, "%s", cur->d_name);
+					curses_text(COLOR_NORM, "%s\n", buf);
+				}
+			}
+		}
+	}
+}
 
 int32_t
 save_read(char *name)
@@ -205,66 +274,6 @@ save_read(char *name)
 	free(cur);
 
 	return 0;
-}
-
-void
-save_init(const char *homedir)
-{
-	struct stat sb;
-
-	assert(game_header);
-	assert(homedir);
-
-	snprintf(savedir, sizeof(savedir), "%s/%s/%s", homedir, "save", game_header->uid);
-
-	if ((stat(savedir, &sb)) == 0)
-	{
-		if (!S_ISDIR(sb.st_mode))
-		{
-			printf("PANIC: %s is not a directory\n", savedir);
-			exit(1);
-		}
-	}
-	else
-	{
-		util_rmkdir(savedir);
-	}
-}
-
-void
-save_list(void)
-{
-	DIR *dir;
-	char buf[PATH_MAX];
-	struct dirent *cur;
-	struct stat sb;
-
-	if ((dir = opendir(savedir)) == NULL)
-	{
-		perror("PANIC: Couldn't open directory");
-		quit_error();
-	}
-
-	curses_text(COLOR_NORM, "Saves:\n");
-	curses_text(COLOR_NORM, "------\n");
-
-	while ((cur = readdir(dir)) != NULL)
-	{
-		snprintf(buf, sizeof(buf), "%s/%s", savedir, cur->d_name);
-		stat(buf, &sb);
-
-		if (S_ISREG(sb.st_mode))
-		{
-			if (strlen(cur->d_name) > strlen(".sav"))
-			{
-				if (!strcmp(&cur->d_name[strlen(cur->d_name) - strlen(".sav")], ".sav"))
-				{
-					snprintf(buf, strlen(".sav") + 1, "%s", cur->d_name);
-					curses_text(COLOR_NORM, "%s\n", buf);
-				}
-			}
-		}
-	}
 }
 
 void
