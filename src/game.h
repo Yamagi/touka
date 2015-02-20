@@ -57,6 +57,7 @@ typedef struct
 } scene;
 
 extern hashmap *game_scenes;
+extern scene *current_scene;
 
 // --------
 

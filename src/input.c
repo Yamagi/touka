@@ -101,6 +101,19 @@ cmd_info(char *msg)
 }
 
 /*
+ * Loads a savegame.
+ */
+static void
+cmd_load(char *msg)
+{
+	if (msg)
+	{
+		save_read(msg);
+		game_scene_play(NULL);
+	}
+}
+
+/*
  * Advances to the next scene.
  */
 static void
@@ -395,6 +408,7 @@ input_init(void)
 	// Register commands
 	input_register("help", "Prints this help", cmd_help, FALSE);
 	input_register("info", "Prints informations about the current game", cmd_info, FALSE);
+	input_register("load", "Loads a saved game", cmd_load, FALSE);
 	input_register("n", "Advances to the next scene", cmd_next, TRUE);
 	input_register("next", "Advances to the next scene", cmd_next, FALSE);
 	input_register("quit", "Exits the application", cmd_quit, FALSE);

@@ -29,7 +29,7 @@ hashmap *game_rooms;
 hashmap *game_scenes;
 
 // Current scene
-static scene *current_scene;
+scene *current_scene;
 
 // Has the game ended?
 static int8_t game_end;
