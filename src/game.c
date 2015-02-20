@@ -514,6 +514,9 @@ game_scene_play(const char *key)
 		return;
 	}
 
+	// Mark scene as visited
+	s->visited = 1;
+
 	// Mark room as seen
 	if ((r = hashmap_get(game_rooms, s->room)) == NULL)
 	{

@@ -76,6 +76,7 @@ OBJS_ = \
 	src/log.o \
 	src/main.o \
 	src/parser.o \
+	src/save.o \
 	src/util.o
 
 # Buildpath

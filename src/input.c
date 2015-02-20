@@ -14,6 +14,7 @@
 #include "input.h"
 #include "main.h"
 #include "log.h"
+#include "save.h"
 #include "util.h"
 #include "data/darray.h"
 #include "data/list.h"
@@ -168,6 +169,18 @@ cmd_room(char *msg)
 	else
 	{
 		game_room_describe(msg);
+	}
+}
+
+/*
+ * Saves the game.
+ */
+static void
+cmd_save(char *msg)
+{
+	if (msg)
+	{
+		save_write(msg);
 	}
 }
 
@@ -386,6 +399,7 @@ input_init(void)
 	input_register("next", "Advances to the next scene", cmd_next, FALSE);
 	input_register("quit", "Exits the application", cmd_quit, FALSE);
 	input_register("room", "Descripes a room", cmd_room, FALSE);
+	input_register("save", "Saves the game", cmd_save, FALSE);
 	input_register("scene", "Replays a scene", cmd_scene, FALSE);
 	input_register("version", "Prints the version number", cmd_version, FALSE);
 

@@ -18,6 +18,7 @@
 #include "input.h"
 #include "log.h"
 #include "main.h"
+#include "save.h"
 #include "util.h"
 
 // --------
@@ -94,6 +95,9 @@ main(int argc, char *argv[])
 
 	// Initialize input
 	input_init();
+
+	// Initialize savegames
+	save_init(homedir);
 
 	// Show startscreen
 	game_scene_play(NULL);
