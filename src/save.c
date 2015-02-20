@@ -147,7 +147,6 @@ save_read(char *name)
 			{
 				if (strcmp(line, game_header->uid))
 				{
-					log_info_f("UID: |%s|", line);
 					curses_text(COLOR_NORM, "Savegame from another game\n");
 
 					return -1;
@@ -158,9 +157,8 @@ save_read(char *name)
 			{
 				if ((s = hashmap_get(game_scenes, line)) == NULL)
 				{
-					curses_text(COLOR_NORM, "Savegame doesn't match game\n");
-
-					return -1;
+					fprintf(stderr, "PANIC: Savegame is broken\n");
+					quit_error();
 				}
 
 				current_scene = s;
@@ -172,9 +170,8 @@ save_read(char *name)
 		{
 			if ((r = hashmap_get(game_rooms, line)) == NULL)
 			{
-				curses_text(COLOR_NORM, "Savegame doesn't match game\n");
-
-				return -1;
+				fprintf(stderr, "PANIC: Savegame is broken\n");
+				quit_error();
 			}
 
 			r->mentioned = 1;
@@ -185,9 +182,8 @@ save_read(char *name)
 		{
 			if ((r = hashmap_get(game_rooms, line)) == NULL)
 			{
-				curses_text(COLOR_NORM, "Savegame doesn't match game\n");
-
-				return -1;
+				fprintf(stderr, "PANIC: Savegame is broken\n");
+				quit_error();
 			}
 
 			r->seen = 1;
@@ -198,9 +194,8 @@ save_read(char *name)
 		{
 			if ((s = hashmap_get(game_scenes, line)) == NULL)
 			{
-				curses_text(COLOR_NORM, "Savegame doesn't match game\n");
-
-				return -1;
+				fprintf(stderr, "PANIC: Savegame is broken\n");
+				quit_error();
 			}
 
 			s->visited = 1;
