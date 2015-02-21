@@ -127,7 +127,7 @@ cmd_next(char *msg)
 
 	if (!msg)
 	{
-		if (game_scene_next(0) == -1)
+		if (!game_scene_next(0))
 		{
 			return;
 		}
@@ -153,7 +153,7 @@ cmd_next(char *msg)
 					return;
 				}
 
-				if (game_scene_next(choice) == -1)
+				if (!game_scene_next(choice))
 				{
                     return;
 				}

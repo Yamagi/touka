@@ -9,6 +9,12 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
+// --------
+
+#include <stdint.h>
+
+// --------
+
 // Applicaction name
 #define APPNAME "Touka"
 
@@ -61,6 +67,9 @@
 #ifndef TRUE
 #define TRUE 1
 #endif
+
+// Datatype for bool
+typedef uint8_t boolean;
 
 // --------
 

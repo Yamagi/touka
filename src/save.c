@@ -105,8 +105,8 @@ save_read(char *name)
 	int8_t rooms_mentioned;
 	int8_t rooms_seen;
 	int8_t scenes_visited;
-	room *r;
-	scene *s;
+	game_room_s *room;
+	game_scene_s *scene;
 	size_t linecap;
 	ssize_t linelen;
 	struct stat sb;
@@ -224,50 +224,50 @@ save_read(char *name)
 
 			if (!strcmp(token, "#CURSCENE:"))
 			{
-				if ((s = hashmap_get(game_scenes, line)) == NULL)
+				if ((scene = hashmap_get(game_scenes, line)) == NULL)
 				{
 					fprintf(stderr, "PANIC: Savegame is broken\n");
 					quit_error();
 				}
 
-				current_scene = s;
+				current_scene = scene;
 			}
 		}
 
 		// Rooms mentioned
 		if (rooms_mentioned)
 		{
-			if ((r = hashmap_get(game_rooms, line)) == NULL)
+			if ((room = hashmap_get(game_rooms, line)) == NULL)
 			{
 				fprintf(stderr, "PANIC: Savegame is broken\n");
 				quit_error();
 			}
 
-			r->mentioned = 1;
+			room->mentioned = 1;
 		}
 
-		// Rooms seen
+		// Rooms visited
 		if (rooms_seen)
 		{
-			if ((r = hashmap_get(game_rooms, line)) == NULL)
+			if ((room = hashmap_get(game_rooms, line)) == NULL)
 			{
 				fprintf(stderr, "PANIC: Savegame is broken\n");
 				quit_error();
 			}
 
-			r->seen = 1;
+			room->visited = 1;
 		}
 
 		// Scenes visited
 		if (scenes_visited)
 		{
-			if ((s = hashmap_get(game_scenes, line)) == NULL)
+			if ((scene = hashmap_get(game_scenes, line)) == NULL)
 			{
 				fprintf(stderr, "PANIC: Savegame is broken\n");
 				quit_error();
 			}
 
-			s->visited = 1;
+			scene->visited = 1;
 		}
 	}
 
@@ -283,8 +283,8 @@ save_write(char *name)
 	char savefile[PATH_MAX];
 	char savename[PATH_MAX];
 	list *tmp;
-	room *r;
-	scene *s;
+	game_room_s *room;
+	game_scene_s *scene;
 
 	assert(name);
 	assert(savedir);
@@ -337,11 +337,11 @@ save_write(char *name)
 
 	while (tmp->count)
 	{
-		r = list_shift(tmp);
+		room = list_shift(tmp);
 
-		if (r->mentioned)
+		if (room->mentioned)
 		{
-			fwrite(r->name, strlen(r->name), 1, save);
+			fwrite(room->name, strlen(room->name), 1, save);
 			fwrite("\n", strlen("\n"), 1, save);
 		}
 	}
@@ -356,11 +356,11 @@ save_write(char *name)
 
 	while (tmp->count)
 	{
-		r = list_shift(tmp);
+		room = list_shift(tmp);
 
-		if (r->seen)
+		if (room->visited)
 		{
-			fwrite(r->name, strlen(r->name), 1, save);
+			fwrite(room->name, strlen(room->name), 1, save);
 			fwrite("\n", strlen("\n"), 1, save);
 		}
 	}
@@ -375,11 +375,11 @@ save_write(char *name)
 
 	while (tmp->count)
 	{
-		s = list_shift(tmp);
+		scene = list_shift(tmp);
 
-		if (s->visited)
+		if (scene->visited)
 		{
-			fwrite(s->name, strlen(s->name), 1, save);
+			fwrite(scene->name, strlen(scene->name), 1, save);
 			fwrite("\n", strlen("\n"), 1, save);
 		}
 	}

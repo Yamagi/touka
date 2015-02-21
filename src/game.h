@@ -1,43 +1,45 @@
 /*
- * this is the "heard" of our engine, as it runs
- * the actual game.
+ * this is the "heart" of our engine, as it runs
+ * the actual game. The upperst level are scenes,
+ * which are composed of rooms and a description.
  */
 
 #ifndef GAME_H_
 #define GAME_H_
 
+#include "main.h"
 #include "data/hashmap.h"
 #include "data/list.h"
 
 // --------
 
 /*
- * Header of the game file.
+ * Header of a game file.
  */
 typedef struct
 {
-	const char *game;
 	const char *author;
 	const char *date;
+	const char *first_scene;
+	const char *game;
 	const char *uid;
-	const char *start;
-} header;
+} game_header_s;
 
 // Parsed game header
-extern header *game_header;
+extern game_header_s *game_header;
 
 /*
  * Represents one room.
  */
 typedef struct
 {
-	const char *name;
+	boolean mentioned;
+	boolean visited;
 	const char *descr;
+	const char *name;
 	list *aliases;
 	list *words;
-	int8_t mentioned;
-	int8_t seen;
-} room;
+} game_room_s;
 
 // Rooms
 extern hashmap *game_rooms;
@@ -47,17 +49,17 @@ extern hashmap *game_rooms;
  */
 typedef struct
 {
-	const char *name;
+	boolean visited;
 	const char *descr;
+	const char *name;
 	const char *room;
+	darray *next;
 	list *aliases;
 	list *words;
-	darray *next;
-	int8_t visited;
-} scene;
+} game_scene_s;
 
 extern hashmap *game_scenes;
-extern scene *current_scene;
+extern game_scene_s *current_scene;
 
 // --------
 
@@ -88,11 +90,11 @@ void game_rooms_list(void);
  * Advances to the next scene. Either by
  * users choice or to the only one. When
  * the requested choice is not possible,
- * -1 is returned.
+ * false is returned.
  *
  * choice: Option to choose
  */
-int32_t game_scene_next(uint32_t choice);
+boolean game_scene_next(uint8_t choice);
 
 /*
  * Plays the current scene.
@@ -103,6 +105,8 @@ void game_scene_play(const char *key);
  * Prints a list of all scenes.
  */
 void game_scene_list(void);
+
+// --------
 
 #endif // GAME_H_
 
