@@ -172,7 +172,7 @@ save_read(char *name)
 	{
 		cur = line;
 
-		// Empty line ends block
+		// Empty cur ends block
 		if (linelen == 1)
 		{
 			header = 0;
@@ -183,23 +183,23 @@ save_read(char *name)
 			continue;
 		}
 
-		// Remove newline
-		line[strlen(line) - 1] = '\0';
+		// Remove newcur
+		cur[strlen(cur) - 1] = '\0';
 
 		// New block
 		if (!(header || rooms_mentioned || rooms_seen || scenes_visited))
 		{
-			if (!strncmp(line, "#ROOMS_MENTIONED:", strlen("#ROOMS_MENTIONED:")))
+			if (!strncmp(cur, "#ROOMS_MENTIONED:", strlen("#ROOMS_MENTIONED:")))
 			{
 				rooms_mentioned = 1;
 			}
 
-			if (!strncmp(line, "#ROOMS_SEEN:", strlen("#ROOMS_SEEN:")))
+			if (!strncmp(cur, "#ROOMS_SEEN:", strlen("#ROOMS_SEEN:")))
 			{
 				rooms_seen = 1;
 			}
 
-			if (!strncmp(line, "#SCENES_VISITED:", strlen("#SCENES_VISITED:")))
+			if (!strncmp(cur, "#SCENES_VISITED:", strlen("#SCENES_VISITED:")))
 			{
 				scenes_visited = 1;
 			}
@@ -210,11 +210,11 @@ save_read(char *name)
 		// Header
 		if (header)
 		{
-			token = strsep(&line, " ");
+			token = strsep(&cur, " ");
 
 			if (!strcmp(token, "#UID:"))
 			{
-				if (strcmp(line, game_header->uid))
+				if (strcmp(cur, game_header->uid))
 				{
 					curses_text(COLOR_NORM, "Savegame from another game\n");
 
@@ -224,7 +224,7 @@ save_read(char *name)
 
 			if (!strcmp(token, "#CURSCENE:"))
 			{
-				if ((scene = hashmap_get(game_scenes, line)) == NULL)
+				if ((scene = hashmap_get(game_scenes, cur)) == NULL)
 				{
 					fprintf(stderr, "PANIC: Savegame is broken\n");
 					quit_error();
@@ -237,7 +237,7 @@ save_read(char *name)
 		// Rooms mentioned
 		if (rooms_mentioned)
 		{
-			if ((room = hashmap_get(game_rooms, line)) == NULL)
+			if ((room = hashmap_get(game_rooms, cur)) == NULL)
 			{
 				fprintf(stderr, "PANIC: Savegame is broken\n");
 				quit_error();
@@ -249,7 +249,7 @@ save_read(char *name)
 		// Rooms visited
 		if (rooms_seen)
 		{
-			if ((room = hashmap_get(game_rooms, line)) == NULL)
+			if ((room = hashmap_get(game_rooms, cur)) == NULL)
 			{
 				fprintf(stderr, "PANIC: Savegame is broken\n");
 				quit_error();
@@ -261,7 +261,7 @@ save_read(char *name)
 		// Scenes visited
 		if (scenes_visited)
 		{
-			if ((scene = hashmap_get(game_scenes, line)) == NULL)
+			if ((scene = hashmap_get(game_scenes, cur)) == NULL)
 			{
 				fprintf(stderr, "PANIC: Savegame is broken\n");
 				quit_error();
@@ -271,7 +271,7 @@ save_read(char *name)
 		}
 	}
 
-	free(cur);
+	free(line);
 
 	return 0;
 }
