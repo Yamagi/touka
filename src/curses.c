@@ -1,6 +1,9 @@
 /*
- * curses.c:
- *  - TUI written with ncurses
+ * curses.c
+ * --------
+ *
+ * Test user interface based upon ncurses.
+ *
  */
 
 #include <ncurses.h>
@@ -30,7 +33,7 @@
 #define KEY_ESC 27
 #define KEY_DEL 127
 
-// Number of events to be replayed at resize
+// Number of events to be replayed at resize.
 #define REPLAY (SCROLLBACK * 64)
 
 // --------
@@ -54,11 +57,11 @@ enum
 typedef struct
 {
 	char *msg;
-	int highlight;
+	uint32_t highlight;
 } repl_msg;
 
 // Linked list for replay buffer
-list *repl_buf;
+static list *repl_buf;
 
 // Curses windows
 static WINDOW *input;
@@ -69,7 +72,7 @@ static WINDOW *text;
 static int32_t scrolled;
 
 // Caches the current status message
-char status_line[STATUSBAR];
+static char status_line[STATUSBAR];
 
 // --------
 
@@ -89,15 +92,15 @@ curses_replay_callback(repl_msg *repl)
  * Prints text into the main window.
  *
  * highlight: Highlight status of the text
- * msg: Test to print
+ * msg: Text to print
  */
 static void
-curses_print(int8_t highlight, const char *msg)
+curses_print(boolean highlight, const char *msg)
 {
 	char *first;
 	char *last;
-	int32_t i;
-	int32_t x, y;
+	uint16_t i;
+	uint32_t x, y;
 
 	if (highlight)
 	{
@@ -154,7 +157,7 @@ curses_print(int8_t highlight, const char *msg)
 static void
 curses_resize(void)
 {
-	int32_t x, y;
+	uint32_t x, y;
 	listnode *cur;
 	repl_msg *rep;
 
@@ -191,7 +194,7 @@ curses_resize(void)
 	getyx(text, y, x);
 
 	/* Scrolls the text window to the same position
-	 * as before. The math is:
+	   as before. The math is:
 		y:        cursor position
 		LINES:    Window height
 		+2:		  Compensate input and status line
@@ -202,8 +205,8 @@ curses_resize(void)
 
 	doupdate();
 
-	log_info("Terminal resize detected.");
-	log_info_f("New terminal size is: %ix%i.", LINES, COLS);
+	log_info("Terminal resize detected");
+	log_info_f("New terminal size is: %i*%i", LINES, COLS);
 }
 
 /*
@@ -215,7 +218,7 @@ curses_resize(void)
 static void
 curses_scroll(int32_t offset)
 {
-	int32_t x, y;
+	uint32_t x, y;
 
 	getyx(text, y, x);
 
@@ -257,7 +260,7 @@ curses_scroll(int32_t offset)
 void
 curses_init(void)
 {
-	log_info("Initializing ncurses.");
+	log_info("Initializing ncurses");
 
 	repl_buf = list_create();
 
@@ -271,7 +274,7 @@ curses_init(void)
 
 	if (!can_change_color())
 	{
-		log_warn("Terminal cannot change colors. Using unfancy standard color.");
+		log_warn("Terminal cannot change colors: Using unfancy standard color");
 
 		init_pair(PAIR_HIGHLIGHT, COLOR_GREEN, COLOR_BLACK);
 		init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
@@ -288,7 +291,7 @@ curses_init(void)
 		init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 	}
 
-	log_info_f("Terminal size is: %i:%i.", LINES, COLS);
+	log_info_f("Terminal size is: %i*%i.", LINES, COLS);
 
     // Main window
 	text = newpad(SCROLLBACK, COLS);
@@ -311,7 +314,7 @@ curses_init(void)
 	pnoutrefresh(text, 0, 0, 0, 0, LINES - 3, COLS);
 	doupdate();
 
-	log_info("Curses initialized.");
+	log_info("Curses initialized");
 }
 
 void
@@ -319,19 +322,19 @@ curses_input(const char *prompt)
 {
 	char buffer[INPUTBUF];
 	char *tmp;
-	int8_t fin;
+	boolean fin;
 	int16_t key;
-	int32_t begin;
 	int32_t chars;
-	int32_t i;
 	int32_t num;
-    int32_t position;
 	int32_t start;
-	int32_t x, y;
+	uint16_t i;
+	uint32_t begin;
+    uint32_t position;
+	uint32_t x, y;
 
 	memset(buffer, '\0', sizeof(buffer));
 	chars = 0;
-	fin = 0;
+	fin = false;
 	position = 0;
 	start = 0;
 
@@ -348,7 +351,7 @@ curses_input(const char *prompt)
 			case KEY_ENTER:
 			case KEY_LF:
 			case KEY_CR:
-				fin = 1;
+				fin = true;
 				break;
 
 
@@ -754,7 +757,7 @@ curses_input(const char *prompt)
 		}
 	}
 
-	log_info_f("User input: %s.", buffer);
+	log_info_f("User input: %s", buffer);
 	input_process(buffer);
 }
 
@@ -775,7 +778,7 @@ curses_quit(void)
 void
 curses_status(const char *msg)
 {
-	int32_t i;
+	uint16_t i;
 
     wmove(status, 0, 0);
 
@@ -791,10 +794,10 @@ curses_status(const char *msg)
 }
 
 void
-curses_text(int8_t highlight, const char *fmt, ...)
+curses_text(boolean highlight, const char *fmt, ...)
 {
 	char *msg;
-	int32_t x, y;
+	uint32_t x, y;
 	repl_msg *rep;
 	size_t len;
 	va_list args;

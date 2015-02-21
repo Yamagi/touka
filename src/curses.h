@@ -8,6 +8,7 @@
 #define CURSES_H_
 
 #include <stdint.h>
+#include "main.h"
 
 /*
  * Highlight state:
@@ -16,6 +17,8 @@
  */
 #define COLOR_NORM 0
 #define COLOR_HIGH 1
+
+// --------
 
 /*
  * Initializes ncurses.
@@ -50,7 +53,9 @@ void curses_status(const char *msg);
  *
  * string: Text to print
  */
-void curses_text(int8_t highlight, const char *fmt, ...);
+void curses_text(boolean highlight, const char *fmt, ...);
+
+// --------
 
 #endif // CURSES_H_
 
