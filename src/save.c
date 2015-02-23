@@ -87,7 +87,7 @@ save_list(void)
 			{
 				if (!strcmp(&cur->d_name[strlen(cur->d_name) - strlen(".sav")], ".sav"))
 				{
-					snprintf(buf, strlen(".sav") + 1, "%s", cur->d_name);
+					snprintf(buf, strlen(cur->d_name) - strlen(".sav") + 1, "%s", cur->d_name);
 					curses_text(COLOR_NORM, "%s\n", buf);
 					count++;
 				}
