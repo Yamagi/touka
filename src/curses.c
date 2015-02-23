@@ -58,7 +58,7 @@ typedef struct
 {
 	char *msg;
 	uint32_t highlight;
-} repl_msg;
+} repl_msg_s;
 
 // Linked list for replay buffer
 static list *repl_buf;
@@ -80,7 +80,7 @@ static char status_line[STATUSBAR];
  * Callback for the replay buffer destruction.
  */
 void
-curses_replay_callback(repl_msg *repl)
+curses_replay_callback(repl_msg_s *repl)
 {
 	free(repl->msg);
 	free(repl);
@@ -159,7 +159,7 @@ curses_resize(void)
 {
 	uint32_t x, y;
 	listnode *cur;
-	repl_msg *rep;
+	repl_msg_s *rep;
 
 	// Alter stdscr, otherwise pads will break
     wresize(stdscr, LINES, COLS);
@@ -798,7 +798,7 @@ curses_text(boolean highlight, const char *fmt, ...)
 {
 	char *msg;
 	uint32_t x, y;
-	repl_msg *rep;
+	repl_msg_s *rep;
 	size_t len;
 	va_list args;
 
@@ -842,7 +842,7 @@ curses_text(boolean highlight, const char *fmt, ...)
 	doupdate();
 
 	// Save to replay buffer
-	if ((rep = malloc(sizeof(repl_msg))) == NULL)
+	if ((rep = malloc(sizeof(repl_msg_s))) == NULL)
 	{
 		perror("PANIC: Couldn't allocate memory");
 		quit_error();
