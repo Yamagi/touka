@@ -71,7 +71,7 @@ main(int argc, char *argv[])
 	if (argc != 2)
 	{
 		fprintf(stderr, "USAGE: %s /path/to/game\n", argv[0]);
-		quit_error();
+		exit(1);
 	}
 
 	// Load the game

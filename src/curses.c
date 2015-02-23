@@ -100,7 +100,7 @@ curses_print(uint32_t color, const char *msg)
 {
 	char *first;
 	char *last;
-	uint16_t i;
+	int16_t i;
 	uint32_t x, y;
 
 	if (color == COLOR_HIGH)
@@ -292,7 +292,7 @@ curses_init(void)
 		init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 	}
 
-	log_info_f("Terminal size is: %i*%i.", LINES, COLS);
+	log_info_f("Terminal size is: %i*%i", LINES, COLS);
 
     // Main window
 	text = newpad(SCROLLBACK, COLS);
@@ -314,8 +314,6 @@ curses_init(void)
 	wnoutrefresh(status);
 	pnoutrefresh(text, 0, 0, 0, 0, LINES - 3, COLS);
 	doupdate();
-
-	log_info("Curses initialized");
 }
 
 void
@@ -765,6 +763,8 @@ curses_input(const char *prompt)
 void
 curses_quit(void)
 {
+	log_info("Shutting down curses");
+
 	delwin(input);
 	delwin(status);
 	delwin(text);
@@ -810,8 +810,7 @@ curses_text(uint32_t color, const char *fmt, ...)
 
 	if ((msg = malloc(len)) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		quit_error();
+		quit_error("Couldn't allocate memory");
 	}
 
 	// Format the message
@@ -845,8 +844,7 @@ curses_text(uint32_t color, const char *fmt, ...)
 	// Save to replay buffer
 	if ((rep = malloc(sizeof(repl_msg_s))) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		quit_error();
+		quit_error("Couldn't allocate memory");
 	}
 
 	rep->msg = msg;

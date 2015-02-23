@@ -245,6 +245,7 @@ game_rooms_list(void)
 	}
 
 	list_destroy(data, NULL);
+	log_info_f("Listed %i rooms", i);
 }
 
 // --------
@@ -302,6 +303,7 @@ game_scene_destroy_callback(void *data)
 static void
 game_scene_endscreen(void)
 {
+	log_info("Game has ended");
 	curses_text(COLOR_NORM, "End-Screen Placeholder\n\n");
 }
 
@@ -311,6 +313,7 @@ game_scene_endscreen(void)
 static void
 game_scene_startscreen(void)
 {
+	log_info("Game has started");
 	curses_text(COLOR_NORM, "Start-Screen Placeholder\n\n");
 }
 
@@ -386,6 +389,7 @@ game_scene_list(void)
 	}
 
 	list_destroy(data, NULL);
+	log_info_f("Listed %i scenes", i);
 }
 
 boolean
@@ -394,12 +398,21 @@ game_scene_next(uint8_t choice)
 	char *key;
 	game_scene_s *scene;
 
+	if (choice)
+	{
+		log_info_f("Advancing to the next scene. Player's choice: %i", choice);
+	}
+	else
+	{
+		log_info("Advancing to the next scene");
+	}
+
 	if (!current_scene)
 	{
 		if ((current_scene = hashmap_get(game_scenes, game_header->first_scene)) == NULL)
 		{
-			fprintf(stderr, "PANIC: First scene %s doesn't exists\n", game_header->first_scene);
-			quit_error();
+			log_error_f("First scene %i doesn't exists\n", game_header->first_scene);
+			quit_error("First scene doesn't exists\n");
 		}
 	}
 	else
@@ -431,8 +444,8 @@ game_scene_next(uint8_t choice)
 
 			if ((scene = hashmap_get(game_scenes, key)) == NULL)
 			{
-				fprintf(stderr, "PANIC: Scene %s doesn't exists\n", game_header->first_scene);
-				quit_error();
+				log_error_f("Scene %s doesn't exists\n", game_header->first_scene);
+				quit_error("A Scene doesn't exists\n");
 			}
 			else
 			{
@@ -460,8 +473,8 @@ game_scene_next(uint8_t choice)
 
 			if ((scene = hashmap_get(game_scenes, key)) == NULL)
 			{
-				fprintf(stderr, "PANIC: Scene %s doesn't exists\n", game_header->first_scene);
-				quit_error();
+				log_error_f("Scene %s doesn't exists\n", game_header->first_scene);
+				quit_error("A Scene doesn't exists\n");
 			}
 			else
 			{
@@ -518,14 +531,16 @@ game_scene_play(const char *key)
 		return;
 	}
 
+	log_info_f("Playing scene %s", current_scene->name);
+
 	// Mark scene as visited
 	scene->visited = 1;
 
 	// Mark room as seen
 	if ((room = hashmap_get(game_rooms, scene->room)) == NULL)
 	{
-		fprintf(stderr, "PANIC: Room %s doesn't exist", scene->room);
-		quit_error();
+		log_error_f("Room %s doesn't exist", scene->room);
+		quit_error("Room doesn't exist");
 	}
 
 	room->mentioned= 1;
@@ -558,12 +573,13 @@ game_init(const char *file)
 {
 	assert(file);
 
+    log_info("Initializing game");
+
 	if (!game_header)
 	{
 		if ((game_header = calloc(1, sizeof(game_header_s))) == NULL)
 		{
-			perror("PANIC: Couldn't allocate memory");
-			quit_error();
+			quit_error("PANIC: Couldn't allocate memory");
 		}
 	}
 
@@ -583,6 +599,8 @@ game_init(const char *file)
 void
 game_quit(void)
 {
+	log_info("Shutting down game");
+
 	if (game_header)
 	{
 		free((char *)game_header->game);

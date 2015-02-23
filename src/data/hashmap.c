@@ -55,14 +55,12 @@ hashmap
 
 	if ((new = malloc(sizeof(hashmap))) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		quit_error();
+		quit_error("Couldn't allocate memory");
 	}
 
 	if ((new->data = calloc(buckets, sizeof(darray *))) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		quit_error();
+		quit_error("Couldn't allocate memory");
 	}
 
 	new->buckets = buckets;
@@ -158,8 +156,7 @@ hashmap_add(hashmap *map, const char *key, void *data, int8_t is_alias)
 
 	if ((node = malloc(sizeof(hashnode))) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		quit_error();
+		quit_error("Couldn't allocate memory");
 	}
 
 	node->key = key;

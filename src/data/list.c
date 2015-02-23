@@ -21,8 +21,7 @@ list
 
 	if ((new = calloc(1, sizeof(list))) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		quit_error();
+		quit_error("Couldn't allocate memory");
 	}
 
 	return new;
@@ -83,8 +82,7 @@ list_push(list *lheader, void *data)
 
 	if ((new = calloc(1, sizeof(listnode))) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		quit_error();
+		quit_error("Couldn't allocate memory");
 	}
 
 	new->data = data;
@@ -143,8 +141,7 @@ list_unshift(list *lheader, void *data)
 
 	if ((new = calloc(1, sizeof(listnode))) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		quit_error();
+		quit_error("Couldn't allocate memory");
 	}
 
 	new->data = data;

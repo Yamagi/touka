@@ -40,13 +40,14 @@ save_init(const char *homedir)
 	assert(game_header);
 	assert(homedir);
 
+	log_info("Initializing savegames");
 	snprintf(savedir, sizeof(savedir), "%s/%s/%s", homedir, "save", game_header->uid);
 
 	if ((stat(savedir, &sb)) == 0)
 	{
 		if (!S_ISDIR(sb.st_mode))
 		{
-			printf("PANIC: %s is not a directory\n", savedir);
+			quit_error("Save dir is not a directory\n");
 			exit(1);
 		}
 	}
@@ -63,12 +64,14 @@ save_list(void)
 	char buf[PATH_MAX];
 	struct dirent *cur;
 	struct stat sb;
+	uint16_t count;
 
 	if ((dir = opendir(savedir)) == NULL)
 	{
-		perror("PANIC: Couldn't open directory");
-		quit_error();
+		quit_error("Couldn't open directory");
 	}
+
+	count = 0;
 
 	curses_text(COLOR_NORM, "Saves:\n");
 	curses_text(COLOR_NORM, "------\n");
@@ -86,10 +89,13 @@ save_list(void)
 				{
 					snprintf(buf, strlen(".sav") + 1, "%s", cur->d_name);
 					curses_text(COLOR_NORM, "%s\n", buf);
+					count++;
 				}
 			}
 		}
 	}
+
+	log_info_f("Listed %i savegames", count);
 }
 
 int32_t
@@ -164,8 +170,7 @@ save_read(char *name)
 
 	if ((save = fopen(savefile, "r")) == NULL)
 	{
-		fprintf(stderr, "PANIC: Couldn't load savegame");
-		quit_error();
+		quit_error("Couldn't load savegame");
 	}
 
     while ((linelen = getline(&line, &linecap, save)) > 0)
@@ -226,8 +231,7 @@ save_read(char *name)
 			{
 				if ((scene = hashmap_get(game_scenes, cur)) == NULL)
 				{
-					fprintf(stderr, "PANIC: Savegame is broken\n");
-					quit_error();
+					quit_error("Savegame is broken\n");
 				}
 
 				current_scene = scene;
@@ -239,8 +243,7 @@ save_read(char *name)
 		{
 			if ((room = hashmap_get(game_rooms, cur)) == NULL)
 			{
-				fprintf(stderr, "PANIC: Savegame is broken\n");
-				quit_error();
+				quit_error("Savegame is broken\n");
 			}
 
 			room->mentioned = 1;
@@ -251,8 +254,7 @@ save_read(char *name)
 		{
 			if ((room = hashmap_get(game_rooms, cur)) == NULL)
 			{
-				fprintf(stderr, "PANIC: Savegame is broken\n");
-				quit_error();
+				quit_error("Savegame is broken\n");
 			}
 
 			room->visited = 1;
@@ -263,8 +265,7 @@ save_read(char *name)
 		{
 			if ((scene = hashmap_get(game_scenes, cur)) == NULL)
 			{
-				fprintf(stderr, "PANIC: Savegame is broken\n");
-				quit_error();
+				quit_error("Savegame is broken\n");
 			}
 
 			scene->visited = 1;
@@ -312,8 +313,7 @@ save_write(char *name)
 	// open file
 	if ((save = fopen(savefile, "w")) == NULL)
 	{
-		perror("PANIC: Couldn't open file");
-		quit_error();
+		quit_error("Couldn't open file");
 	}
 
 	// Write metadata

@@ -19,6 +19,7 @@
 #include "game.h"
 #include "input.h"
 #include "log.h"
+#include "save.h"
 #include "util.h"
 
 // --------
@@ -30,6 +31,7 @@ util_rmkdir(const char *dir)
 	char tmp[PATH_MAX];
 	size_t len;
 
+	log_info_f("Creating path %s", dir);
 	stpncpy(tmp, dir, sizeof(tmp));
 	len = strlen(tmp);
 
@@ -48,8 +50,7 @@ util_rmkdir(const char *dir)
 			{
 				if (errno != EEXIST)
 				{
-					perror("PANIC: Couldn't create directory");
-					exit(1);
+					quit_error("Couldn't create directory");
 				}
 			}
 
@@ -61,20 +62,38 @@ util_rmkdir(const char *dir)
 	{
 		if (errno != EEXIST)
 		{
-			perror("PANIC: Couldn't create directory");
-			quit_error();
+			quit_error("Couldn't create directory");
 		}
 	}
 }
 
 // --------
 
-/*
- * Does the dirty work for our
- * various quit functions.
- */
-static void
-quit(int32_t ret)
+void
+quit_error(const char *msg)
+{
+	int32_t err = errno;
+
+	// Shutdown TUI
+	curses_quit();
+
+	// Save game
+	save_write("shutdown");
+
+	if (err)
+	{
+		fprintf(stderr, "PANIC: %s (%s)\n", msg, strerror(err));
+	}
+	else
+	{
+		fprintf(stderr, "PANIC: %s\n", msg);
+	}
+
+	_exit(1);
+}
+
+void
+quit_success(void)
 {
 	static int32_t recursive;
 
@@ -88,6 +107,9 @@ quit(int32_t ret)
 		recursive++;
 	}
 
+	// Save game
+	save_write("shutdown");
+
 	// Shutdown game
 	game_quit();
 
@@ -100,18 +122,6 @@ quit(int32_t ret)
 	// Close log handlers
 	log_close();
 
-	_exit(ret);
-}
-
-void
-quit_error(void)
-{
-	quit(1);
-}
-
-void
-quit_success(void)
-{
-	quit(0);
+	_exit(0);
 }
 

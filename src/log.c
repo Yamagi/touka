@@ -84,14 +84,12 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 
     if ((inpmsg = malloc(msglen)) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		goto error;
+		perror("Couldn't allocate memory");
 	}
 
     if ((logmsg = malloc(msglen)) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		goto error;
+		quit_error("Couldn't allocate memory");
 	}
 
 	// Format the message
@@ -104,8 +102,7 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 
 	if ((t = localtime(&tmp)) == NULL)
 	{
-		perror("PANIC: Couldn't get local time");
-		quit_error();
+		quit_error("Couldn't get local time");
 	}
 
 	strftime(msgtime, sizeof(msgtime), "%m-%d-%Y %H:%M:%S", t);
@@ -113,8 +110,7 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 	// Status
 	if (log_typetostr(type, status, sizeof(status)) != 0)
 	{
-		fprintf(stderr, "PANIC: Unknown logtype\n");
-		goto error;
+		quit_error("Unknown logtype\n");
 	}
 
 	// Prepend informational stuff
@@ -127,8 +123,7 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 	// Write it
 	if ((fwrite(logmsg, strlen(logmsg), 1, logfile)) != 1)
 	{
-		perror("PANIC: Couldn't log error message");
-		quit_error();
+		quit_error("Couldn't log message");
 	}
 
 	fflush(logfile);
@@ -144,11 +139,6 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 	free(logmsg);
 
 	return;
-
-error:
-	free(inpmsg);
-	free(logmsg);
-	quit_error();
 }
 
 void
@@ -167,8 +157,7 @@ log_init(const char *path, const char *name, int32_t seg)
 	{
 		if (!S_ISDIR(sb.st_mode))
 		{
-			printf("PANIC: %s is not a directory\n", path);
-			quit_error();
+			quit_error("Not not a directory\n");
 		}
 	}
 	else
@@ -197,8 +186,7 @@ log_init(const char *path, const char *name, int32_t seg)
 
 		if ((rename(oldfile, newfile)) != 0)
 		{
-			perror("PANIC: Couldn't rotate log files");
-			quit_error();
+			quit_error("Couldn't rotate log files");
 		}
 	}
 
@@ -210,15 +198,13 @@ log_init(const char *path, const char *name, int32_t seg)
 	{
 		if ((rename(oldfile, newfile)) != 0)
 		{
-			perror("PANIC: Couldn't rotate log files");
-			quit_error();
+			quit_error("Couldn't rotate log files");
 		}
 	}
 
 	if ((logfile = fopen(oldfile, "w")) == NULL)
 	{
-		perror("PANIC: Couldn't create log file");
-		quit_error();
+		quit_error("Couldn't create log file");
 	}
 }
 
@@ -231,8 +217,7 @@ log_close(void)
 
 		if ((fclose(logfile)) != 0)
 		{
-			perror("PANIC: Couldn't close log file");
-			quit_error();
+			quit_error("Couldn't close log file");
 		}
 
 		logfile = NULL;

@@ -27,7 +27,7 @@ void util_rmkdir(const char *dir);
 /*
  * Shuts the application down and returns 1.
  */
-void quit_error(void);
+void quit_error(const char *msg);
 
 /*
  * Shuts the application down and returns 0.

@@ -79,8 +79,8 @@ void log_close(void);
 /*
  * 	Convenience macro for errors
  */
-#define log_error(F) log_insert(LOG_ERROS, __func__, __LINE__, F)
-#define log_error_f(F, ...) log_insert(LOG_ERROS, __func__, __LINE__, F, __VA_ARGS__)
+#define log_error(F) log_insert(LOG_ERROR, __func__, __LINE__, F)
+#define log_error_f(F, ...) log_insert(LOG_ERROR, __func__, __LINE__, F, __VA_ARGS__)
 
 // --------
 

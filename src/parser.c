@@ -70,8 +70,7 @@ static char
 
 		if ((string = realloc(string, len)) == NULL)
 		{
-			perror("PANIC: Couldn't allocate memory");
-			quit_error();
+			quit_error("Couldn't allocate memory");
 		}
 
 		memset(string + oldlen, 0, len - oldlen);
@@ -95,8 +94,8 @@ static char
 static void
 parser_error(void)
 {
-	fprintf(stderr, "Parser error in line %i\n", count);
-	quit_error();
+	log_error_f("Parser error in line %i of file\n", count);
+	quit_error("Parser error");
 }
 
 /*
@@ -154,28 +153,23 @@ parser_check_header(void)
 {
 	if (!game_header->game)
 	{
-		fprintf(stderr, "PANIC: No game name specified\n");
-		quit_error();
+		quit_error("No game name specified\n");
 	}
 	else if (!game_header->author)
 	{
-		fprintf(stderr, "PANIC: No author specified\n");
-		quit_error();
+		quit_error("No author specified\n");
 	}
 	else if (!game_header->date)
 	{
-		fprintf(stderr, "PANIC: No copyright date speficied\n");
-		quit_error();
+		quit_error("PANIC: No copyright date speficied\n");
 	}
 	else if (!game_header->uid)
 	{
-		fprintf(stderr, "PANIC: No UID specified\n");
-		quit_error();
+		quit_error("PANIC: No UID specified\n");
 	}
 	else if (!game_header->first_scene)
 	{
-		fprintf(stderr, "PANIC: No starting scene specified\n");
-		quit_error();
+		quit_error("PANIC: No starting scene specified\n");
 	}
 
 	log_info("Game specifications are:");
@@ -368,8 +362,7 @@ parser_room(list *tokens)
 	{
 		if ((room = calloc(1, sizeof(game_room_s))) == NULL)
 		{
-			perror("PANIC: Couldn't allocate memory");
-			quit_error();
+			quit_error("Couldn't allocate memory");
 		}
 	}
 
@@ -588,8 +581,7 @@ parser_scene(list *tokens)
 	{
 		if ((scene = calloc(1, sizeof(game_scene_s))) == NULL)
 		{
-			perror("PANIC: Couldn't allocate memory");
-			quit_error();
+			quit_error("Couldn't allocate memory");
 		}
 	}
 
@@ -729,21 +721,20 @@ parser_game(const char *file)
 
 	if ((stat(file, &sb)) != 0)
 	{
-		printf("PANIC: %s doesn't exists\n", file);
-		quit_error();
+		quit_error("Game file doesn't exists\n");
 	}
 
 	if (!S_ISREG(sb.st_mode))
 	{
-		printf("PANIC: %s ist not a regular file\n", file);
-		quit_error();
+		quit_error("Game file ist not a regular file\n");
 	}
 
 	if ((game = fopen(file, "r")) == NULL)
 	{
-		perror("PANIC: Couldn't open game file");
-		quit_error();
+		quit_error("Couldn't open game file");
 	}
+
+	log_info_f("Parsing game file: %s", file);
 
 	line = NULL;
 	linecap = 0;
@@ -807,5 +798,6 @@ parser_game(const char *file)
 	}
 
 	free(line);
+	log_info_f("Parsed %i lines", count);
 }
 

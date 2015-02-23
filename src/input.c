@@ -88,6 +88,8 @@ cmd_help(char *msg)
 
 		curses_text(COLOR_NORM, "%-*s %s\n", len + 1, cur->name, cur->help);
 	}
+
+	log_info_f("Listed %i commands", i);
 }
 
 /*
@@ -228,7 +230,7 @@ static void
 cmd_version(char *msg)
 {
 	curses_text(COLOR_NORM, "This is %s %s, (c) %s %s\n", APPNAME, VERSION, YEAR, AUTHOR);
-	curses_text(COLOR_NORM, "This binary was build on %s.\n", __DATE__);
+	curses_text(COLOR_NORM, "This binary was build on %s\n", __DATE__);
 }
 
 // ---------
@@ -274,8 +276,7 @@ input_register(const char *name, const char *help, void (*callback)(char *msg), 
 
 	if ((new = malloc(sizeof(input_cmd))) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		quit_error();
+		quit_error("Couldn't allocate memory");
 	}
 
 	new->name = name;
@@ -411,7 +412,7 @@ input_complete_reset(void)
 void
 input_init(void)
 {
-	log_info("Initializing input.");
+	log_info("Initializing input");
 
 	// Register commands
 	input_register("help", "Prints this help", cmd_help, FALSE);

@@ -46,8 +46,7 @@ darray_resize(darray *array)
 
 	if ((array->data = realloc(array->data, new)) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		quit_error();
+		quit_error("Couldn't allocate memory");
 	}
 
 	array->end = new;
@@ -62,8 +61,7 @@ darray
 
 	if ((new = malloc(sizeof(darray))) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		quit_error();
+		quit_error("Couldn't allocate memory");
 	}
 
 	new->elements = 0;
@@ -71,8 +69,7 @@ darray
 
 	if ((new->data = malloc(sizeof(void *) * INT_ELEMENTS)) == NULL)
 	{
-		perror("PANIC: Couldn't allocate memory");
-		quit_error();
+		quit_error("Couldn't allocate memory");
 	}
 
 	return new;
