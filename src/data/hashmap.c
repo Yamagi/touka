@@ -1,6 +1,9 @@
 /*
- * hashmap.c:
- *  - A simple hashmap
+ * hashmap.c
+ * ---------
+ *
+ * A very simple hashmap, build around
+ * our dynamic array and jenkins hash.
  */
 
 #include "assert.h"

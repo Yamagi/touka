@@ -2,8 +2,9 @@
  * curses.c
  * --------
  *
- * Test user interface based upon ncurses.
- *
+ * Text user interface based upon ncurses. Since
+ * input is tighly integrated with the TUI low
+ * level input is also part of the file.
  */
 
 #include <ncurses.h>

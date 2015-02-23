@@ -1,6 +1,10 @@
 /*
  * input.c
- *  - Input processing
+ * -------
+ *
+ * Upper layer input processing and support
+ * code like command completion and a simple
+ * history.
  */
 
 #include <assert.h>
@@ -24,10 +28,10 @@
 // Represents one input command
 typedef struct input_cmd
 {
-	const char *name;
+	boolean alias;
 	const char *help;
+	const char *name;
 	void (*callback)(char *msg);
-	uint8_t alias;
 } input_cmd;
 
 // Holds all input command
@@ -255,7 +259,7 @@ input_sort_callback(const void *msg1, const void *msg2)
  * callback: Callback function for that command
  */
 static void
-input_register(const char *name, const char *help, void (*callback)(char *msg), uint8_t alias)
+input_register(const char *name, const char *help, void (*callback)(char *msg), boolean alias)
 {
 	input_cmd *new;
 
@@ -515,6 +519,4 @@ input_process(char *cmd)
 	// Empty line after each cmd-output
 	curses_text(COLOR_NORM, "\n");
 }
-
-
 

@@ -1,4 +1,7 @@
 /*
+ * util.h
+ * ------
+ *
  * A collection of various more or less
  * usefull utility functions, that don't
  * fit anywhere else.
@@ -8,6 +11,8 @@
 #define UTIL_H_
 
 #include <stdint.h>
+
+// ---------
 
 /*
  * Create a directory with all intermediate
@@ -28,6 +33,8 @@ void quit_error(void);
  * Shuts the application down and returns 0.
  */
 void quit_success(void);
+
+// --------
 
 #endif // UTIL_H_
 

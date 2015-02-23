@@ -1,4 +1,7 @@
 /*
+ * list.h
+ * ------
+ *
  * This is a simple doubled linked list.
  * Elements can be accessed from front
  * and back.
@@ -6,6 +9,8 @@
 
 #ifndef LINKEDLIST_H_
 #define LINKEDLIST_H_
+
+// --------
 
 /*
  * One node in a list.
@@ -71,6 +76,8 @@ void list_unshift(list *lheader, void *data);
  * and removes the data.
  */
 void *list_shift(list *lheader);
+
+// --------
 
 #endif // LINKEDLIST_H_
 

@@ -1,4 +1,7 @@
 /*
+ * log.h
+ * -----
+ *
  * This is a small log file handler. Currently only
  * three log levels are supported:
  *  - LOG_INFO:  Normal messages
@@ -15,10 +18,12 @@
  *  the log handler must be closed with closelog().
  */
 
-#ifndef LOGGER_H_
-#define LOGGER_H_
+#ifndef LOG_H_
+#define LOG_H_
 
 #include <stdint.h>
+
+// --------
 
 /*
  * Possible log states
@@ -57,6 +62,8 @@ void log_init(const char *path, const char *name, int32_t seg);
  */
 void log_close(void);
 
+// --------
+
 /*
  * 	Convenience macros for infos
  */
@@ -74,6 +81,8 @@ void log_close(void);
  */
 #define log_error(F) log_insert(LOG_ERROS, __func__, __LINE__, F)
 #define log_error_f(F, ...) log_insert(LOG_ERROS, __func__, __LINE__, F, __VA_ARGS__)
+
+// --------
 
 #endif // LOG_H_
 

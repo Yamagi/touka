@@ -8,6 +8,8 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
+// ---------
+
 /*
  * Parses a game file. Must be called after game_init()
  * since it filles the games internal data structures.
@@ -15,6 +17,8 @@
  * file: File to parse
  */
 void parser_game(const char *file);
+
+// ---------
 
 #endif // PARSER_H_
 

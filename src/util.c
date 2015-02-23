@@ -1,6 +1,9 @@
 /*
  * utility.c:
- *  - Various utility functions
+ * ----------
+ *
+ * Various stuff like global utility functions
+ * or the shutdown code.
  */
 
 #include <errno.h>

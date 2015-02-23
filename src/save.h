@@ -14,6 +14,8 @@
 
 #include <stdint.h>
 
+// --------
+
 /*
  * Initializes the savegame system.
  *
@@ -40,6 +42,8 @@ uint32_t save_read(char *name);
  * name: Name of the savegame
  */
 void save_write(char *name);
+
+// --------
 
 #endif // SAVE_H_
 

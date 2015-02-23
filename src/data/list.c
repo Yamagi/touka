@@ -1,6 +1,8 @@
 /*
- * linkedlist.c:
- *  - A simple, generic double linked list
+ * list.c
+ * ------
+ *
+ * A simple, generic double linked list
  */
 
 #include <assert.h>

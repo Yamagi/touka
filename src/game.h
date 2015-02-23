@@ -1,5 +1,8 @@
 /*
- * this is the "heart" of our engine, as it runs
+ * game.h
+ * ------
+ *
+ * This is the "heart" of our engine, as it runs
  * the actual game. The upperst level are scenes,
  * which are composed of rooms and a description.
  */

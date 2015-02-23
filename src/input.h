@@ -1,4 +1,7 @@
 /*
+ * input.h
+ * -------
+ *
  * Input processing and sub commands. This code is
  * mostly responsible for calling the approriate
  * functions according to user input.
@@ -10,6 +13,8 @@
 
 #ifndef INPUT_H_
 #define INPUT_H_
+
+// --------
 
 /*
  * Returns the next string in the history.
@@ -59,6 +64,8 @@ void input_process(char *input);
  * Shuts the input subsystem down.
  */
 void input_quit(void);
+
+// --------
 
 #endif // INPUT_H_
 

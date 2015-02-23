@@ -1,7 +1,10 @@
 /*
- * log.c:
- *  - Logging
- *  - Log rotation
+ * log.c
+ * -----
+ *
+ * A simple logger. It supports three log levels
+ * (INFO, WARN, ERROR), more can be added easily.
+ * Log files are rotated.
  */
 
 #include <assert.h>

@@ -1,9 +1,9 @@
 /*
- * Special macros:
- *  - Application name
- *  - Internal limits
- *  - Version number
- *  - etc.
+ * main.h
+ * ------
+ *
+ * Global macros. Either for coniguration
+ * or implementation.
  */
 
 #ifndef MAIN_H_

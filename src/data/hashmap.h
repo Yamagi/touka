@@ -1,3 +1,10 @@
+/*
+ * hashmap.h
+ * ---------
+ *
+ * A simple hashmap implementattion, based
+ * around dynamic arrays and jenkins hash.
+ */
 
 #ifndef HASHMAP_H_
 #define HASHMAP_H_
@@ -10,6 +17,8 @@
 
 #define ALIAS 1
 #define MAIN 0
+
+// --------
 
 typedef struct
 {
@@ -24,6 +33,8 @@ typedef struct
 	int32_t buckets;
 	void **data;
 } hashmap;
+
+// --------
 
 /*
  * Creates a new hashmap.
@@ -67,6 +78,8 @@ void hashmap_add(hashmap *map, const char *key, void *data, int8_t alias);
  * key: Key of the element
  */
 void *hashmap_get(hashmap *map, const char *key);
+
+// --------
 
 #endif // HASHMAP_H_
 

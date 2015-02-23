@@ -1,4 +1,7 @@
 /*
+ * darray.h
+ * --------
+ *
  * A simple dynamic array. This special type
  * of array is grown and narrowed automatically
  * as necessary.
@@ -9,6 +12,8 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+
+// --------
 
 // Represents a dynamic array
 typedef struct darray
@@ -74,6 +79,8 @@ void *darray_get(darray *array, int32_t element);
  *           to qsort()
  */
 void darray_sort(darray *array, int32_t (*callback)(const void*, const void*));
+
+// --------
 
 #endif // DARRAY_H_
 

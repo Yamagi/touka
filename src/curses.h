@@ -1,4 +1,7 @@
 /*
+ * curses.h
+ * --------
+ *
  * Text User Interface written with ncurses. This is a
  * rather simple approach with only three windows and
  * no global refresh cycle.

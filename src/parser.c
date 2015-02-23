@@ -1,7 +1,10 @@
 /*
- * parser.c:
- *  - Parses the game file:
- *    - Header
+ * parser.c
+ * --------
+ *
+ * Parses the game file. Please note that this hand
+ * written implementation is not that robust, if an
+ * error is detected, it just bails out.
  */
 
 #define _WITH_GETLINE

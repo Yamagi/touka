@@ -5,7 +5,6 @@
  * This file runs the game. The upperst level
  * is a scene, which is composed of a room and
  * a description.
- *
  */
 
 #include <assert.h>

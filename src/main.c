@@ -1,9 +1,8 @@
 /*
- * main.c:
- *  - Application startup
- *  - Application shutdown
- *  - Argument processing
- *  - Main loop
+ * main.c
+ * ------
+ *
+ * Application startup and the main loop.
  */
 
 #include <limits.h>
@@ -20,17 +19,6 @@
 #include "main.h"
 #include "save.h"
 #include "util.h"
-
-// --------
-
-static void
-mainloop(void)
-{
-	while (1)
-	{
-		curses_input("Touka: ");
-	}
-}
 
 // --------
 
@@ -102,8 +90,11 @@ main(int argc, char *argv[])
 	// Show startscreen
 	game_scene_play(NULL);
 
-	// Loop forever
-	mainloop();
+	// Mainloop
+	while (TRUE)
+	{
+		curses_input("Touka: ");
+	}
 
 	// Terminate
     quit_success();

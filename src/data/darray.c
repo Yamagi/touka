@@ -1,6 +1,9 @@
 /*
- * darray.c:
- *  - Simple dynamic array
+ * darray.c
+ * --------
+ *
+ * A very simple dynamic array, which is in fact
+ * more some kind of double ended queue.
  */
 
 #include <assert.h>
@@ -11,12 +14,10 @@
 #include "darray.h"
 #include "../util.h"
 
-// ----
-
 // Initial number of elements
 #define INT_ELEMENTS 16
 
-// ----
+// --------
 
 /*
  * Resizes the array if necessary.
