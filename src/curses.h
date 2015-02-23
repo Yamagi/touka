@@ -18,8 +18,11 @@
  *  - COLOR_NORM: White on black
  *  - COLOR_HIGH: Green on Black
  */
-#define COLOR_NORM 0
-#define COLOR_HIGH 1
+enum
+{
+	COLOR_NORM,
+	COLOR_HIGH
+};
 
 // --------
 
@@ -56,7 +59,7 @@ void curses_status(const char *msg);
  *
  * string: Text to print
  */
-void curses_text(boolean highlight, const char *fmt, ...);
+void curses_text(uint32_t color, const char *fmt, ...);
 
 // --------
 

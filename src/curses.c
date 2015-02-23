@@ -57,8 +57,8 @@ enum
 // One message saved for replay
 typedef struct
 {
+	uint32_t color;
 	char *msg;
-	uint32_t highlight;
 } repl_msg_s;
 
 // Linked list for replay buffer
@@ -96,14 +96,14 @@ curses_replay_callback(repl_msg_s *repl)
  * msg: Text to print
  */
 static void
-curses_print(boolean highlight, const char *msg)
+curses_print(uint32_t color, const char *msg)
 {
 	char *first;
 	char *last;
 	uint16_t i;
 	uint32_t x, y;
 
-	if (highlight)
+	if (color == COLOR_HIGH)
 	{
 		wattron(text, COLOR_PAIR(PAIR_HIGHLIGHT));
 	}
@@ -188,7 +188,7 @@ curses_resize(void)
 	while (cur)
 	{
 		rep = cur->data;
-		curses_print(rep->highlight, rep->msg);
+		curses_print(rep->color, rep->msg);
 		cur = cur->next;
 	}
 
@@ -795,7 +795,7 @@ curses_status(const char *msg)
 }
 
 void
-curses_text(boolean highlight, const char *fmt, ...)
+curses_text(uint32_t color, const char *fmt, ...)
 {
 	char *msg;
 	uint32_t x, y;
@@ -819,7 +819,7 @@ curses_text(boolean highlight, const char *fmt, ...)
 	vsnprintf(msg, len, fmt, args);
 	va_end(args);
 
-	curses_print(highlight, msg);
+	curses_print(color, msg);
 	getyx(text, y, x);
 
 	if (y < LINES - 3)
@@ -850,7 +850,7 @@ curses_text(boolean highlight, const char *fmt, ...)
 	}
 
 	rep->msg = msg;
-	rep->highlight = highlight;
+	rep->color = color;
 	list_push(repl_buf, rep);
 
 	while (repl_buf->count > REPLAY)
