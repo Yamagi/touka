@@ -64,6 +64,9 @@ typedef struct
 // Linked list for replay buffer
 static list *repl_buf;
 
+// The prompt
+char *curses_prompt;
+
 // Curses windows
 static WINDOW *input;
 static WINDOW *status;
@@ -264,6 +267,7 @@ curses_init(void)
 	log_info("Initializing ncurses");
 
 	repl_buf = list_create();
+	curses_prompt = "# ";
 
 	// Initialize ncurses
 	initscr();
@@ -317,7 +321,7 @@ curses_init(void)
 }
 
 void
-curses_input(const char *prompt)
+curses_input(void)
 {
 	char buffer[INPUTBUF];
 	char *tmp;
@@ -339,7 +343,7 @@ curses_input(const char *prompt)
 
 	wmove(input, 0, 0);
 	wclrtoeol(input);
-	waddstr(input, prompt);
+	waddstr(input, curses_prompt);
 
 	while ((key = wgetch(input)) != ERR)
 	{
@@ -360,12 +364,12 @@ curses_input(const char *prompt)
 
 				wmove(input, 0, 0);
 				wclrtoeol(input);
-				waddstr(input, prompt);
+				waddstr(input, curses_prompt);
 
-				start = strlen(buffer) - (COLS - 1 - strlen(prompt));
+				start = strlen(buffer) - (COLS - 1 - strlen(curses_prompt));
 				start = start < 0 ? 0 : start;
 
-				for (i = 0; i < COLS - strlen(prompt)
+				for (i = 0; i < COLS - strlen(curses_prompt)
 						&& buffer[start + i] != '\0'; i++)
 				{
 					waddch(input, buffer[start + i]);
@@ -374,7 +378,7 @@ curses_input(const char *prompt)
 				if (position > start)
 				{
 					getyx(input, y, x);
-					wmove(input, y, strlen(prompt) + position - start);
+					wmove(input, y, strlen(curses_prompt) + position - start);
 				}
 				else
 				{
@@ -386,7 +390,7 @@ curses_input(const char *prompt)
 
 			// Delete current line
 			case KEY_ESC:
-				wmove(input, 0, strlen(prompt));
+				wmove(input, 0, strlen(curses_prompt));
 				wclrtoeol(input);
 
 				memset(buffer, 0, sizeof(buffer));
@@ -409,14 +413,14 @@ curses_input(const char *prompt)
 					memset(buffer, 0, sizeof(buffer));
 					strncpy(buffer, tmp, sizeof(buffer));
 
-					start = strlen(buffer) - (COLS - 1 - strlen(prompt));
+					start = strlen(buffer) - (COLS - 1 - strlen(curses_prompt));
 					start = start < 0 ? 0 : start;
 					chars = strlen(buffer);
 
-					wmove(input, 0, strlen(prompt));
+					wmove(input, 0, strlen(curses_prompt));
 					wclrtoeol(input);
 
-					for (i = 0; i < COLS - strlen(prompt)
+					for (i = 0; i < COLS - strlen(curses_prompt)
 							&& buffer[start + i] != '\0'; i++)
 					{
 						waddch(input, buffer[start + i]);
@@ -438,14 +442,14 @@ curses_input(const char *prompt)
 					memset(buffer, 0, sizeof(buffer));
 					strncpy(buffer, tmp, sizeof(buffer));
 
-					start = strlen(buffer) - (COLS - 1 - strlen(prompt));
+					start = strlen(buffer) - (COLS - 1 - strlen(curses_prompt));
 					start = start < 0 ? 0 : start;
 					chars = strlen(buffer);
 
-					wmove(input, 0, strlen(prompt));
+					wmove(input, 0, strlen(curses_prompt));
 					wclrtoeol(input);
 
-					for (i = 0; i < COLS - strlen(prompt)
+					for (i = 0; i < COLS - strlen(curses_prompt)
 							&& buffer[start + i] != '\0'; i++)
 					{
 						waddch(input, buffer[start + i]);
@@ -467,14 +471,14 @@ curses_input(const char *prompt)
 					memset(buffer, 0, sizeof(buffer));
 					strncpy(buffer, tmp, sizeof(buffer));
 
-					start = strlen(buffer) - (COLS - 1 - strlen(prompt));
+					start = strlen(buffer) - (COLS - 1 - strlen(curses_prompt));
 					start = start < 0 ? 0 : start;
 					chars = strlen(buffer);
 
-					wmove(input, 0, strlen(prompt));
+					wmove(input, 0, strlen(curses_prompt));
 					wclrtoeol(input);
 
-					for (i = 0; i < COLS - strlen(prompt)
+					for (i = 0; i < COLS - strlen(curses_prompt)
 							&& buffer[start + i] != '\0'; i++)
 					{
 						waddch(input, buffer[start + i]);
@@ -509,15 +513,15 @@ curses_input(const char *prompt)
 				{
 					start -= HSCROLLOFF;
 
-					wmove(input, 0, strlen(prompt));
+					wmove(input, 0, strlen(curses_prompt));
 					wclrtoeol(input);
 
-					for (i = 0; i < COLS - strlen(prompt); i++)
+					for (i = 0; i < COLS - strlen(curses_prompt); i++)
 					{
 						waddch(input, buffer[start + i]);
 					}
 
-					wmove(input, 0, strlen(prompt) + HSCROLLOFF);
+					wmove(input, 0, strlen(curses_prompt) + HSCROLLOFF);
 				}
 
 				getyx(input, y, x);
@@ -537,16 +541,16 @@ curses_input(const char *prompt)
 				position = 0;
 				start = 0;
 
-				wmove(input, 0, strlen(prompt));
+				wmove(input, 0, strlen(curses_prompt));
 				wclrtoeol(input);
 
-				for (i = 0; i < COLS - strlen(prompt)
+				for (i = 0; i < COLS - strlen(curses_prompt)
 					   && buffer[start + i] != '\0'; i++)
 				{
 					waddch(input, buffer[start + i]);
 				}
 
-				wmove(input, 0, strlen(prompt));
+				wmove(input, 0, strlen(curses_prompt));
 
 				break;
 
@@ -564,10 +568,10 @@ curses_input(const char *prompt)
 				{
 					start += HSCROLLOFF;
 
-                    wmove(input, 0, strlen(prompt));
+                    wmove(input, 0, strlen(curses_prompt));
 					wclrtoeol(input);
 
-                    for (i = 0; i < COLS - strlen(prompt)
+                    for (i = 0; i < COLS - strlen(curses_prompt)
 						   && buffer[start + i] != '\0'; i++)
 					{
 						waddch(input, buffer[start + i]);
@@ -591,10 +595,10 @@ curses_input(const char *prompt)
 					break;
 				}
 
-				num = COLS - strlen(prompt) - HSCROLLOFF - 1;
+				num = COLS - strlen(curses_prompt) - HSCROLLOFF - 1;
 				begin = chars - num < 0 ? 0 : chars - num;
 
-				wmove(input, 0, strlen(prompt));
+				wmove(input, 0, strlen(curses_prompt));
 				wclrtoeol(input);
 
 				for (i = 0; i <= num && buffer[begin + i] != '\0'; i++)
@@ -704,11 +708,11 @@ curses_input(const char *prompt)
 					{
 						start += HSCROLLOFF;
 
-						wmove(input, 0, strlen(prompt));
+						wmove(input, 0, strlen(curses_prompt));
 						wclrtoeol(input);
 
 						// 1 for the cursor
-						for (i = 0; i < COLS - strlen(prompt)
+						for (i = 0; i < COLS - strlen(curses_prompt)
 								- HSCROLLOFF - 1; i++)
 						{
 							waddch(input, buffer[start + i]);

@@ -36,10 +36,8 @@ void curses_init(void);
  * into a buffer and sends the buffer up into
  * input frontend. This function blocks, until
  * user input was received.
- *
- * prompt: Prompt to display
  */
-void curses_input(const char *prompt);
+void curses_input(void);
 
 /*
  * Shuts ncurses down.
@@ -50,7 +48,8 @@ void curses_quit(void);
  * Prints text to the status bar. The text
  * is cut off at terminal width.
  *
- * msg: Text to print
+ * fmt: Format
+ * ...: Parameters to print
  */
 void curses_status(const char *fmt, ...);
 

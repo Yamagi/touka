@@ -79,7 +79,6 @@ main(int argc, char *argv[])
 
 	// Initialize TUI
 	curses_init();
-	curses_status("Welcome to %s", game_header->game);
 
 	// Initialize input
 	input_init();
@@ -93,7 +92,7 @@ main(int argc, char *argv[])
 	// Mainloop
 	while (TRUE)
 	{
-		curses_input("Touka: ");
+		curses_input();
 	}
 
 	// Terminate
