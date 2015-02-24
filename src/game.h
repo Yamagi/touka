@@ -64,6 +64,19 @@ typedef struct
 extern hashmap *game_scenes;
 extern game_scene_s *current_scene;
 
+/*
+ * Statistics.
+ */
+typedef struct
+{
+	uint32_t rooms_total;
+	uint32_t rooms_visited;
+	uint32_t scenes_total;
+	uint32_t scenes_visited;
+} game_stats_s;
+
+extern game_stats_s *game_stats;
+
 // --------
 
 /*

@@ -322,6 +322,7 @@ parser_add_room(game_room_s *room)
 	}
 
 	hashmap_add(game_rooms, room->name, room, MAIN);
+	game_stats->rooms_total++;
 
 	// Aliases
 	if (room->aliases)
@@ -541,6 +542,7 @@ parser_add_scene(game_scene_s *scene)
 	}
 
 	hashmap_add(game_scenes, scene->name, scene, MAIN);
+	game_stats->scenes_total++;
 
 	// Aliases
 	if (scene->aliases)

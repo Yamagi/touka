@@ -32,6 +32,9 @@ hashmap *game_rooms;
 // Scenes
 hashmap *game_scenes;
 
+// Statistics
+game_stats_s *game_stats;
+
 // Current scene
 game_scene_s *current_scene;
 
@@ -304,7 +307,16 @@ static void
 game_scene_endscreen(void)
 {
 	log_info("Game has ended");
-	curses_text(COLOR_NORM, "End-Screen Placeholder\n\n");
+
+	curses_text(COLOR_NORM, "Congratulations! You have successfull completed ");
+	curses_text(COLOR_HIGH, "%s", game_header->game);
+	curses_text(COLOR_NORM, ".\n\n");
+
+	curses_text(COLOR_NORM, "Your track record is:\n");
+	curses_text(COLOR_NORM, " - %i from %i rooms visited\n", game_stats->rooms_visited,
+			game_stats->rooms_total);
+	curses_text(COLOR_NORM, " - %i from %i scenes played\n\n", game_stats->scenes_visited,
+			game_stats->scenes_total);
 }
 
 /*
@@ -314,7 +326,20 @@ static void
 game_scene_startscreen(void)
 {
 	log_info("Game has started");
-	curses_text(COLOR_NORM, "Start-Screen Placeholder\n\n");
+
+	curses_text(COLOR_NORM, "Welcome to ");
+	curses_text(COLOR_HIGH, "%s\n", game_header->game);
+	curses_text(COLOR_NORM, "Written by %s\n\n", game_header->author);
+
+	curses_text(COLOR_NORM, "This game has:\n");
+	curses_text(COLOR_NORM, " - %i rooms\n", game_stats->rooms_total);
+	curses_text(COLOR_NORM, " - %i scenes\n\n", game_stats->scenes_total);
+
+	curses_text(COLOR_NORM, "Type ");
+	curses_text(COLOR_HIGH, "help ");
+	curses_text(COLOR_NORM, "for help, or ");
+	curses_text(COLOR_HIGH, "next ");
+	curses_text(COLOR_NORM, "to start the game.\n\n");
 }
 
 void
@@ -534,7 +559,11 @@ game_scene_play(const char *key)
 	log_info_f("Playing scene %s", current_scene->name);
 
 	// Mark scene as visited
-	scene->visited = 1;
+	if (!scene->visited)
+	{
+		scene->visited = TRUE;
+		game_stats->scenes_visited++;
+	}
 
 	// Mark room as seen
 	if ((room = hashmap_get(game_rooms, scene->room)) == NULL)
@@ -543,8 +572,12 @@ game_scene_play(const char *key)
 		quit_error("Room doesn't exist");
 	}
 
-	room->mentioned= 1;
-	room->visited = 1;
+	if (!room->visited)
+	{
+		room->mentioned = TRUE;
+		room->visited = TRUE;
+		game_stats->rooms_visited++;
+	}
 
 	// Print description
 	lnode = scene->words->first;
@@ -579,7 +612,15 @@ game_init(const char *file)
 	{
 		if ((game_header = calloc(1, sizeof(game_header_s))) == NULL)
 		{
-			quit_error("PANIC: Couldn't allocate memory");
+			quit_error("Couldn't allocate memory");
+		}
+	}
+
+	if (!game_stats)
+	{
+		if ((game_stats = calloc(1, sizeof(game_stats_s))) == NULL)
+		{
+			quit_error("Couldn't allocate memory");
 		}
 	}
 
@@ -611,6 +652,12 @@ game_quit(void)
 
 		free(game_header);
 		game_header = NULL;
+	}
+
+	if (game_stats)
+	{
+		free(game_stats);
+		game_stats = NULL;
 	}
 
 	if (game_rooms)
