@@ -527,7 +527,7 @@ game_scene_play(const char *key)
 	{
 		if ((scene = hashmap_get(game_scenes, key)) == NULL)
 		{
-			curses_text(COLOR_NORM, "No such room: %s\n", key);
+			curses_text(COLOR_NORM, "No such scene: %s\n", key);
 
 			return;
 		}
@@ -535,7 +535,7 @@ game_scene_play(const char *key)
 #ifdef NDEBUG
 		if (!scene->visited)
 		{
-			curses_text(COLOR_NORM, "No such room: %s\n", key);
+			curses_text(COLOR_NORM, "No such scene: %s\n", key);
 
 			return;
 		}

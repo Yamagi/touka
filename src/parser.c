@@ -463,7 +463,7 @@ parser_room(list *tokens)
 /*
  * Checks if a scene was parsed successfull.
  *
- * new: Room to be checked
+ * new: Scene to be checked
  */
 static void
 parser_check_scene(game_scene_s *scene)
