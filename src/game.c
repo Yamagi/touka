@@ -277,6 +277,11 @@ game_scene_destroy_callback(void *data)
 		free((char *)scene->descr);
 	}
 
+	if (scene->prompt)
+	{
+		free((char *)scene->prompt);
+	}
+
 	if (scene->room)
 	{
 		free((char *)scene->room);
@@ -586,6 +591,22 @@ game_scene_play(const char *key)
 	// Set statusbar
 	curses_status("Scene: %i/%i || Room: %s", game_stats->scenes_visited,
 			game_stats->scenes_total, room->descr);
+
+	// Set prompt
+	if (scene->prompt)
+	{
+		if (curses_prompt)
+		{
+			free(curses_prompt);
+		}
+
+        if ((curses_prompt = malloc(strlen(scene->prompt) + 2)) == NULL)
+		{
+			quit_error("Couldn't allocate memory");
+		}
+
+		snprintf(curses_prompt, sizeof(curses_prompt), "%s: ", scene->prompt);
+	}
 
 	// Print description
 	lnode = scene->words->first;

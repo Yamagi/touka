@@ -24,6 +24,9 @@ enum
 	COLOR_HIGH
 };
 
+// The prompt
+extern char *curses_prompt;
+
 // --------
 
 /*

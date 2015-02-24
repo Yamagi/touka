@@ -55,6 +55,7 @@ typedef struct
 	boolean visited;
 	const char *descr;
 	const char *name;
+	const char *prompt;
 	const char *room;
 	darray *next;
 	list *aliases;

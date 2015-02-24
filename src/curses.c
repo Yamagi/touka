@@ -267,7 +267,7 @@ curses_init(void)
 	log_info("Initializing ncurses");
 
 	repl_buf = list_create();
-	curses_prompt = "# ";
+	curses_prompt = strdup("# ");
 
 	// Initialize ncurses
 	initscr();
@@ -777,6 +777,11 @@ curses_quit(void)
 	if (repl_buf)
 	{
 		list_destroy(repl_buf, curses_replay_callback);
+	}
+
+	if (curses_prompt)
+	{
+		free(curses_prompt);
 	}
 }
 

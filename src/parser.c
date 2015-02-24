@@ -16,6 +16,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include "curses.h"
 #include "game.h"
 #include "log.h"
 #include "util.h"
@@ -628,6 +629,20 @@ parser_scene(list *tokens)
 			}
 
 			scene->descr = parser_concat(tokens);
+		}
+		else if (!strcmp(cur, "#PROMPT:"))
+		{
+			if (scene->words)
+			{
+				parser_error();
+			}
+
+			if (curses_prompt)
+			{
+				free(curses_prompt);
+			}
+
+            scene->prompt = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "#ALIAS:"))
 		{
