@@ -104,7 +104,7 @@ curses_print(uint32_t color, const char *msg)
 	char *first;
 	char *last;
 	int16_t i;
-	uint32_t x, y;
+	uint32_t x;
 
 	if (color == COLOR_HIGH)
 	{
@@ -115,7 +115,7 @@ curses_print(uint32_t color, const char *msg)
 		wattron(text, COLOR_PAIR(PAIR_TEXT));
 	}
 
-    getyx(text, y, x);
+	x = getcurx(text);
 
 	// Split line
 	if (COLS - x < strlen(msg))
@@ -163,7 +163,7 @@ curses_print(uint32_t color, const char *msg)
 static void
 curses_resize(void)
 {
-	uint32_t x, y;
+	uint32_t y;
 	listnode *cur;
 	repl_msg_s *rep;
 
@@ -197,7 +197,7 @@ curses_resize(void)
 		cur = cur->next;
 	}
 
-	getyx(text, y, x);
+	y = getcury(text);
 
 	/* Scrolls the text window to the same position
 	   as before. The math is:
@@ -224,9 +224,9 @@ curses_resize(void)
 static void
 curses_scroll(int32_t offset)
 {
-	uint32_t x, y;
+	uint32_t y;
 
-	getyx(text, y, x);
+	y= getcury(text);
 
 	// No scrollback buffer until now
 	if (y < LINES - 3)
@@ -829,7 +829,7 @@ void
 curses_text(uint32_t color, const char *fmt, ...)
 {
 	char *msg;
-	uint32_t x, y;
+	uint32_t y;
 	repl_msg_s *rep;
 	size_t len;
 	va_list args;
@@ -850,7 +850,7 @@ curses_text(uint32_t color, const char *fmt, ...)
 	va_end(args);
 
 	curses_print(color, msg);
-	getyx(text, y, x);
+	y = getcury(text);
 
 	if (y < LINES - 3)
 	{

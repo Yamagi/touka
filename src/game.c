@@ -605,7 +605,7 @@ game_scene_play(const char *key)
 			quit_error("Couldn't allocate memory");
 		}
 
-		snprintf(curses_prompt, sizeof(curses_prompt), "%s: ", scene->prompt);
+		sprintf(curses_prompt, "%s: ", scene->prompt);
 	}
 
 	// Print description
