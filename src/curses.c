@@ -149,6 +149,8 @@ curses_print(uint32_t color, const char *msg)
 		{
 			waddstr(text, "\n");
 		}
+
+		free(first);
 	}
 
 	waddstr(text, msg);
@@ -819,6 +821,8 @@ curses_status(const char *fmt, ...)
 
     wnoutrefresh(status);
 	doupdate();
+
+	free(msg);
 }
 
 void

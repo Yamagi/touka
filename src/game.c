@@ -600,7 +600,7 @@ game_scene_play(const char *key)
 			free(curses_prompt);
 		}
 
-        if ((curses_prompt = malloc(strlen(scene->prompt) + 2)) == NULL)
+        if ((curses_prompt = malloc(strlen(scene->prompt) + 3)) == NULL)
 		{
 			quit_error("Couldn't allocate memory");
 		}
