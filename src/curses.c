@@ -777,11 +777,29 @@ curses_quit(void)
 }
 
 void
-curses_status(const char *msg)
+curses_status(const char *fmt, ...)
 {
+	char *msg;
+	size_t len;
 	uint16_t i;
+	va_list args;
+
+	// Determine length
+	va_start(args, fmt);
+	len = vsnprintf(NULL, 0, fmt, args) + 1;
+	va_end(args);
+
+	if ((msg = malloc(len)) == NULL)
+	{
+		quit_error("Couldn't allocate memory");
+	}
+
+    va_start(args, fmt);
+	vsnprintf(msg, len, fmt, args);
+	va_end(args);
 
     wmove(status, 0, 0);
+	wclrtoeol(status);
 
 	for (i = 0; i < COLS && msg[i] != '\0'; i++)
 	{

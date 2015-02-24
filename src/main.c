@@ -79,7 +79,7 @@ main(int argc, char *argv[])
 
 	// Initialize TUI
 	curses_init();
-	curses_status("Cool status message :)");
+	curses_status("Welcome to %s", game_header->game);
 
 	// Initialize input
 	input_init();

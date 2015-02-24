@@ -52,7 +52,7 @@ void curses_quit(void);
  *
  * msg: Text to print
  */
-void curses_status(const char *msg);
+void curses_status(const char *fmt, ...);
 
 /*
  * Prints a string into the main window.

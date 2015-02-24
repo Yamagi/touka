@@ -317,6 +317,8 @@ game_scene_endscreen(void)
 			game_stats->rooms_total);
 	curses_text(COLOR_NORM, " - %i from %i scenes played\n\n", game_stats->scenes_visited,
 			game_stats->scenes_total);
+
+	curses_status("Game is finished");
 }
 
 /*
@@ -340,6 +342,8 @@ game_scene_startscreen(void)
 	curses_text(COLOR_NORM, "for help, or ");
 	curses_text(COLOR_HIGH, "next ");
 	curses_text(COLOR_NORM, "to start the game.\n\n");
+
+	curses_status("Welcome to %s", game_header->game);
 }
 
 void
@@ -578,6 +582,10 @@ game_scene_play(const char *key)
 		room->visited = TRUE;
 		game_stats->rooms_visited++;
 	}
+
+	// Set statusbar
+	curses_status("Scene: %i/%i || Room: %s", game_stats->scenes_visited,
+			game_stats->scenes_total, room->descr);
 
 	// Print description
 	lnode = scene->words->first;
