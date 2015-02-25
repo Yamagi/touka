@@ -46,8 +46,8 @@ static char
 {
 	char *cur;
 	char *string;
-	int32_t len;
-	int32_t oldlen;
+	size_t len;
+	size_t oldlen;
 
 	assert(tokens);
 

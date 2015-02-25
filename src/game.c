@@ -43,6 +43,104 @@ static boolean game_end;
 
 // --------
 
+static void
+game_print_description(list *words)
+{
+	char *cur;
+	char *line;
+	char *work;
+	list *parts;
+	listnode *node;
+	size_t len;
+	size_t oldlen;
+	uint32_t i;
+	uint32_t count;
+
+	assert(words);
+
+	len = 0;
+	line = NULL;
+	node = words->first;
+
+	while (node)
+	{
+		cur = node->data;
+
+		if (!line)
+		{
+			oldlen = 0;
+			len = strlen(cur) + 2;
+		}
+		else
+		{
+			oldlen = len;
+			len += strlen(line) + strlen(cur) + 2;
+		}
+
+		if ((line = realloc(line, len)) == NULL)
+		{
+			quit_error("Couldn't allocate memory");
+		}
+
+		memset(line + oldlen, 0, len - oldlen);
+		strncat(line, cur, len);
+
+		if (node->next)
+		{
+			if (line[strlen(line) - 1] != '\n')
+			{
+				strncat(line, " ", len);
+			}
+		}
+
+		node = node->next;
+	}
+
+	count = 0;
+
+	for (i = 0; i <= strlen(line); i++)
+	{
+		if (line[i] == '|')
+		{
+			count++;
+		}
+	}
+
+	if ((count % 2) != 0)
+	{
+		log_error("Syntax error, uneven number of |");
+
+		curses_text(COLOR_NORM, line);
+		curses_text(COLOR_NORM, "\n");
+
+		return;
+	}
+
+	count = 0;
+	parts = list_create();
+	work = line;
+
+    while ((cur = strsep(&work, "|")) != NULL)
+	{
+		count++;
+
+		if ((count % 2) == 0)
+		{
+			curses_text(COLOR_HIGH, cur);
+		}
+		else
+		{
+			curses_text(COLOR_NORM, cur);
+		}
+	}
+
+	curses_text(COLOR_NORM, "\n");
+	free(line);
+}
+
+
+// --------
+
 /*
  * Callback destroy a room.
  *
@@ -523,8 +621,6 @@ game_scene_next(uint8_t choice)
 void
 game_scene_play(const char *key)
 {
-	uint16_t i;
-	listnode *lnode;
 	game_room_s *room;
 	game_scene_s *scene;
 
@@ -609,23 +705,7 @@ game_scene_play(const char *key)
 	}
 
 	// Print description
-	lnode = scene->words->first;
-
-	for (i = 0; i < scene->words->count; i++)
-	{
-		if (!strcmp(lnode->data, "\n") || i == scene->words->count - 1)
-		{
-			curses_text(COLOR_NORM, lnode->data);
-		}
-		else
-		{
-			curses_text(COLOR_NORM, "%s ", lnode->data);
-		}
-
-		lnode = lnode->next;
-	}
-
-	curses_text(COLOR_NORM, "\n");
+	game_print_description(scene->words);
 }
 
 // --------
