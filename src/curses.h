@@ -20,8 +20,9 @@
  */
 enum
 {
+	COLOR_HIGH,
 	COLOR_NORM,
-	COLOR_HIGH
+	COLOR_ROOM
 };
 
 // The prompt

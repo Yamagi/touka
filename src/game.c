@@ -43,99 +43,247 @@ static boolean game_end;
 
 // --------
 
+static uint32_t
+game_match_link(char *link)
+{
+	game_room_s *room;
+
+	uint32_t i;
+
+	assert(link);
+
+	// Remove | at the end
+	link[strlen(link) - 1] = '\0';
+
+	// Remove | at the beginning
+	for (i = 0; i < strlen(link); i++)
+	{
+		link[i] = link[i + 1];
+	}
+
+	if ((room = hashmap_get(game_rooms, link)) != NULL)
+	{
+		return COLOR_ROOM;
+	}
+
+	log_warn_f("Link %s didn't match anything", link);
+
+	return COLOR_HIGH;
+}
+
 static void
 game_print_description(list *words)
 {
 	char *cur;
-	char *line;
-	char *work;
-	list *parts;
+	char *link;
+	char tmp[3];
 	listnode *node;
-	size_t len;
-	size_t oldlen;
-	uint32_t i;
-	uint32_t count;
+	size_t len, oldlen;
+	uint32_t color;
 
-	assert(words);
+	assert (words);
 
-	len = 0;
-	line = NULL;
+	link = NULL;
 	node = words->first;
+	memset(tmp, 0, sizeof(tmp));
 
 	while (node)
 	{
 		cur = node->data;
 
-		if (!line)
+		// Word starts a link
+		if (!strncmp(cur, "|", 1))
 		{
+			// We are already in a link
+			if (link)
+			{
+				log_error("Nested link detected");
+
+				if (!node->next || !strcmp(cur, "\n"))
+				{
+					curses_text(COLOR_NORM, cur);
+				}
+				else
+				{
+					curses_text(COLOR_NORM, "%s ", cur);
+				}
+
+				node = node->next;
+				continue;
+			}
+
+			// The link has only one word
+			if (!strncmp(&cur[strlen(cur) - 1], "|", 1)
+					|| !strncmp(&cur[strlen(cur) - 2], "|", 1))
+			{
+				link = strdup(cur);
+
+				// Sentence mark
+				if (!strncmp(&link[strlen(link) - 2], "|", 1))
+				{
+					stpncpy(tmp, &link[strlen(link) - 1], sizeof(tmp));
+					link[strlen(link) - 1] = '\0';
+				}
+
+				color = game_match_link(link);
+
+				curses_text(color, link);
+
+				if (!node->next || !strcmp(cur, "\n"))
+				{
+					curses_text(color, tmp);
+				}
+				else
+				{
+					curses_text(color, "%s ", tmp);
+				}
+
+				free(link);
+				link = NULL;
+				memset(tmp, 0, sizeof(tmp));
+
+				node = node->next;
+				continue;
+			}
+
+			// Links begins here
 			oldlen = 0;
 			len = strlen(cur) + 2;
+
+			if ((link = calloc(1, len)) == 0)
+			{
+				quit_error("Couldn't allocate memory");
+			}
+
+			strncat(link, cur, len);
+			strncat(link, " ", len);
+
+			node = node->next;
+			continue;
+		}
+
+		// Word ends a link
+		if (!strncmp(&cur[strlen(cur) - 1], "|", 1)
+				|| !strncmp(&cur[strlen(cur) - 2], "|", 1))
+		{
+			// Not in a link
+			if (!link)
+			{
+				log_error("Closing an unopened link");
+
+				if (!node->next || !strcmp(cur, "\n"))
+				{
+					curses_text(COLOR_NORM, cur);
+				}
+				else
+				{
+					curses_text(COLOR_NORM, "%s ", cur);
+				}
+
+				node = node->next;
+				continue;
+			}
+
+			oldlen = len;
+			len = strlen(cur) + len + 2;
+
+			if ((link = realloc(link, len)) == NULL)
+			{
+				quit_error("Couldn't allocate memory");
+			}
+
+			memset(link + len, 0, len - oldlen);
+			strncat(link, cur, len);
+
+			// Sentence mark
+			if (!strncmp(&link[strlen(link) - 2], "|", 1))
+			{
+				stpncpy(tmp, &link[strlen(link) - 1], sizeof(tmp));
+				link[strlen(link) - 1] = '\0';
+			}
+
+			color = game_match_link(link);
+
+			curses_text(color, link);
+
+			if (!node->next || !strcmp(cur, "\n"))
+			{
+				curses_text(color, tmp);
+			}
+			else
+			{
+				curses_text(color, "%s ", tmp);
+			}
+
+			free(link);
+			link = NULL;
+			memset(tmp, 0, sizeof(tmp));
+
+			node = node->next;
+			continue;
+		}
+
+		// Word is part of a link
+		if (link)
+		{
+			if (!strcmp(cur, "\n"))
+			{
+				log_error("Line break in link");
+
+				if (!node->next || !strcmp(cur, "\n"))
+				{
+					curses_text(COLOR_NORM, "%s ", link);
+					curses_text(COLOR_NORM, cur);
+				}
+				else
+				{
+					curses_text(COLOR_NORM, "%s ", link);
+					curses_text(COLOR_NORM, "%s ", cur);
+				}
+
+				free(link);
+				link = NULL;
+
+				node = node->next;
+				continue;
+			}
+
+			oldlen = len;
+			len = strlen(cur) + len + 2;
+
+			if ((link = realloc(link, len)) == NULL)
+			{
+				quit_error("Couldn't allocate memory");
+			}
+
+			memset(link + len, 0, len - oldlen);
+			strncat(link, cur, len);
+			strncat(link, " ", len);
+
+            node = node->next;
+			continue;
+		}
+
+		// Normal word
+		if (!node->next || !strcmp(cur, "\n"))
+		{
+			curses_text(COLOR_NORM, cur);
 		}
 		else
 		{
-			oldlen = len;
-			len += strlen(line) + strlen(cur) + 2;
-		}
-
-		if ((line = realloc(line, len)) == NULL)
-		{
-			quit_error("Couldn't allocate memory");
-		}
-
-		memset(line + oldlen, 0, len - oldlen);
-		strncat(line, cur, len);
-
-		if (node->next)
-		{
-			if (line[strlen(line) - 1] != '\n')
-			{
-				strncat(line, " ", len);
-			}
+			curses_text(COLOR_NORM, "%s ", cur);
 		}
 
 		node = node->next;
 	}
 
-	count = 0;
-
-	for (i = 0; i <= strlen(line); i++)
+	// Link still open
+	if (link)
 	{
-		if (line[i] == '|')
-		{
-			count++;
-		}
-	}
-
-	if ((count % 2) != 0)
-	{
-		log_error("Syntax error, uneven number of |");
-
-		curses_text(COLOR_NORM, line);
-		curses_text(COLOR_NORM, "\n");
-
-		return;
-	}
-
-	count = 0;
-	parts = list_create();
-	work = line;
-
-    while ((cur = strsep(&work, "|")) != NULL)
-	{
-		count++;
-
-		if ((count % 2) == 0)
-		{
-			curses_text(COLOR_HIGH, cur);
-		}
-		else
-		{
-			curses_text(COLOR_NORM, cur);
-		}
+		log_error("Link still open at end of description");
 	}
 
 	curses_text(COLOR_NORM, "\n");
-	free(line);
 }
 
 

@@ -50,6 +50,7 @@ enum
 {
 	PAIR_HIGHLIGHT = 1,
 	PAIR_INPUT,
+	PAIR_ROOM,
 	PAIR_STATUS,
 	PAIR_TEXT
 };
@@ -109,6 +110,10 @@ curses_print(uint32_t color, const char *msg)
 	if (color == COLOR_HIGH)
 	{
 		wattron(text, COLOR_PAIR(PAIR_HIGHLIGHT));
+	}
+	else if (color == COLOR_ROOM)
+	{
+		wattron(text, COLOR_PAIR(PAIR_ROOM));
 	}
 	else
 	{
@@ -281,10 +286,11 @@ curses_init(void)
 
 	if (!can_change_color())
 	{
-		log_warn("Terminal cannot change colors: Using unfancy standard color");
+		log_warn("Terminal cannot change colors, using unfancy standard color");
 
 		init_pair(PAIR_HIGHLIGHT, COLOR_GREEN, COLOR_BLACK);
 		init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
+		init_pair(PAIR_ROOM, COLOR_BLUE, COLOR_BLACK);
 		init_pair(PAIR_STATUS, COLOR_CYAN, COLOR_BLUE);
 		init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 	}
@@ -294,11 +300,12 @@ curses_init(void)
 
 		init_pair(PAIR_HIGHLIGHT, COLOR_YELLOW, COLOR_BLACK);
 		init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
+		init_pair(PAIR_ROOM, COLOR_BLUE, COLOR_BLACK);
 		init_pair(PAIR_STATUS, COLOR_BLACK, COLOR_STAT_GREY);
 		init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 	}
 
-	log_info_f("Terminal size is: %i*%i", LINES, COLS);
+	log_info_f("Terminal size is %i*%i", LINES, COLS);
 
     // Main window
 	text = newpad(SCROLLBACK, COLS);
