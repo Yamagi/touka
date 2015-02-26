@@ -15,9 +15,8 @@ Dies ist die Beschreibung eines Testraumes. Ueber mehrere Zeilen, um
 sicher zu sein, dass der Zeilenumbruch sauber funktioniert. Bla, Bla.
 Und noch ein Umbruch. |testroom2| ist ein weiterer Raum.
 
-
 Leerzeilen sind hingegen volle Zeilenumbrüche, werden also in den Stream
-kodiert. Mal schauen ob dieser hier tut.
+kodiert. Mal schauen ob dieser hier tut. % Kommentar
 
 ----
 

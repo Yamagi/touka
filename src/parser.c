@@ -111,6 +111,7 @@ static list
 	char *work;
 	list *tokens;
 	size_t len;
+	uint32_t i;
 
 	assert(line);
 
@@ -129,6 +130,17 @@ static list
 	{
 		work[len] = '\0';
 		work--;
+	}
+
+	// Strip comments
+	for (i = 0; i < strlen(work); i++)
+	{
+		if (work[i] == '%')
+		{
+			work[i] = '\0';
+
+			break;
+		}
 	}
 
 	while ((token = strsep(&work, " \n")) != NULL)
@@ -762,6 +774,13 @@ parser_game(const char *file)
     while ((linelen = getline(&line, &linecap, game)) > 0)
 	{
 		count++;
+
+        // Line is comment
+		if (line[0] == '%')
+		{
+			continue;
+		}
+
 		tokens = parser_tokenize(line);
 
 		// What we are parsing?
