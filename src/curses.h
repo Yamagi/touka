@@ -20,8 +20,9 @@
  */
 enum
 {
-	COLOR_HIGH,
+	COLOR_HIGH = 0,
 	COLOR_NORM,
+	COLOR_PROMPT,
 	COLOR_ROOM
 };
 

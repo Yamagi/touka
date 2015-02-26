@@ -477,7 +477,7 @@ input_process(char *cmd)
 	}
 
 	// Echo the input
-	curses_text(COLOR_HIGH, "> ");
+	curses_text(COLOR_PROMPT, "> ");
 	curses_text(COLOR_NORM, "%s\n", cmd);
 
 	// And put into history

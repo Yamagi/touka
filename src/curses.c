@@ -42,7 +42,8 @@
 // Colors
 enum
 {
-	COLOR_ROOM_BLUE = 17,
+	COLOR_PROMPT_GREEN = 17,
+	COLOR_ROOM_BLUE,
 	COLOR_STAT_GREY
 };
 
@@ -51,6 +52,7 @@ enum
 {
 	PAIR_HIGHLIGHT = 1,
 	PAIR_INPUT,
+	PAIR_PROMPT,
 	PAIR_ROOM,
 	PAIR_STATUS,
 	PAIR_TEXT
@@ -111,6 +113,10 @@ curses_print(uint32_t color, const char *msg)
 	if (color == COLOR_HIGH)
 	{
 		wattron(text, COLOR_PAIR(PAIR_HIGHLIGHT));
+	}
+	else if (color == COLOR_PROMPT)
+	{
+		wattron(text, COLOR_PAIR(PAIR_PROMPT));
 	}
 	else if (color == COLOR_ROOM)
 	{
@@ -291,17 +297,20 @@ curses_init(void)
 
 		init_pair(PAIR_HIGHLIGHT, COLOR_GREEN, COLOR_BLACK);
 		init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
+		init_pair(PAIR_PROMPT, COLOR_GREEN, COLOR_BLACK);
 		init_pair(PAIR_ROOM, COLOR_BLUE, COLOR_BLACK);
 		init_pair(PAIR_STATUS, COLOR_CYAN, COLOR_BLUE);
 		init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 	}
 	else
 	{
+		init_color(COLOR_PROMPT_GREEN, 168, 613, 277);
 		init_color(COLOR_ROOM_BLUE, 473, 753, 895);
 		init_color(COLOR_STAT_GREY, 679, 669, 578);
 
 		init_pair(PAIR_HIGHLIGHT, COLOR_YELLOW, COLOR_BLACK);
 		init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
+		init_pair(PAIR_PROMPT, COLOR_PROMPT_GREEN, COLOR_BLACK);
 		init_pair(PAIR_ROOM, COLOR_ROOM_BLUE, COLOR_BLACK);
 		init_pair(PAIR_STATUS, COLOR_BLACK, COLOR_STAT_GREY);
 		init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
