@@ -13,7 +13,7 @@
 
 Dies ist die Beschreibung eines Testraumes. Ueber mehrere Zeilen, um
 sicher zu sein, dass der Zeilenumbruch sauber funktioniert. Bla, Bla.
-Und noch ein Umbruch.
+Und noch ein Umbruch. |testroom2| ist ein weiterer Raum.
 
 
 Leerzeilen sind hingegen volle Zeilenumbrüche, werden also in den Stream
@@ -37,12 +37,12 @@ Eine kurze Testbeschreibung eines zweiten Raumes ohne Aliases.
 #NEXT: testscene2
 #NEXT: END
 
-|Eine tolle| Testscene. Wieder eine Beschreibung ueber mehrere Zeilen um
-zu schauen, ob wir die |Umbrueche korrekt parsen|. In |testroom1| spielt
-diese |Szene|.
+Eine tolle Testscene. Wieder eine Beschreibung ueber mehrere Zeilen um
+zu schauen, ob wir die Umbrueche korrekt parsen. In |testroom1| spielt
+diese Szene.
 
 Und wieder ist eine freie Zeile ein Zeilenumbruch. Und auch hier im
-Spiel. |Endlink|
+Spiel.
 
 ----
 

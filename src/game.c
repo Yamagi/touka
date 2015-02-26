@@ -4,7 +4,8 @@
  *
  * This file runs the game. The upperst level
  * is a scene, which is composed of a room and
- * a description.
+ * a description. The description can have
+ * links
  */
 
 #include <assert.h>
@@ -43,6 +44,20 @@ static boolean game_end;
 
 // --------
 
+/*
+ * Removes the link markers around the
+ * given link, matches it against all
+ * known objects and returns the color
+ * desriping the object. Of no object
+ * is found, COLOR_NORM is returned.
+ *
+ * Please note that the matcher uses a
+ * "first match serves" approach, e.g.
+ * if a match is found it shadows all
+ * other objects.
+ *
+ * link: Link to match.
+ */
 static uint32_t
 game_match_link(char *link)
 {
@@ -63,14 +78,27 @@ game_match_link(char *link)
 
 	if ((room = hashmap_get(game_rooms, link)) != NULL)
 	{
+		if (!room->mentioned)
+		{
+			room->mentioned = 1;
+		}
+
 		return COLOR_ROOM;
 	}
 
 	log_warn_f("Link %s didn't match anything", link);
 
-	return COLOR_HIGH;
+	return COLOR_NORM;
 }
 
+/*
+ * Prints a description. Link detection
+ * is performed and the links are matched
+ * by game_link_match(). Links are printed
+ * in a specific color.
+ *
+ * words: List with words to print
+ */
 static void
 game_print_description(list *words)
 {
@@ -94,7 +122,6 @@ game_print_description(list *words)
 		// Word starts a link
 		if (!strncmp(cur, "|", 1))
 		{
-			// We are already in a link
 			if (link)
 			{
 				log_error("Nested link detected");
@@ -112,13 +139,11 @@ game_print_description(list *words)
 				continue;
 			}
 
-			// The link has only one word
 			if (!strncmp(&cur[strlen(cur) - 1], "|", 1)
 					|| !strncmp(&cur[strlen(cur) - 2], "|", 1))
 			{
 				link = strdup(cur);
 
-				// Sentence mark
 				if (!strncmp(&link[strlen(link) - 2], "|", 1))
 				{
 					stpncpy(tmp, &link[strlen(link) - 1], sizeof(tmp));
@@ -146,7 +171,6 @@ game_print_description(list *words)
 				continue;
 			}
 
-			// Links begins here
 			oldlen = 0;
 			len = strlen(cur) + 2;
 
@@ -166,7 +190,6 @@ game_print_description(list *words)
 		if (!strncmp(&cur[strlen(cur) - 1], "|", 1)
 				|| !strncmp(&cur[strlen(cur) - 2], "|", 1))
 		{
-			// Not in a link
 			if (!link)
 			{
 				log_error("Closing an unopened link");
@@ -195,7 +218,6 @@ game_print_description(list *words)
 			memset(link + len, 0, len - oldlen);
 			strncat(link, cur, len);
 
-			// Sentence mark
 			if (!strncmp(&link[strlen(link) - 2], "|", 1))
 			{
 				stpncpy(tmp, &link[strlen(link) - 1], sizeof(tmp));
@@ -395,24 +417,7 @@ game_room_describe(const char *key)
 #endif // NDEBUG
 
 	// Print description
-	lnode = room->words->first;
-
-	for (i = 0; i < room->words->count; i++)
-	{
-		if (!strcmp(lnode->data, "\n") || i == room->words->count - 1)
-		{
-			curses_text(COLOR_NORM, lnode->data);
-		}
-		else
-		{
-			curses_text(COLOR_NORM, "%s ", lnode->data);
-		}
-
-		lnode = lnode->next;
-	}
-
-	curses_text(COLOR_NORM, "\n");
-
+	game_print_description(room->words);
 }
 
 void
