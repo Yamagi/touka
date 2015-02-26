@@ -42,7 +42,8 @@
 // Colors
 enum
 {
-	COLOR_STAT_GREY = 17
+	COLOR_ROOM_BLUE = 17,
+	COLOR_STAT_GREY
 };
 
 // Colorpairs
@@ -296,11 +297,12 @@ curses_init(void)
 	}
 	else
 	{
+		init_color(COLOR_ROOM_BLUE, 473, 753, 895);
 		init_color(COLOR_STAT_GREY, 679, 669, 578);
 
 		init_pair(PAIR_HIGHLIGHT, COLOR_YELLOW, COLOR_BLACK);
 		init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
-		init_pair(PAIR_ROOM, COLOR_BLUE, COLOR_BLACK);
+		init_pair(PAIR_ROOM, COLOR_ROOM_BLUE, COLOR_BLACK);
 		init_pair(PAIR_STATUS, COLOR_BLACK, COLOR_STAT_GREY);
 		init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 	}
