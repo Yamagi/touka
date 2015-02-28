@@ -107,10 +107,12 @@ save_read(char *name)
 	char savefile[PATH_MAX];
 	char savename[PATH_MAX];
 	char *token;
+	int8_t glossary_mentioned;
 	int8_t header;
 	int8_t rooms_mentioned;
 	int8_t rooms_seen;
 	int8_t scenes_visited;
+	game_glossary_s *glossary;
 	game_room_s *room;
 	game_scene_s *scene;
 	size_t linecap;
@@ -158,6 +160,7 @@ save_read(char *name)
 	}
 
 	// Load it
+	glossary_mentioned = 0;
 	header = 1;
 	rooms_mentioned = 0;
 	rooms_seen = 0;
@@ -180,6 +183,7 @@ save_read(char *name)
 		// Empty cur ends block
 		if (linelen == 1)
 		{
+			glossary_mentioned = 0;
 			header = 0;
 			rooms_mentioned = 0;
 			rooms_seen = 0;
@@ -192,8 +196,13 @@ save_read(char *name)
 		cur[strlen(cur) - 1] = '\0';
 
 		// New block
-		if (!(header || rooms_mentioned || rooms_seen || scenes_visited))
+		if (!(glossary_mentioned || header || rooms_mentioned || rooms_seen || scenes_visited))
 		{
+			if (!strncmp(cur, "#GLOSSARY_MENTIONED:", strlen("GLOSSARY_EMNTIONED:")))
+			{
+				glossary_mentioned = 1;
+			}
+
 			if (!strncmp(cur, "#ROOMS_MENTIONED:", strlen("#ROOMS_MENTIONED:")))
 			{
 				rooms_mentioned = 1;
@@ -210,6 +219,17 @@ save_read(char *name)
 			}
 
 			continue;
+		}
+
+		// Glossary
+		if (glossary_mentioned)
+		{
+			if ((glossary = hashmap_get(game_glossary, cur)) == NULL)
+			{
+				quit_error("Savegame is broken\n");
+			}
+
+			glossary->mentioned = 1;
 		}
 
 		// Header
