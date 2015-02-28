@@ -38,7 +38,7 @@ Eine kurze Testbeschreibung eines zweiten Raumes ohne Aliases.
 
 Eine tolle Testscene. Wieder eine Beschreibung ueber mehrere Zeilen um
 zu schauen, ob wir die Umbrueche korrekt parsen. In |testroom1| spielt
-diese Szene.
+diese Szene. |glossary1|
 
 Und wieder ist eine freie Zeile ein Zeilenumbruch. Und auch hier im
 Spiel.
@@ -51,5 +51,13 @@ Spiel.
 #NEXT: END
 
 Bla, Bla, Bla.
+
+----
+
+#GLOSSARY: glossary1
+#DESCR: Ein Testeintrag
+#ALIAS: g1
+
+Dies ist ein Testeintrag im Glossar.
 
 ----

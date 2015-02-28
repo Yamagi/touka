@@ -25,6 +25,7 @@
 // --------
 
 // What we are parsing?
+static uint8_t is_glossary;
 static uint8_t is_header;
 static uint8_t is_room;
 static uint8_t is_scene;
@@ -266,6 +267,209 @@ parser_header(list *tokens)
 		else
 		{
 			parser_error();
+		}
+	}
+}
+
+// --------
+
+/*
+ * Checks if a glossary entry was parsed successfull.
+ *
+ * entry: Entry to be checked
+ */
+static void
+parser_check_glossary(game_glossary_s *entry)
+{
+	assert(entry);
+
+	if (!entry->name)
+	{
+		parser_error();
+	}
+
+	if (!entry->descr)
+	{
+		parser_error();
+	}
+
+	if (!entry->words)
+	{
+		parser_error();
+	}
+	else
+	{
+		if (!entry->words->count)
+		{
+			parser_error();
+		}
+	}
+
+	if (!entry->aliases)
+	{
+		log_info_f("Glossary entry: %s (0 aliases, %i words)", entry->name,
+				entry->words->count);
+	}
+	else
+	{
+		log_info_f("Glossary entry: %s (%i aliases, %i words)", entry->name,
+				entry->aliases->count, entry->words->count);
+	}
+}
+
+/*
+ * Adds an entry to the global
+ * glossary.
+ *
+ * entry: Entry to add
+ */
+static void
+parser_add_glossary(game_glossary_s *entry)
+{
+	listnode *lnode;
+	game_glossary_s *test;
+	int32_t i;
+
+	parser_check_glossary(entry);
+
+	if ((test = hashmap_get(game_glossary, entry->name)) != NULL)
+	{
+		log_warn_f("There's already a glossary entry with name or alias %s", entry->name);
+	}
+
+	hashmap_add(game_glossary, entry->name, entry, MAIN);
+	game_stats->glossary_total++;
+
+	// Aliases
+	if (entry->aliases)
+	{
+		if (entry->aliases->first)
+		{
+			lnode = entry->aliases->first;
+
+			for (i = 0; i  < entry->aliases->count; i++)
+			{
+				if ((test = hashmap_get(game_glossary, lnode->data)) != NULL)
+				{
+					log_warn_f("There's already a glossary entry with name or alias %s", entry->name);
+				}
+			}
+
+			hashmap_add(game_glossary, lnode->data, entry, ALIAS);
+			lnode = lnode->next;
+		}
+	}
+}
+
+/*
+ * Parses a glossary entry.
+ *
+ * tokens: Line to parse
+ */
+static void
+parser_glossary(list *tokens)
+{
+	char *cur;
+	uint32_t i;
+	static game_glossary_s *entry;
+
+	assert(tokens);
+
+	if (!entry)
+	{
+		if ((entry = calloc(1, sizeof(game_glossary_s))) == NULL)
+		{
+			quit_error("Couldn't allocate memory");
+		}
+	}
+
+	// Empty input line
+	if (!tokens->count)
+	{
+		if (entry->words)
+		{
+			if (entry->words->last)
+			{
+				if (strcmp(entry->words->last->data, "\n"))
+				{
+					list_push(entry->words, strdup("\n"));
+				}
+			}
+		}
+	}
+
+	while (tokens->count > 0)
+	{
+		cur = list_shift(tokens);
+
+		if (!strcmp(cur, "#GLOSSARY:"))
+		{
+			if (entry->name || entry->words)
+			{
+				parser_error();
+			}
+
+			if (tokens->count != 1)
+			{
+				parser_error();
+			}
+
+			entry->name = strdup(list_shift(tokens));
+		}
+		else if (!strcmp(cur, "#DESCR:"))
+		{
+			if (entry->words)
+			{
+				parser_error();
+			}
+
+			entry->descr = parser_concat(tokens);
+		}
+		else if (!strcmp(cur, "#ALIAS:"))
+		{
+			if (entry->words)
+			{
+				parser_error();
+			}
+
+			if (!entry->aliases)
+			{
+				entry->aliases = list_create();
+			}
+
+			list_push(entry->aliases, parser_concat(tokens));
+		}
+		else if (!strcmp(cur, "----"))
+		{
+			if (entry->words)
+			{
+				if (entry->words->last)
+				{
+					while (!strcmp(entry->words->last->data, "\n"))
+					{
+						free(list_pop(entry->words));
+					}
+				}
+			}
+
+			parser_add_glossary(entry);
+
+			is_glossary = 0;
+			entry = NULL;
+		}
+		else
+		{
+			if (!entry->words)
+			{
+				entry->words = list_create();
+			}
+
+			list_push(entry->words, strdup(cur));
+
+			for (i = 0; tokens->count; i++)
+			{
+				list_push(entry->words, strdup(list_shift(tokens)));
+			}
 		}
 	}
 }
@@ -784,18 +988,23 @@ parser_game(const char *file)
 		tokens = parser_tokenize(line);
 
 		// What we are parsing?
-		if (!(is_header || is_room || is_scene))
+		if (!(is_glossary || is_header || is_room || is_scene))
 		{
 			if (tokens->count > 0)
 			{
 				tmp = list_shift(tokens);
 
-				if (!strcmp(tmp, "#ROOM:"))
+				if (!strcmp(tmp, "#GLOSSARY:"))
+				{
+					is_glossary = 1;
+					list_unshift(tokens, tmp);
+				}
+				else if (!strcmp(tmp, "#ROOM:"))
 				{
 					is_room = 1;
 					list_unshift(tokens, tmp);
 				}
-				if (!strcmp(tmp, "#SCENE:"))
+				else if (!strcmp(tmp, "#SCENE:"))
 				{
 					is_scene = 1;
 					list_unshift(tokens, tmp);
@@ -810,6 +1019,12 @@ parser_game(const char *file)
 				list_destroy(tokens, NULL);
 				continue;
 			}
+		}
+
+		// Glossary
+		if (is_glossary)
+		{
+			parser_glossary(tokens);
 		}
 
 		// Header

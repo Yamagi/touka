@@ -85,6 +85,8 @@ extern game_scene_s *current_scene;
  */
 typedef struct
 {
+	uint32_t glossary_total;
+	uint32_t glossary_mentioned;
 	uint32_t rooms_total;
 	uint32_t rooms_visited;
 	uint32_t scenes_total;
