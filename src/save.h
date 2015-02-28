@@ -36,7 +36,7 @@ void save_list(void);
  *
  * name: Name of the savegame
  */
-uint32_t save_read(char *name);
+boolean save_read(char *name);
 
 /*
  * Saves the game.

@@ -182,7 +182,7 @@ save_list(void)
 	log_info_f("Listed %i savegames", count);
 }
 
-int32_t
+boolean
 save_read(char *name)
 {
 	FILE *save;
@@ -233,14 +233,14 @@ save_read(char *name)
 		{
 			curses_text(COLOR_NORM, "Savegame %s doesn't exists\n", name);
 
-			return -1;
+			return FALSE;
 		}
 	}
 	else
 	{
 			curses_text(COLOR_NORM, "Savegame %s doesn't exists\n", name);
 
-			return -1;
+			return FALSE;
 	}
 
 	// Load it
@@ -330,7 +330,7 @@ save_read(char *name)
 				{
 					curses_text(COLOR_NORM, "Savegame from another game\n");
 
-					return -1;
+					return FALSE;
 				}
 			}
 
@@ -386,7 +386,7 @@ save_read(char *name)
 
 	free(line);
 
-	return 0;
+	return TRUE;
 }
 
 void

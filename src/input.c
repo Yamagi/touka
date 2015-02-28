@@ -131,8 +131,10 @@ cmd_load(char *msg)
 {
 	if (msg)
 	{
-		save_read(msg);
-		game_scene_play(NULL);
+		if (save_read(msg))
+		{
+			game_scene_play(NULL);
+		}
 	}
 	else
 	{
