@@ -42,7 +42,8 @@
 // Colors
 enum
 {
-	COLOR_HIGHLIGHT_YELLOW = 17,
+	COLOR_GLOSSARY_RED = 17,
+	COLOR_HIGHLIGHT_YELLOW,
 	COLOR_PROMPT_GREEN,
 	COLOR_ROOM_BLUE,
 	COLOR_STAT_GREY
@@ -51,7 +52,8 @@ enum
 // Colorpairs
 enum
 {
-	PAIR_HIGHLIGHT = 1,
+	PAIR_GLOSSARY = 1,
+	PAIR_HIGHLIGHT,
 	PAIR_INPUT,
 	PAIR_PROMPT,
 	PAIR_ROOM,
@@ -111,7 +113,11 @@ curses_print(uint32_t color, const char *msg)
 	int16_t i;
 	uint32_t x;
 
-	if (color == COLOR_HIGH)
+	if (color == COLOR_GLOSSARY)
+	{
+		wattron(text, COLOR_PAIR(PAIR_GLOSSARY));
+	}
+	else if (color == COLOR_HIGH)
 	{
 		wattron(text, COLOR_PAIR(PAIR_HIGHLIGHT));
 	}
@@ -296,6 +302,7 @@ curses_init(void)
 	{
 		log_warn("Terminal cannot change colors, using unfancy standard color");
 
+		init_pair(PAIR_GLOSSARY, COLOR_RED, COLOR_BLACK);
 		init_pair(PAIR_HIGHLIGHT, COLOR_GREEN, COLOR_BLACK);
 		init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
 		init_pair(PAIR_PROMPT, COLOR_GREEN, COLOR_BLACK);
@@ -305,11 +312,13 @@ curses_init(void)
 	}
 	else
 	{
+		init_color(COLOR_GLOSSARY_RED, 753, 333, 333);
 		init_color(COLOR_HIGHLIGHT_YELLOW, 767, 767, 144);
 		init_color(COLOR_PROMPT_GREEN, 168, 613, 277);
 		init_color(COLOR_ROOM_BLUE, 473, 753, 895);
 		init_color(COLOR_STAT_GREY, 679, 669, 578);
 
+		init_pair(PAIR_GLOSSARY, COLOR_GLOSSARY_RED, COLOR_BLACK);
 		init_pair(PAIR_HIGHLIGHT, COLOR_HIGHLIGHT_YELLOW, COLOR_BLACK);
 		init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
 		init_pair(PAIR_PROMPT, COLOR_PROMPT_GREEN, COLOR_BLACK);

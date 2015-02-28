@@ -64,6 +64,7 @@ static boolean game_end;
 static uint32_t
 game_match_link(char *link)
 {
+	game_glossary_s *glossary;
 	game_room_s *room;
 
 	uint32_t i;
@@ -79,6 +80,18 @@ game_match_link(char *link)
 		link[i] = link[i + 1];
 	}
 
+	// Glossary
+	if ((glossary = hashmap_get(game_glossary, link)) != NULL)
+	{
+		if (!glossary->mentioned)
+		{
+			glossary->mentioned = 1;
+		}
+
+		return COLOR_GLOSSARY;
+	}
+
+	// Room
 	if ((room = hashmap_get(game_rooms, link)) != NULL)
 	{
 		if (!room->mentioned)
