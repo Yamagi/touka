@@ -2,7 +2,7 @@
  * main.h
  * ------
  *
- * Global macros. Either for coniguration
+ * Global macros. Either for configuration
  * or implementation.
  */
 
@@ -43,7 +43,7 @@
 #define LOGNUM 15
 
 // Version number
-#define VERSION "0.1"
+#define VERSION "0.5"
 
 // Number of lines in the scrollback buffer
 #define SCROLLBACK 512
