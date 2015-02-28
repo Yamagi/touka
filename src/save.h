@@ -1,7 +1,7 @@
 /*
  * Code to save the game state into a file and
- * load it back at a later time. Also available
- * savegame files can be listed.
+ * load it back at a later time. All available
+ * savegame files can be listed, too.
  *
  * Since the save games are written in plain
  * text and parsed at load, they shouled be
@@ -11,6 +11,8 @@
 
 #ifndef SAVE_H_
 #define SAVE_H_
+
+// --------
 
 #include <stdint.h>
 

@@ -32,6 +32,16 @@ static char savedir[PATH_MAX];
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                        Support Functions                          *
+ *                                                                   *
+ *********************************************************************/
+
+/*
+ * Resets the global state, as if the engine
+ * was just started and the game loaded.
+ */
 static void
 save_reset_state(void)
 {
@@ -99,6 +109,12 @@ save_reset_state(void)
 }
 
 // --------
+
+/*********************************************************************
+ *                                                                   *
+ *                          Public Interface                         *
+ *                                                                   *
+ *********************************************************************/
 
 void
 save_init(const char *homedir)
