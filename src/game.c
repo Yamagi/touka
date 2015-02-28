@@ -4,8 +4,8 @@
  *
  * This file runs the game. The upperst level
  * is a scene, which is composed of a room and
- * a description. The description can have
- * links
+ * a description. Further objects are a small
+ * glossary and links.
  */
 
 #include <assert.h>
@@ -19,6 +19,7 @@
 #include "main.h"
 #include "parser.h"
 #include "util.h"
+
 #include "data/hashmap.h"
 #include "data/list.h"
 
@@ -47,17 +48,23 @@ boolean game_end;
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                        Support Functions                          *
+ *                                                                   *
+ *********************************************************************/
+
 /*
- * Removes the link markers around the
- * given link, matches it against all
- * known objects and returns the color
- * desriping the object. Of no object
- * is found, COLOR_NORM is returned.
+ * Link handling. The link must be passed with
+ * links markers (|) around it. They're removed
+ * and the link is matched against all objects.
+ * If a match is found, the corresponding color
+ * is returned. If there's no match, COLOR_NORM
+ * is returned.
  *
- * Please note that the matcher uses a
- * "first match serves" approach, e.g.
- * if a match is found it shadows all
- * other objects.
+ * Please note that the matcher uses a "first
+ * match serves" approach, e.g.  if a match is
+ * found it shadows all other objects.
  *
  * link: Link to match.
  */
@@ -86,6 +93,7 @@ game_match_link(char *link)
 		if (!glossary->mentioned)
 		{
 			glossary->mentioned = 1;
+			game_stats->glossary_mentioned++;
 		}
 
 		return COLOR_GLOSSARY;
@@ -108,10 +116,9 @@ game_match_link(char *link)
 }
 
 /*
- * Prints a description. Link detection
- * is performed and the links are matched
- * by game_link_match(). Links are printed
- * in a specific color.
+ * Prints a description. Link detection is performed
+ * and the links are matched by game_link_match().
+ * Links are printed in a specific color.
  *
  * words: List with words to print
  */
@@ -203,62 +210,65 @@ game_print_description(list *words)
 		}
 
 		// Word ends a link
-		if (!strncmp(&cur[strlen(cur) - 1], "|", 1)
-				|| !strncmp(&cur[strlen(cur) - 2], "|", 1))
+		if (strlen(cur) >= 3)
 		{
-			if (!link)
+			if (!strncmp(&cur[strlen(cur) - 1], "|", 1)
+					|| !strncmp(&cur[strlen(cur) - 2], "|", 1))
 			{
-				log_error("Closing an unopened link");
+				if (!link)
+				{
+					log_error("Closing an unopened link");
+
+					if (!node->next || !strcmp(cur, "\n"))
+					{
+						curses_text(COLOR_NORM, cur);
+					}
+					else
+					{
+						curses_text(COLOR_NORM, "%s ", cur);
+					}
+
+					node = node->next;
+					continue;
+				}
+
+				oldlen = len;
+				len = strlen(cur) + len + 2;
+
+				if ((link = realloc(link, len)) == NULL)
+				{
+					quit_error("Couldn't allocate memory");
+				}
+
+				memset(link + len, 0, len - oldlen);
+				strncat(link, cur, len);
+
+				if (!strncmp(&link[strlen(link) - 2], "|", 1))
+				{
+					stpncpy(tmp, &link[strlen(link) - 1], sizeof(tmp));
+					link[strlen(link) - 1] = '\0';
+				}
+
+				color = game_match_link(link);
+
+				curses_text(color, link);
 
 				if (!node->next || !strcmp(cur, "\n"))
 				{
-					curses_text(COLOR_NORM, cur);
+					curses_text(color, tmp);
 				}
 				else
 				{
-					curses_text(COLOR_NORM, "%s ", cur);
+					curses_text(color, "%s ", tmp);
 				}
+
+				free(link);
+				link = NULL;
+				memset(tmp, 0, sizeof(tmp));
 
 				node = node->next;
 				continue;
 			}
-
-			oldlen = len;
-			len = strlen(cur) + len + 2;
-
-			if ((link = realloc(link, len)) == NULL)
-			{
-				quit_error("Couldn't allocate memory");
-			}
-
-			memset(link + len, 0, len - oldlen);
-			strncat(link, cur, len);
-
-			if (!strncmp(&link[strlen(link) - 2], "|", 1))
-			{
-				stpncpy(tmp, &link[strlen(link) - 1], sizeof(tmp));
-				link[strlen(link) - 1] = '\0';
-			}
-
-			color = game_match_link(link);
-
-			curses_text(color, link);
-
-			if (!node->next || !strcmp(cur, "\n"))
-			{
-				curses_text(color, tmp);
-			}
-			else
-			{
-				curses_text(color, "%s ", tmp);
-			}
-
-			free(link);
-			link = NULL;
-			memset(tmp, 0, sizeof(tmp));
-
-			node = node->next;
-			continue;
 		}
 
 		// Word is part of a link
@@ -327,8 +337,15 @@ game_print_description(list *words)
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                        Glossary Functions                         *
+ *                                                                   *
+ *********************************************************************/
+
 /*
- * Callback to destroy a glossary entry.
+ * Callback to destroy an instance of 'game_glossary_s'.
+ * To be passed to hashmap_destroy() or the like.
  *
  * data: Glossary to destroy
  */
@@ -371,7 +388,7 @@ game_glossary_list(void)
 	list *data;
 	listnode *node;
 	size_t len_entry;
-	uint32_t i;
+	uint16_t i;
 
     data = hashmap_to_list(game_glossary);
 	len_entry = 0;
@@ -434,9 +451,9 @@ game_glossary_list(void)
 void
 game_glossary_print(const char *key)
 {
-	uint16_t i;
-	listnode *lnode;
 	game_glossary_s *entry;
+	listnode *lnode;
+	uint16_t i;
 
 	assert(key);
 
@@ -474,24 +491,31 @@ game_glossary_print(const char *key)
 	}
 
 	curses_text(COLOR_NORM, ":\n");
-#endif
 
-#ifdef NDEBUG
+#else
+
 	if (!entry->mentioned)
 	{
 		curses_text(COLOR_NORM, "No such glossary entry: %s\n", key);
 
 		return;
 	}
-#endif
+#endif // NDEBUG
 
 	game_print_description(entry->words);
 }
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                          Room Functions                           *
+ *                                                                   *
+ *********************************************************************/
+
 /*
- * Callback destroy a room.
+ * Callback to destroy an instance of 'game_room_s'.
+ * To be passed to hashmap_destroy() or the like.
  *
  * data: Room to destroy
  */
@@ -530,24 +554,20 @@ game_room_destroy_callback(void *data)
 void
 game_room_describe(const char *key)
 {
-	uint16_t i;
-	listnode *lnode;
 	game_room_s *room;
+	listnode *lnode;
+	uint16_t i;
 
 	assert(key);
 
 	if ((room = hashmap_get(game_rooms, key)) == NULL)
 	{
-		// Room doesn't exists
 		curses_text(COLOR_NORM, "No such room: %s\n", key);
 
 		return;
 	}
 
 #ifndef NDEBUG
-	/* When an debug build, print the room name
-	   and all it's aliases above the description. */
-
 	curses_text(COLOR_HIGH, "%s", room->name);
 
 	if (room->aliases)
@@ -577,8 +597,6 @@ game_room_describe(const char *key)
 
 #else
 
-	// Only the debug build shows not visited rooms
-
 	if (room->mentioned && !room->visited)
 	{
 		curses_text(COLOR_NORM, "Room %s was mentioned but not visited\n", key);
@@ -592,7 +610,6 @@ game_room_describe(const char *key)
 
 		return;
 	}
-
 #endif // NDEBUG
 
 	// Print description
@@ -602,11 +619,11 @@ game_room_describe(const char *key)
 void
 game_rooms_list(void)
 {
-	uint16_t i;
-	size_t len;
+	game_room_s *room;
 	list *data;
 	listnode *node;
-	game_room_s *room;
+	size_t len;
+	uint16_t i;
 
 	data = hashmap_to_list(game_rooms);
 	len = 0;
@@ -683,8 +700,15 @@ game_rooms_list(void)
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                         Scene Functions                           *
+ *                                                                   *
+ *********************************************************************/
+
 /*
- * Callback to destroy a scene.
+ * Callback to destroy an instance of 'game_scene_s'.
+ * To be passed to hashmap_destroy() or the like.
  *
  * data: Scene to destroy
  */
@@ -736,7 +760,8 @@ game_scene_destroy_callback(void *data)
 }
 
 /*
- * Prints a nice endscreen.
+ * Prints a nice endscreen with the statistics.
+ * The prompt is reset to game_header->prompt.
  */
 static void
 game_scene_endscreen(void)
@@ -748,6 +773,8 @@ game_scene_endscreen(void)
 	curses_text(COLOR_NORM, ".\n\n");
 
 	curses_text(COLOR_NORM, "Your track record is:\n");
+	curses_text(COLOR_NORM, " - %i from %i glossar entries seen\n", game_stats->glossary_mentioned,
+			game_stats->glossary_total);
 	curses_text(COLOR_NORM, " - %i from %i rooms visited\n", game_stats->rooms_visited,
 			game_stats->rooms_total);
 	curses_text(COLOR_NORM, " - %i from %i scenes played\n\n", game_stats->scenes_visited,
@@ -773,7 +800,9 @@ game_scene_endscreen(void)
 }
 
 /*
- * prints a nice startscreen.
+ * Prints a nice startscreen including statistics
+ * and a nice hint to start the game or how to get
+ * help. The prompt is set to game_header->prompt.
  */
 static void
 game_scene_startscreen(void)
@@ -785,6 +814,7 @@ game_scene_startscreen(void)
 	curses_text(COLOR_NORM, "Written by %s\n\n", game_header->author);
 
 	curses_text(COLOR_NORM, "This game has:\n");
+	curses_text(COLOR_NORM, " - %i glossar entries\n", game_stats->glossary_total);
 	curses_text(COLOR_NORM, " - %i rooms\n", game_stats->rooms_total);
 	curses_text(COLOR_NORM, " - %i scenes\n\n", game_stats->scenes_total);
 
@@ -816,11 +846,11 @@ game_scene_startscreen(void)
 void
 game_scene_list(void)
 {
-	uint16_t i;
-	size_t len_scene, len_room;
+	game_scene_s *scene;
 	list *data;
 	listnode *node;
-	game_scene_s *scene;
+	size_t len_scene, len_room;
+	uint16_t i;
 
 	data = hashmap_to_list(game_scenes);
 	len_scene = 0;
@@ -865,8 +895,10 @@ game_scene_list(void)
 		len_scene = strlen("Name");
 	}
 
-	curses_text(COLOR_NORM, "%-*s %-*s %s\n", len_scene + 1, "Name", len_room + 1, "Room", "Description");
-	curses_text(COLOR_NORM, "%-*s %-*s %s\n", len_scene + 1, "----", len_room + 1, "----", "-----------");
+	curses_text(COLOR_NORM, "%-*s %-*s %s\n", len_scene + 1, "Name", len_room + 1,
+			"Room", "Description");
+	curses_text(COLOR_NORM, "%-*s %-*s %s\n", len_scene + 1, "----", len_room + 1,
+			"----", "-----------");
 
 	for (i = 0; i <= data->count; i++)
 	{
@@ -1034,7 +1066,7 @@ game_scene_play(const char *key)
 		game_stats->scenes_visited++;
 	}
 
-	// Mark room as seen
+	// Mark room as visited
 	if ((room = hashmap_get(game_rooms, scene->room)) == NULL)
 	{
 		log_error_f("Room %s doesn't exist", scene->room);
@@ -1073,6 +1105,12 @@ game_scene_play(const char *key)
 }
 
 // --------
+
+/*********************************************************************
+ *                                                                   *
+ *                    Initialization Functions                       *
+ *                                                                   *
+ *********************************************************************/
 
 void
 game_init(const char *file)
@@ -1127,6 +1165,11 @@ game_quit(void)
 		free((char *)game_header->date);
 		free((char *)game_header->uid);
 		free((char *)game_header->first_scene);
+
+		if (game_header->prompt)
+		{
+			free((char *)game_header->prompt);
+		}
 
 		free(game_header);
 		game_header = NULL;

@@ -5,12 +5,17 @@
  * This is the "heart" of our engine, as it runs
  * the actual game. The upperst level are scenes,
  * which are composed of rooms and a description.
+ * Additionally a glossary is provided and stats
+ * are written.
  */
 
 #ifndef GAME_H_
 #define GAME_H_
 
+// --------
+
 #include "main.h"
+
 #include "data/hashmap.h"
 #include "data/list.h"
 
@@ -109,8 +114,7 @@ extern boolean game_end;
 void game_glossary_list(void);
 
 /*
- * Prints a description of a
- * glossary entry.
+ * Prints a description of a glossary entry.
  *
  * key: Entry which description is printed
  */
@@ -127,10 +131,7 @@ void game_init(const char *file);
 void game_quit(void);
 
 /*
- * Prints a room description into
- * the text window. If an debug
- * build, it's name and all aliases
- * are printed too.
+ * Prints a room description into.
  */
 void game_room_describe(const char *key);
 
