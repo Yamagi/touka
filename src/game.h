@@ -78,6 +78,7 @@ typedef struct
 	list *words;
 } game_scene_s;
 
+// Scenes
 extern hashmap *game_scenes;
 extern game_scene_s *current_scene;
 
@@ -94,7 +95,11 @@ typedef struct
 	uint32_t scenes_visited;
 } game_stats_s;
 
+// Global statistics struct
 extern game_stats_s *game_stats;
+
+// Has the game ended?
+extern boolean game_end;
 
 // --------
 

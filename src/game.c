@@ -43,7 +43,7 @@ game_stats_s *game_stats;
 game_scene_s *current_scene;
 
 // Has the game ended?
-static boolean game_end;
+boolean game_end;
 
 // --------
 

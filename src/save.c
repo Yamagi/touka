@@ -3,8 +3,7 @@
  * ------
  *
  * Code to save the game state into a file and
- * load it back at a later time. Also available
- * savegame files can be listed.
+ * load it back at a later time.
  */
 
 #define _WITH_GETLINE
@@ -20,15 +19,84 @@
 
 #include "curses.h"
 #include "game.h"
-#include "data/hashmap.h"
-#include "data/list.h"
 #include "log.h"
 #include "main.h"
 #include "util.h"
 
+#include "data/hashmap.h"
+#include "data/list.h"
+
 // --------
 
 static char savedir[PATH_MAX];
+
+// --------
+
+static void
+save_reset_state(void)
+{
+	game_glossary_s *glossary;
+	game_room_s *room;
+	game_scene_s *scene;
+	list *tmp;
+
+	// Global state
+	current_scene = NULL;
+	game_end = FALSE;
+
+	// Glossary
+	tmp = hashmap_to_list(game_glossary);
+
+	while (tmp->count)
+	{
+		glossary = list_shift(tmp);
+
+		if (glossary->mentioned)
+		{
+			glossary->mentioned = FALSE;
+		}
+	}
+
+	game_stats->glossary_mentioned = 0;
+	free(tmp);
+
+	// Rooms
+	tmp = hashmap_to_list(game_rooms);
+
+	while (tmp->count)
+	{
+		room = list_shift(tmp);
+
+		if (room->mentioned)
+		{
+			room->mentioned = FALSE;
+		}
+
+		if (room->visited)
+		{
+			room->visited = FALSE;
+		}
+	}
+
+	game_stats->rooms_visited = 0;
+	free(tmp);
+
+	// Scenes
+	tmp = hashmap_to_list(game_scenes);
+
+	while (tmp->count)
+	{
+		scene = list_shift(tmp);
+
+		if (scene->visited)
+		{
+			scene->visited = FALSE;
+		}
+	}
+
+	game_stats->scenes_visited = 0;
+	free(tmp);
+}
 
 // --------
 
@@ -47,7 +115,7 @@ save_init(const char *homedir)
 	{
 		if (!S_ISDIR(sb.st_mode))
 		{
-			quit_error("Save dir is not a directory\n");
+			quit_error("Savedir is not a directory\n");
 			exit(1);
 		}
 	}
@@ -102,17 +170,17 @@ int32_t
 save_read(char *name)
 {
 	FILE *save;
+	boolean glossary_mentioned;
+	boolean header;
+	boolean rooms_mentioned;
+	boolean rooms_seen;
+	boolean scenes_visited;
+	game_glossary_s *glossary;
 	char *cur;
 	char *line;
 	char savefile[PATH_MAX];
 	char savename[PATH_MAX];
 	char *token;
-	int8_t glossary_mentioned;
-	int8_t header;
-	int8_t rooms_mentioned;
-	int8_t rooms_seen;
-	int8_t scenes_visited;
-	game_glossary_s *glossary;
 	game_room_s *room;
 	game_scene_s *scene;
 	size_t linecap;
@@ -160,11 +228,11 @@ save_read(char *name)
 	}
 
 	// Load it
-	glossary_mentioned = 0;
-	header = 1;
-	rooms_mentioned = 0;
-	rooms_seen = 0;
-	scenes_visited = 0;
+	glossary_mentioned = FALSE;
+	header = TRUE;
+	rooms_mentioned = FALSE;
+	rooms_seen = FALSE;
+	scenes_visited = FALSE;
 
 	line = NULL;
 	linecap = 0;
@@ -176,46 +244,49 @@ save_read(char *name)
 		quit_error("Couldn't load savegame");
 	}
 
+	// Reset state
+	save_reset_state();
+
     while ((linelen = getline(&line, &linecap, save)) > 0)
 	{
 		cur = line;
 
-		// Empty cur ends block
+		// Empty line ends block
 		if (linelen == 1)
 		{
-			glossary_mentioned = 0;
-			header = 0;
-			rooms_mentioned = 0;
-			rooms_seen = 0;
-			scenes_visited = 0;
+			glossary_mentioned = FALSE;
+			header = FALSE;
+			rooms_mentioned = FALSE;
+			rooms_seen = FALSE;
+			scenes_visited = FALSE;
 
 			continue;
 		}
 
-		// Remove newcur
+		// Remove newline character
 		cur[strlen(cur) - 1] = '\0';
 
 		// New block
 		if (!(glossary_mentioned || header || rooms_mentioned || rooms_seen || scenes_visited))
 		{
-			if (!strncmp(cur, "#GLOSSARY_MENTIONED:", strlen("GLOSSARY_EMNTIONED:")))
+			if (!strncmp(cur, "#GLOSSARY_MENTIONED:", strlen("GLOSSARY_MENTIONED:")))
 			{
-				glossary_mentioned = 1;
+				glossary_mentioned = TRUE;
 			}
 
 			if (!strncmp(cur, "#ROOMS_MENTIONED:", strlen("#ROOMS_MENTIONED:")))
 			{
-				rooms_mentioned = 1;
+				rooms_mentioned = TRUE;
 			}
 
 			if (!strncmp(cur, "#ROOMS_SEEN:", strlen("#ROOMS_SEEN:")))
 			{
-				rooms_seen = 1;
+				rooms_seen = TRUE;
 			}
 
 			if (!strncmp(cur, "#SCENES_VISITED:", strlen("#SCENES_VISITED:")))
 			{
-				scenes_visited = 1;
+				scenes_visited = TRUE;
 			}
 
 			continue;
@@ -229,7 +300,7 @@ save_read(char *name)
 				quit_error("Savegame is broken\n");
 			}
 
-			glossary->mentioned = 1;
+			glossary->mentioned = TRUE;
 		}
 
 		// Header
@@ -256,6 +327,11 @@ save_read(char *name)
 
 				current_scene = scene;
 			}
+
+			if (!strcmp(token, "#GAMEEND"))
+			{
+				game_end = TRUE;
+			}
 		}
 
 		// Rooms mentioned
@@ -266,7 +342,7 @@ save_read(char *name)
 				quit_error("Savegame is broken\n");
 			}
 
-			room->mentioned = 1;
+			room->mentioned = TRUE;
 		}
 
 		// Rooms visited
@@ -277,7 +353,7 @@ save_read(char *name)
 				quit_error("Savegame is broken\n");
 			}
 
-			room->visited = 1;
+			room->visited = TRUE;
 		}
 
 		// Scenes visited
@@ -288,7 +364,7 @@ save_read(char *name)
 				quit_error("Savegame is broken\n");
 			}
 
-			scene->visited = 1;
+			scene->visited = TRUE;
 		}
 	}
 
@@ -303,9 +379,10 @@ save_write(char *name)
     FILE *save;
 	char savefile[PATH_MAX];
 	char savename[PATH_MAX];
-	list *tmp;
+	game_glossary_s *glossary;
 	game_room_s *room;
 	game_scene_s *scene;
+	list *tmp;
 
 	assert(name);
 	assert(savedir);
@@ -330,7 +407,7 @@ save_write(char *name)
 	snprintf(savefile, sizeof(savefile), "%s/%s", savedir, savename);
 	log_info_f("Saving game to %s", savefile);
 
-	// open file
+	// Open file
 	if ((save = fopen(savefile, "w")) == NULL)
 	{
 		quit_error("Couldn't open file");
@@ -348,7 +425,31 @@ save_write(char *name)
 		fwrite("\n ", strlen("\n"), 1, save);
 	}
 
+	if (game_end)
+	{
+		fwrite("#GAMEEND\n", strlen("#GAMEEND\n"), 1, save);
+	}
+
 	fwrite("\n ", strlen("\n"), 1, save);
+
+	// Write mentioned glossar entries
+	fwrite("#GLOSSAR_MENTIONED:\n", strlen("#GLOSSAR_MENTIONED:\n"), 1, save);
+
+	tmp = hashmap_to_list(game_glossary);
+
+	while (tmp->count)
+	{
+		glossary = list_shift(tmp);
+
+		if (glossary->mentioned)
+		{
+			fwrite(glossary->name, strlen(glossary->name), 1, save);
+			fwrite("\n", strlen("\n"), 1, save);
+		}
+	}
+
+	fwrite("\n", strlen("\n"), 1, save);
+	list_destroy(tmp, NULL);
 
 	// Write mentioned rooms
 	fwrite("#ROOMS_MENTIONED:\n", strlen("#ROOMS_MENTIONED:\n"), 1, save);
