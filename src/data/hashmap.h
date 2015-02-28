@@ -15,8 +15,7 @@
 #include "list.h"
 #include "list.h"
 
-#define ALIAS 1
-#define MAIN 0
+#include "../main.h"
 
 // --------
 
@@ -69,7 +68,7 @@ list *hashmap_to_list(hashmap *map);
  * key: Key
  * data: Data
  */
-void hashmap_add(hashmap *map, const char *key, void *data, int8_t alias);
+void hashmap_add(hashmap *map, const char *key, void *data, boolean alias);
 
 /*
  * Retrieves an element from the hashmap.

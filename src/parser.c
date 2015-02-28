@@ -370,7 +370,7 @@ parser_add_glossary(game_glossary_s *entry)
 		log_warn_f("There's already a glossary entry with name or alias %s", entry->name);
 	}
 
-	hashmap_add(game_glossary, entry->name, entry, MAIN);
+	hashmap_add(game_glossary, entry->name, entry, FALSE);
 	game_stats->glossary_total++;
 
 	// Aliases
@@ -388,7 +388,7 @@ parser_add_glossary(game_glossary_s *entry)
 				}
 			}
 
-			hashmap_add(game_glossary, lnode->data, entry, ALIAS);
+			hashmap_add(game_glossary, lnode->data, entry, TRUE);
 			lnode = lnode->next;
 		}
 	}
@@ -585,7 +585,7 @@ parser_add_room(game_room_s *room)
 		log_warn_f("There's already a room with name or alias %s", room->name);
 	}
 
-	hashmap_add(game_rooms, room->name, room, MAIN);
+	hashmap_add(game_rooms, room->name, room, FALSE);
 	game_stats->rooms_total++;
 
 	// Aliases
@@ -602,7 +602,7 @@ parser_add_room(game_room_s *room)
 					log_warn_f("There's already a room with name or alias %s", room->name);
 				}
 
-				hashmap_add(game_rooms, lnode->data, room, ALIAS);
+				hashmap_add(game_rooms, lnode->data, room, TRUE);
 				lnode = lnode->next;
 			}
 		}
@@ -817,7 +817,7 @@ parser_add_scene(game_scene_s *scene)
 		log_warn_f("There's already a scene with name or alias %s", scene->name);
 	}
 
-	hashmap_add(game_scenes, scene->name, scene, MAIN);
+	hashmap_add(game_scenes, scene->name, scene, FALSE);
 	game_stats->scenes_total++;
 
 	// Aliases
@@ -834,7 +834,7 @@ parser_add_scene(game_scene_s *scene)
 					log_warn_f("There's already a scene with name or alias %s", scene->name);
 				}
 
-				hashmap_add(game_scenes, lnode->data, scene, ALIAS);
+				hashmap_add(game_scenes, lnode->data, scene, TRUE);
 				lnode = lnode->next;
 			}
 		}

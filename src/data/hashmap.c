@@ -15,6 +15,8 @@
 #include "darray.h"
 #include "hashmap.h"
 #include "list.h"
+
+#include "../main.h"
 #include "../util.h"
 
 // --------
@@ -145,7 +147,7 @@ list
 }
 
 void
-hashmap_add(hashmap *map, const char *key, void *data, int8_t is_alias)
+hashmap_add(hashmap *map, const char *key, void *data, boolean is_alias)
 {
 	hashnode *node;
 	int32_t bucket;
