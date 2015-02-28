@@ -98,6 +98,19 @@ extern game_stats_s *game_stats;
 // --------
 
 /*
+ * Prints a list of glossary entries.
+ */
+void game_glossary_list(void);
+
+/*
+ * Prints a description of a
+ * glossary entry.
+ *
+ * key: Entry which description is printed
+ */
+void game_glossary_print(const char *key);
+
+/*
  * Initializes the game.
  */
 void game_init(const char *file);

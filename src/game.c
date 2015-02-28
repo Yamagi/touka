@@ -364,6 +364,130 @@ game_glossary_destroy_callback(void *data)
 	free(entry);
 }
 
+void
+game_glossary_list(void)
+{
+	game_glossary_s *entry;
+	list *data;
+	listnode *node;
+	size_t len_entry;
+	uint32_t i;
+
+    data = hashmap_to_list(game_glossary);
+	len_entry = 0;
+
+	if (data)
+	{
+		if (data->first)
+		{
+			node = data->first;
+
+			while (node)
+			{
+				entry = node->data;
+
+#ifdef NDEBUG
+				if (!entry->mentioned)
+				{
+					node = node->next;
+
+					continue;
+				}
+#endif
+
+				if (strlen(entry->name) > len_entry)
+				{
+					len_entry = strlen(entry->name);
+				}
+
+				node = node->next;
+			}
+		}
+	}
+
+	if (len_entry < strlen("Entry"))
+	{
+		len_entry = strlen("Entry");
+	}
+
+	curses_text(COLOR_NORM, "%-*s %s\n", len_entry + 2, "Entry", "Description");
+	curses_text(COLOR_NORM, "%-*s %s\n", len_entry + 2, "-----", "-----------");
+
+	for (i = 0; i <= data->count; i++)
+	{
+		entry = list_shift(data);
+
+#ifdef NDEBUG
+		if (!entry->mentioned)
+		{
+			continue;
+		}
+#endif
+
+		curses_text(COLOR_NORM, "%-*s %s\n", len_entry + 2, entry->name, entry->descr);
+	}
+
+	list_destroy(data, NULL);
+	log_info_f("Listed %i glossary entries", i);
+}
+
+void
+game_glossary_print(const char *key)
+{
+	uint16_t i;
+	listnode *lnode;
+	game_glossary_s *entry;
+
+	assert(key);
+
+	if ((entry = hashmap_get(game_glossary, key)) == NULL)
+	{
+		curses_text(COLOR_NORM, "No such glossary entry: %s\n", key);
+
+		return;
+	}
+
+#ifndef NDEBUG
+	curses_text(COLOR_HIGH, "%s", entry->name);
+
+	if (entry->aliases)
+	{
+		if (entry->aliases->first)
+		{
+			lnode = entry->aliases->first;
+		}
+
+		curses_text(COLOR_NORM, " (");
+
+		for (i = 0; i < entry->aliases->count; i++)
+		{
+			if (i)
+			{
+				curses_text(COLOR_NORM, ", ");
+			}
+
+			curses_text(COLOR_HIGH, lnode->data);
+			lnode = lnode->next;
+		}
+
+		curses_text(COLOR_NORM, ")");
+	}
+
+	curses_text(COLOR_NORM, ":\n");
+#endif
+
+#ifdef NDEBUG
+	if (!entry->mentioned)
+	{
+		curses_text(COLOR_NORM, "No such glossary entry: %s\n", key);
+
+		return;
+	}
+#endif
+
+	game_print_description(entry->words);
+}
+
 // --------
 
 /*

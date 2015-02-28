@@ -52,6 +52,23 @@ static char *tab_stub;
 // ---------
 
 /*
+ * Prints a list of all glossary entries
+ * or descriped the specified entry.
+ */
+static void
+cmd_glossary(char *msg)
+{
+	if (msg)
+	{
+		game_glossary_print(msg);
+	}
+	else
+	{
+		game_glossary_list();
+	}
+}
+
+/*
  * Prints a list with all commands and
  * their associated help texts.
  */
@@ -415,6 +432,7 @@ input_init(void)
 	log_info("Initializing input");
 
 	// Register commands
+	input_register("glossary", "Prints a glossary entry", cmd_glossary, FALSE);
 	input_register("help", "Prints this help", cmd_help, FALSE);
 	input_register("info", "Prints informations about the current game", cmd_info, FALSE);
 	input_register("load", "Loads a saved game", cmd_load, FALSE);
