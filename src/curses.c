@@ -288,7 +288,11 @@ curses_init(void)
 	log_info("Initializing ncurses");
 
 	repl_buf = list_create();
-	curses_prompt = strdup("# ");
+
+	if (!curses_prompt)
+	{
+		curses_prompt = strdup("# ");
+	}
 
 	// Initialize ncurses
 	initscr();

@@ -1,40 +1,41 @@
-#GAME: Touka Example Game
-#AUTHOR: Yamagi Burmeister
-#DATE: 02/13/2015
-#UID: TEG1
-#START: testscene1
+%GAME: Touka Example Game
+%AUTHOR: Yamagi Burmeister
+%DATE: 02/13/2015
+%UID: TEG1
+%START: testscene1
+%PROMPT: HEADER
 
 ----
 
-#ROOM: testroom1
-#DESCR: Dies ist Testroom 1
-#ALIAS: Test Room
-#ALIAS: Testroom1
+%ROOM: testroom1
+%DESCR: Dies ist Testroom 1
+%ALIAS: Test Room
+%ALIAS: Testroom1
 
 Dies ist die Beschreibung eines Testraumes. Ueber mehrere Zeilen, um
 sicher zu sein, dass der Zeilenumbruch sauber funktioniert. Bla, Bla.
 Und noch ein Umbruch. |testroom2| ist ein weiterer Raum.
 
 Leerzeilen sind hingegen volle Zeilenumbrüche, werden also in den Stream
-kodiert. Mal schauen ob dieser hier tut. % Kommentar
+kodiert. Mal schauen ob dieser hier tut. # Kommentar
 
 ----
 
-#ROOM: testroom2
-#DESCR: Und das hier is Testroom 2
+%ROOM: testroom2
+%DESCR: Und das hier is Testroom 2
 
 Eine kurze Testbeschreibung eines zweiten Raumes ohne Aliases.
 
 ----
 
-#SCENE: testscene1
-#DESCR: A Testscene for testing the scene code
-#ALIAS: Test Scene 1
-#ALIAS: TS1
-#ROOM: testroom1
-#PROMPT: P1
-#NEXT: testscene2
-#NEXT: END
+%SCENE: testscene1
+%DESCR: A Testscene for testing the scene code
+%ALIAS: Test Scene 1
+%ALIAS: TS1
+%ROOM: testroom1
+%PROMPT: P1
+%NEXT: testscene2
+%NEXT: END
 
 Eine tolle Testscene. Wieder eine Beschreibung ueber mehrere Zeilen um
 zu schauen, ob wir die Umbrueche korrekt parsen. In |testroom1| spielt
@@ -45,18 +46,18 @@ Spiel.
 
 ----
 
-#SCENE: testscene2
-#DESCR: Eine zweite Testszene
-#ROOM: testroom2
-#NEXT: END
+%SCENE: testscene2
+%DESCR: Eine zweite Testszene
+%ROOM: testroom2
+%NEXT: END
 
 Bla, Bla, Bla.
 
 ----
 
-#GLOSSARY: glossary1
-#DESCR: Ein Testeintrag
-#ALIAS: g1
+%GLOSSARY: glossary1
+%DESCR: Ein Testeintrag
+%ALIAS: g1
 
 Dies ist ein Testeintrag im Glossar.
 

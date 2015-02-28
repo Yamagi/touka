@@ -754,6 +754,22 @@ game_scene_endscreen(void)
 			game_stats->scenes_total);
 
 	curses_status("Game is finished");
+
+	// Set prompt
+	if (game_header->prompt)
+	{
+		if (curses_prompt)
+		{
+			free(curses_prompt);
+		}
+
+        if ((curses_prompt = malloc(strlen(game_header->prompt) + 3)) == NULL)
+		{
+			quit_error("Couldn't allocate memory");
+		}
+
+		sprintf(curses_prompt, "%s: ", game_header->prompt);
+	}
 }
 
 /*
@@ -779,6 +795,22 @@ game_scene_startscreen(void)
 	curses_text(COLOR_NORM, "to start the game.\n\n");
 
 	curses_status("Welcome to %s", game_header->game);
+
+	// Set prompt
+	if (game_header->prompt)
+	{
+		if (curses_prompt)
+		{
+			free(curses_prompt);
+		}
+
+        if ((curses_prompt = malloc(strlen(game_header->prompt) + 3)) == NULL)
+		{
+			quit_error("Couldn't allocate memory");
+		}
+
+		sprintf(curses_prompt, "%s: ", game_header->prompt);
+	}
 }
 
 void

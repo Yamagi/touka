@@ -25,6 +25,7 @@ typedef struct
 	const char *date;
 	const char *first_scene;
 	const char *game;
+	const char *prompt;
 	const char *uid;
 } game_header_s;
 

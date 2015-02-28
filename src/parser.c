@@ -128,7 +128,7 @@ static list
 	assert(line);
 
 	// Line is comment
-	if (line[0] == '%')
+	if (line[0] == '#')
 	{
 		return NULL;
 	}
@@ -153,7 +153,7 @@ static list
 	// Strip comments
 	for (i = 0; i < strlen(work); i++)
 	{
-		if (work[i] == '%')
+		if (work[i] == '#')
 		{
 			work[i] = '\0';
 
@@ -190,23 +190,23 @@ parser_check_header(void)
 {
 	if (!game_header->game)
 	{
-		quit_error("No game name specified\n");
+		quit_error("No game name specified");
 	}
 	else if (!game_header->author)
 	{
-		quit_error("No author specified\n");
+		quit_error("No author specified");
 	}
 	else if (!game_header->date)
 	{
-		quit_error("No copyright date speficied\n");
+		quit_error("No copyright date speficied");
 	}
 	else if (!game_header->uid)
 	{
-		quit_error("No UID specified\n");
+		quit_error("No UID specified");
 	}
 	else if (!game_header->first_scene)
 	{
-		quit_error("No starting scene specified\n");
+		quit_error("No starting scene specified");
 	}
 
 	log_info("Game specifications are:");
@@ -234,7 +234,7 @@ parser_header(list *tokens)
 	{
 		cur = list_shift(tokens);
 
-		if (!strcmp(cur, "#GAME:"))
+		if (!strcmp(cur, "%GAME:"))
 		{
 			if (tokens->count < 1)
 			{
@@ -243,7 +243,7 @@ parser_header(list *tokens)
 
 			game_header->game = parser_concat(tokens);
 		}
-		else if (!strcmp(cur, "#AUTHOR:"))
+		else if (!strcmp(cur, "%AUTHOR:"))
 		{
 			if (tokens->count < 1)
 			{
@@ -252,7 +252,7 @@ parser_header(list *tokens)
 
 			game_header->author = parser_concat(tokens);
 		}
-		else if (!strcmp(cur, "#DATE:"))
+		else if (!strcmp(cur, "%DATE:"))
 		{
 			if (tokens->count < 1)
 			{
@@ -261,7 +261,7 @@ parser_header(list *tokens)
 
 			game_header->date = parser_concat(tokens);
 		}
-		else if (!strcmp(cur, "#UID:"))
+		else if (!strcmp(cur, "%UID:"))
 		{
 			if (tokens->count != 1)
 			{
@@ -270,7 +270,7 @@ parser_header(list *tokens)
 
 			game_header->uid = strdup(list_shift(tokens));
 		}
-		else if (!strcmp(cur, "#START:"))
+		else if (!strcmp(cur, "%START:"))
 		{
 			if (tokens->count != 1)
 			{
@@ -278,6 +278,16 @@ parser_header(list *tokens)
 			}
 
 			game_header->first_scene = strdup(list_shift(tokens));
+		}
+		else if (!strcmp(cur, "%PROMPT:"))
+		{
+			if (curses_prompt)
+			{
+				free(curses_prompt);
+			}
+
+			game_header->prompt = parser_concat(tokens);
+
 		}
 		else if (!strcmp(cur, "----"))
 		{
@@ -439,7 +449,7 @@ parser_glossary(list *tokens)
 	{
 		cur = list_shift(tokens);
 
-		if (!strcmp(cur, "#GLOSSARY:"))
+		if (!strcmp(cur, "%GLOSSARY:"))
 		{
 			if (entry->name || entry->words)
 			{
@@ -453,7 +463,7 @@ parser_glossary(list *tokens)
 
 			entry->name = strdup(list_shift(tokens));
 		}
-		else if (!strcmp(cur, "#DESCR:"))
+		else if (!strcmp(cur, "%DESCR:"))
 		{
 			if (entry->words)
 			{
@@ -462,7 +472,7 @@ parser_glossary(list *tokens)
 
 			entry->descr = parser_concat(tokens);
 		}
-		else if (!strcmp(cur, "#ALIAS:"))
+		else if (!strcmp(cur, "%ALIAS:"))
 		{
 			if (entry->words)
 			{
@@ -654,7 +664,7 @@ parser_room(list *tokens)
 	{
 		cur = list_shift(tokens);
 
-		if (!strcmp(cur, "#ROOM:"))
+		if (!strcmp(cur, "%ROOM:"))
 		{
 			if (room->name || room->words)
 			{
@@ -668,7 +678,7 @@ parser_room(list *tokens)
 
 			room->name = strdup(list_shift(tokens));
 		}
-		else if (!strcmp(cur, "#DESCR:"))
+		else if (!strcmp(cur, "%DESCR:"))
 		{
 			if (room->words)
 			{
@@ -677,7 +687,7 @@ parser_room(list *tokens)
 
 			room->descr = parser_concat(tokens);
 		}
-		else if (!strcmp(cur, "#ALIAS:"))
+		else if (!strcmp(cur, "%ALIAS:"))
 		{
 			if (room->words)
 			{
@@ -886,7 +896,7 @@ parser_scene(list *tokens)
 	{
 		cur = list_shift(tokens);
 
-		if (!strcmp(cur, "#SCENE:"))
+		if (!strcmp(cur, "%SCENE:"))
 		{
 			if (scene->name || scene->words)
 			{
@@ -900,7 +910,7 @@ parser_scene(list *tokens)
 
 			scene->name = strdup(list_shift(tokens));
 		}
-		else if (!strcmp(cur, "#DESCR:"))
+		else if (!strcmp(cur, "%DESCR:"))
 		{
 			if (scene->words)
 			{
@@ -909,21 +919,16 @@ parser_scene(list *tokens)
 
 			scene->descr = parser_concat(tokens);
 		}
-		else if (!strcmp(cur, "#PROMPT:"))
+		else if (!strcmp(cur, "%PROMPT:"))
 		{
 			if (scene->words)
 			{
 				parser_error();
 			}
 
-			if (curses_prompt)
-			{
-				free(curses_prompt);
-			}
-
             scene->prompt = parser_concat(tokens);
 		}
-		else if (!strcmp(cur, "#ALIAS:"))
+		else if (!strcmp(cur, "%ALIAS:"))
 		{
 			if (scene->words)
 			{
@@ -937,7 +942,7 @@ parser_scene(list *tokens)
 
 			list_push(scene->aliases, parser_concat(tokens));
 		}
-		else if (!strcmp(cur, "#ROOM:"))
+		else if (!strcmp(cur, "%ROOM:"))
 		{
 			if (scene->words)
 			{
@@ -951,7 +956,7 @@ parser_scene(list *tokens)
 
 			scene->room = strdup(list_shift(tokens));
 		}
-		else if (!strcmp(cur, "#NEXT:"))
+		else if (!strcmp(cur, "%NEXT:"))
 		{
 			if (scene->words)
 			{
@@ -1060,17 +1065,17 @@ parser_game(const char *file)
 			{
 				tmp = list_shift(tokens);
 
-				if (!strcmp(tmp, "#GLOSSARY:"))
+				if (!strcmp(tmp, "%GLOSSARY:"))
 				{
 					is_glossary = TRUE;
 					list_unshift(tokens, tmp);
 				}
-				else if (!strcmp(tmp, "#ROOM:"))
+				else if (!strcmp(tmp, "%ROOM:"))
 				{
 					is_room = TRUE;
 					list_unshift(tokens, tmp);
 				}
-				else if (!strcmp(tmp, "#SCENE:"))
+				else if (!strcmp(tmp, "%SCENE:"))
 				{
 					is_scene = TRUE;
 					list_unshift(tokens, tmp);
