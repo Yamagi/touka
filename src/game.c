@@ -27,6 +27,9 @@
 // Game header
 game_header_s *game_header;
 
+// Glossary
+hashmap *game_glossary;
+
 // Rooms
 hashmap *game_rooms;
 
@@ -308,6 +311,45 @@ game_print_description(list *words)
 	curses_text(COLOR_NORM, "\n");
 }
 
+
+// --------
+
+/*
+ * Callback to destroy a glossary entry.
+ *
+ * data: Glossary to destroy
+ */
+static void
+game_glossary_destroy_callback(void *data)
+{
+	game_glossary_s *entry;
+
+	assert(data);
+
+	entry = data;
+
+	if (entry->name)
+	{
+		free((char *)entry->name);
+	}
+
+	if (entry->descr)
+	{
+		free((char *)entry->descr);
+	}
+
+	if (entry->aliases)
+	{
+		list_destroy(entry->aliases, NULL);
+	}
+
+	if (entry->words)
+	{
+		list_destroy(entry->words, NULL);
+	}
+
+	free(entry);
+}
 
 // --------
 
@@ -886,6 +928,11 @@ game_init(const char *file)
 		}
 	}
 
+	if (!game_glossary)
+	{
+		game_glossary = hashmap_create(128);
+	}
+
 	if (!game_rooms)
 	{
 		game_rooms = hashmap_create(128);
@@ -920,6 +967,11 @@ game_quit(void)
 	{
 		free(game_stats);
 		game_stats = NULL;
+	}
+
+	if (game_glossary)
+	{
+		hashmap_destroy(game_glossary, game_glossary_destroy_callback);
 	}
 
 	if (game_rooms)

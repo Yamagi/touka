@@ -32,6 +32,21 @@ typedef struct
 extern game_header_s *game_header;
 
 /*
+ * Represents one glossary entry.
+ */
+typedef struct
+{
+	boolean mentioned;
+	const char *descr;
+	const char *name;
+	list *aliases;
+	list *words;
+} game_glossary_s;
+
+// Glossary
+extern hashmap *game_glossary;
+
+/*
  * Represents one room.
  */
 typedef struct
