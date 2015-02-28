@@ -3,8 +3,9 @@
  * --------
  *
  * Parses the game file. Please note that this hand
- * written implementation is not that robust, if an
- * error is detected, it just bails out.
+ * written implementation is not that robust if you
+ * might expect. if an * error is detected, it just
+ * bails out.
  */
 
 #define _WITH_GETLINE
@@ -19,26 +20,34 @@
 #include "curses.h"
 #include "game.h"
 #include "log.h"
+
 #include "util.h"
 #include "data/list.h"
 
 // --------
 
 // What we are parsing?
-static uint8_t is_glossary;
-static uint8_t is_header;
-static uint8_t is_room;
-static uint8_t is_scene;
+static boolean is_glossary;
+static boolean is_header;
+static boolean is_room;
+static boolean is_scene;
 
 // Lines parsed so far
 static int32_t count;
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                        Support Functions                          *
+ *                                                                   *
+ *********************************************************************/
+
 /*
- * Concanates elements of a list
- * filled with strings into one
- * string.
+ * Concanates elements of a linked list
+ * filled with strings into one string.
+ * The string is allocated with malloc(),
+ * so the caller need to free() it.
  *
  * tokens: List to concanate
  */
@@ -47,8 +56,7 @@ static char
 {
 	char *cur;
 	char *string;
-	size_t len;
-	size_t oldlen;
+	size_t len, oldlen;
 
 	assert(tokens);
 
@@ -76,7 +84,6 @@ static char
 		}
 
 		memset(string + oldlen, 0, len - oldlen);
-
 		strncat(string, cur, len);
 
 		if (tokens->count > 0)
@@ -89,19 +96,23 @@ static char
 }
 
 /*
- * Bails out with error.
- *
- * line: Line number where the error occured
+ * This function prints a more or less
+ * helpfull error message and bails out.
  */
 static void
 parser_error(void)
 {
 	log_error_f("Parser error in line %i of file\n", count);
+
 	quit_error("Parser error");
 }
 
 /*
- * Tokenizes a line.
+ * Tokenize a line into a linked list with
+ * the single words. If the first character
+ * is the comment symbol (for us the line
+ * doesn't exists and should be skipped)
+ * NULL is returned. Otherwise the list.
  *
  * line: Line to tokenize
  */
@@ -112,9 +123,15 @@ static list
 	char *work;
 	list *tokens;
 	size_t len;
-	uint32_t i;
+	uint16_t i;
 
 	assert(line);
+
+	// Line is comment
+	if (line[0] == '%')
+	{
+		return NULL;
+	}
 
 	work = line;
 	tokens = list_create();
@@ -159,8 +176,14 @@ static list
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                       Game Header Parsing                         *
+ *                                                                   *
+ *********************************************************************/
+
 /*
- * Checks if the header was parsed successfull.
+ * Checks if the  game header was parsed successfull.
  */
 static void
 parser_check_header(void)
@@ -175,15 +198,15 @@ parser_check_header(void)
 	}
 	else if (!game_header->date)
 	{
-		quit_error("PANIC: No copyright date speficied\n");
+		quit_error("No copyright date speficied\n");
 	}
 	else if (!game_header->uid)
 	{
-		quit_error("PANIC: No UID specified\n");
+		quit_error("No UID specified\n");
 	}
 	else if (!game_header->first_scene)
 	{
-		quit_error("PANIC: No starting scene specified\n");
+		quit_error("No starting scene specified\n");
 	}
 
 	log_info("Game specifications are:");
@@ -194,9 +217,11 @@ parser_check_header(void)
 }
 
 /*
- * Parses the game header.
+ * Parses the game header into the global struct
+ * 'game_header'. Called for every line of the
+ * header.
  *
- * tokens: Line to parse
+ * tokens: Tokenized line to parse
  */
 static void
 parser_header(list *tokens)
@@ -262,7 +287,7 @@ parser_header(list *tokens)
 			}
 
 			parser_check_header();
-			is_header = 0;
+			is_header = FALSE;
 		}
 		else
 		{
@@ -273,8 +298,15 @@ parser_header(list *tokens)
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                         Glossar Parsing                           *
+ *                                                                   *
+ *********************************************************************/
+
 /*
  * Checks if a glossary entry was parsed successfull.
+ * If not, the parser bails out with an error.
  *
  * entry: Entry to be checked
  */
@@ -318,8 +350,9 @@ parser_check_glossary(game_glossary_s *entry)
 }
 
 /*
- * Adds an entry to the global
- * glossary.
+ * Adds an entry to the global glossary. If an
+ * entry with the same name or alias is already
+ * present, a warning is logged.
  *
  * entry: Entry to add
  */
@@ -328,7 +361,7 @@ parser_add_glossary(game_glossary_s *entry)
 {
 	listnode *lnode;
 	game_glossary_s *test;
-	int32_t i;
+	uint16_t i;
 
 	parser_check_glossary(entry);
 
@@ -362,16 +395,20 @@ parser_add_glossary(game_glossary_s *entry)
 }
 
 /*
- * Parses a glossary entry.
+ * Parses a glossary entry into a 'game_glossary_s' struct.
+ * If necessary the struct is created. This function is
+ * called for every line of the entry and if it's complete
+ * it's automatically added to the global 'game_glossar'
+ * hashmap.
  *
- * tokens: Line to parse
+ * tokens: Tokenized line to parse
  */
 static void
 parser_glossary(list *tokens)
 {
 	char *cur;
-	uint32_t i;
 	static game_glossary_s *entry;
+	uint16_t i;
 
 	assert(tokens);
 
@@ -454,7 +491,7 @@ parser_glossary(list *tokens)
 
 			parser_add_glossary(entry);
 
-			is_glossary = 0;
+			is_glossary = FALSE;
 			entry = NULL;
 		}
 		else
@@ -476,10 +513,17 @@ parser_glossary(list *tokens)
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                           Room Parsing                            *
+ *                                                                   *
+ *********************************************************************/
+
 /*
- * Checks if a room was parsed successfull
+ * Checks if a room was parsed successfull.
+ * If not the parser bails out with an error.
  *
- * new: Room to be checked
+ * room: Room to be checked
  */
 static void
 parser_check_room(game_room_s *room)
@@ -521,15 +565,18 @@ parser_check_room(game_room_s *room)
 }
 
 /*
- * Does some sanity checks and adds the
- * room to the global room list.
+ * Add the room to the global 'game_rooms' hashmap.
+ * If there's already an entry with the same name or
+ * alias a warning is logged.
+ *
+ * room: Room to add
  */
 static void
 parser_add_room(game_room_s *room)
 {
-	listnode *lnode;
 	game_room_s *test;
-	int32_t i;
+	listnode *lnode;
+	uint16_t i;
 
 	parser_check_room(room);
 
@@ -563,16 +610,20 @@ parser_add_room(game_room_s *room)
 }
 
 /*
- * Parses a room.
+ * Parses a room into a 'game_room_s' struct. The
+ * struct is created if necessary. This function
+ * is called for every line of the room. When the
+ * room is completly parsed, it's automatically
+ * added to the global 'game_rooms' hashmap.
  *
- * tokens: Line to parse
+ * tokens: Tokenized line to parse
  */
 static void
 parser_room(list *tokens)
 {
 	char *cur;
-	int32_t i;
 	static game_room_s *room;
+	uint16_t i;
 
 	assert(tokens);
 
@@ -655,7 +706,7 @@ parser_room(list *tokens)
 
 			parser_add_room(room);
 
-			is_room = 0;
+			is_room = FALSE;
 			room = NULL;
 		}
 		else
@@ -677,10 +728,17 @@ parser_room(list *tokens)
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                          Scene Parsing                            *
+ *                                                                   *
+ *********************************************************************/
+
 /*
  * Checks if a scene was parsed successfull.
+ * If not, the parser bails out.
  *
- * new: Scene to be checked
+ * scene: Scene to be checked
  */
 static void
 parser_check_scene(game_scene_s *scene)
@@ -739,17 +797,18 @@ parser_check_scene(game_scene_s *scene)
 }
 
 /*
- * Does some sanity checks and adds the
- * scene to the global scene list.
+ * Adds a new scene to the global 'game_scenes' hashmap.
+ * If an entry with the same name or alias is already
+ * present, a warnig is logged.
  *
- * new: Scene to add
+ * scene: Scene to add
  */
 static void
 parser_add_scene(game_scene_s *scene)
 {
-	listnode *lnode;
 	game_scene_s *test;
-	int32_t i;
+	listnode *lnode;
+	uint16_t i;
 
 	parser_check_scene(scene);
 
@@ -783,16 +842,20 @@ parser_add_scene(game_scene_s *scene)
 }
 
 /*
- * Parses a scene.
+ * Parses a scene into a 'game_scene_s' struct. If
+ * necessary the struct is created. This function is
+ * called for every line of the scene. After it was
+ * parsed it's added the global 'game_scenes' hashmap
+ * automatically.
  *
- * tokens: Line to parse
+ * tokens: Tokenized line to parse
  */
 static void
 parser_scene(list *tokens)
 {
 	char *cur;
-	int32_t i;
 	static game_scene_s *scene;
+	uint16_t i;
 
 	assert(tokens);
 
@@ -917,7 +980,7 @@ parser_scene(list *tokens)
 
 			parser_add_scene(scene);
 
-			is_scene = 0;
+			is_scene = FALSE;
 			scene = NULL;
 		}
 		else
@@ -939,16 +1002,22 @@ parser_scene(list *tokens)
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                       Parser Main Function                        *
+ *                                                                   *
+ *********************************************************************/
+
 void
 parser_game(const char *file)
 {
 	FILE *game;
 	char *line;
 	char *tmp;
+	list *tokens;
 	size_t linecap;
 	ssize_t linelen;
 	struct stat sb;
-	list *tokens;
 
 	assert(file);
 
@@ -973,19 +1042,16 @@ parser_game(const char *file)
 	linecap = 0;
 
 	// Header is always the first section
-	is_header = 1;
+	is_header = TRUE;
 
     while ((linelen = getline(&line, &linecap, game)) > 0)
 	{
 		count++;
 
-        // Line is comment
-		if (line[0] == '%')
+		if ((tokens = parser_tokenize(line)) == NULL)
 		{
 			continue;
 		}
-
-		tokens = parser_tokenize(line);
 
 		// What we are parsing?
 		if (!(is_glossary || is_header || is_room || is_scene))
@@ -996,22 +1062,22 @@ parser_game(const char *file)
 
 				if (!strcmp(tmp, "#GLOSSARY:"))
 				{
-					is_glossary = 1;
+					is_glossary = TRUE;
 					list_unshift(tokens, tmp);
 				}
 				else if (!strcmp(tmp, "#ROOM:"))
 				{
-					is_room = 1;
+					is_room = TRUE;
 					list_unshift(tokens, tmp);
 				}
 				else if (!strcmp(tmp, "#SCENE:"))
 				{
-					is_scene = 1;
+					is_scene = TRUE;
 					list_unshift(tokens, tmp);
 				}
 				else
 				{
-					//parser_error();
+					parser_error();
 				}
 			}
 			else

@@ -12,7 +12,9 @@
 
 /*
  * Parses a game file. Must be called after game_init()
- * since it filles the games internal data structures.
+ * since it fills the games internal data structures.
+ * The functions checks if the given file exists and
+ * bails out if it doesn't.
  *
  * file: File to parse
  */
