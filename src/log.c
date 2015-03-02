@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 
 #include "log.h"
+#include "main.h"
 #include "util.h"
 
 // --------
@@ -27,18 +28,26 @@ static FILE *logfile;
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                            Support Functions                      *
+ *                                                                   *
+ *********************************************************************/
+
 /*
- * Converts a logtype to a human
- * readable string.
+ * Converts a logtype to a human readable
+ * string.
  *
  * type: Logtype to convert
- * str: String where the string is copied
- * len: Length of string
+ * str: String to which the return value is copied
+ * len: Length of the return string
  */
-static int32_t
+static boolean
 log_typetostr(logtype type, char *str, size_t len)
 {
-	int8_t ret = 0;
+	boolean ret;
+
+    ret = TRUE;
 
 	switch (type)
 	{
@@ -56,7 +65,7 @@ log_typetostr(logtype type, char *str, size_t len)
 
 		default:
 			strncpy(str, "UNKNOWN", len);
-			ret = -1;
+			ret = FALSE;
 			break;
 	}
 
@@ -65,11 +74,17 @@ log_typetostr(logtype type, char *str, size_t len)
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                          Public Interface                         *
+ *                                                                   *
+ *********************************************************************/
+
 void
 log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 {
-	char *inpmsg = NULL;
-	char *logmsg = NULL;
+	char *inpmsg;
+	char *logmsg;
 	char msgtime[32];
 	char status[32];
 	size_t msglen;
@@ -108,7 +123,7 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 	strftime(msgtime, sizeof(msgtime), "%m-%d-%Y %H:%M:%S", t);
 
 	// Status
-	if (log_typetostr(type, status, sizeof(status)) != 0)
+	if (!log_typetostr(type, status, sizeof(status)) != 0)
 	{
 		quit_error("Unknown logtype\n");
 	}
@@ -137,16 +152,14 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 
 	free(inpmsg);
 	free(logmsg);
-
-	return;
 }
 
 void
-log_init(const char *path, const char *name, int32_t seg)
+log_init(const char *path, const char *name, int16_t seg)
 {
 	char newfile[PATH_MAX];
 	char oldfile[PATH_MAX];
-	int32_t i;
+	int16_t i;
 	struct stat sb;
 
 	assert(!logfile);

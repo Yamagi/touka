@@ -2,8 +2,8 @@
  * log.h
  * -----
  *
- * This is a small log file handler. Currently only
- * three log levels are supported:
+ * This is a small log file handler. Currently only three log
+ * levels are supported:
  *  - LOG_INFO:  Normal messages
  *  - LOG_WARN:  Warnings
  *  - LOG_ERROR: Error messages
@@ -21,6 +21,8 @@
 #ifndef LOG_H_
 #define LOG_H_
 
+// --------
+
 #include <stdint.h>
 
 // --------
@@ -34,6 +36,8 @@ typedef enum
 	LOG_WARN,
 	LOG_ERROR
 } logtype;
+
+// --------
 
 /*
  * Logs an message. If NDEBUG is not set and type is
@@ -55,7 +59,7 @@ void log_insert(logtype type, const char *func, int32_t line, const char *fmt, .
  * name: Name of the log file
  * seg: Number of segments to keep. Maximum is 99
  */
-void log_init(const char *path, const char *name, int32_t seg);
+void log_init(const char *path, const char *name, int16_t seg);
 
 /*
  * Closes the log file. May be called several times.
