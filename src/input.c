@@ -2,9 +2,12 @@
  * input.c
  * -------
  *
- * Upper layer input processing and support
- * code like command completion and a simple
- * history.
+ * Input Processing. The user interaction is done
+ * in curses-.c, this file does the nicer job of
+ * "upper layer" processing. Each command has a
+ * callback function, which does the real work.
+ * Also a command completion and input history
+ * is implemented.
  */
 
 #include <assert.h>
@@ -20,6 +23,7 @@
 #include "log.h"
 #include "save.h"
 #include "util.h"
+
 #include "data/darray.h"
 #include "data/list.h"
 
@@ -51,9 +55,16 @@ static char *tab_stub;
 
 // ---------
 
+/*********************************************************************
+ *                                                                   *
+ *                        Command Callbacks                          *
+ *                                                                   *
+ *********************************************************************/
+
 /*
- * Prints a list of all glossary entries
- * or descriped the specified entry.
+ * Prints a list of all glossary entries or descripes
+ * the specified entry. Error handling is done in the
+ * called functions.
  */
 static void
 cmd_glossary(char *msg)
@@ -75,9 +86,9 @@ cmd_glossary(char *msg)
 static void
 cmd_help(char *msg)
 {
-	int32_t i;
-	int32_t len;
 	input_cmd *cur;
+	size_t len;
+	uint16_t i;
 
 	len = 0;
 
@@ -124,7 +135,9 @@ cmd_info(char *msg)
 }
 
 /*
- * Loads a savegame.
+ * Loads a savegame and replays the last scene.
+ * But only if the game was successfull loaded,
+ * of course.
  */
 static void
 cmd_load(char *msg)
@@ -143,12 +156,12 @@ cmd_load(char *msg)
 }
 
 /*
- * Advances to the next scene.
+ * Advances the game to the next scene and plays it.
  */
 static void
 cmd_next(char *msg)
 {
-	int32_t choice;
+	uint8_t choice;
 
 	if (!msg)
 	{
@@ -190,7 +203,7 @@ cmd_next(char *msg)
 }
 
 /*
- * Shuts the application down.
+ * Shuts the application cleanly down.
  */
 static void
 cmd_quit(char *msg)
@@ -199,7 +212,9 @@ cmd_quit(char *msg)
 }
 
 /*
- * Descripes a room.
+ * List all rooms or descripes a room.
+ * Error handling is done by the called
+ * function.
  */
 static void
 cmd_room(char *msg)
@@ -215,7 +230,8 @@ cmd_room(char *msg)
 }
 
 /*
- * Saves the game.
+ * Saves the game to a file with the given
+ * name.
  */
 static void
 cmd_save(char *msg)
@@ -227,7 +243,9 @@ cmd_save(char *msg)
 }
 
 /*
- * Replays a scene.
+ * Replays a scene. If no scene name is given,
+ * the last scene is replayed. Error handling
+ * is done by the called function.
  */
 static void
 cmd_scene(char *msg)
@@ -254,6 +272,12 @@ cmd_version(char *msg)
 
 // ---------
 
+/*********************************************************************
+ *                                                                   *
+ *                       Command Registration                        *
+ *                                                                   *
+ *********************************************************************/
+
 /*
  * Callback function to qsort for the command darray.
  */
@@ -278,6 +302,7 @@ input_sort_callback(const void *msg1, const void *msg2)
  * name: Name of the command
  * help: A short help text
  * callback: Callback function for that command
+ * alias: The command is an alias
  */
 static void
 input_register(const char *name, const char *help, void (*callback)(char *msg), boolean alias)
@@ -308,6 +333,12 @@ input_register(const char *name, const char *help, void (*callback)(char *msg), 
 }
 
 // ---------
+
+/*********************************************************************
+ *                                                                   *
+ *                          Input History                            *
+ *                                                                   *
+ *********************************************************************/
 
 char *
 input_history_next(void)
@@ -367,6 +398,12 @@ input_history_reset(void)
 }
 
 // ---------
+
+/*********************************************************************
+ *                                                                   *
+ *                        Command Completion                         *
+ *                                                                   *
+ *********************************************************************/
 
 char *
 input_complete(char *msg)
@@ -428,6 +465,12 @@ input_complete_reset(void)
 
 // ---------
 
+/*********************************************************************
+ *                                                                   *
+ *                   Initialization and Shutdown                     *
+ *                                                                   *
+ *********************************************************************/
+
 void
 input_init(void)
 {
@@ -466,15 +509,21 @@ input_quit(void)
 
 // ---------
 
+/*********************************************************************
+ *                                                                   *
+ *                         Input Processing                          *
+ *                                                                   *
+ *********************************************************************/
+
 void
 input_process(char *cmd)
 {
+	boolean match;
 	char *tmp;
 	char *token;
 	input_cmd *cur;
-	int32_t i;
-	int8_t match;
 	size_t len;
+	uint16_t i;
 
 	// Strip whitespaces
 	while (cmd[0] == ' ')
@@ -513,13 +562,13 @@ input_process(char *cmd)
 	input_complete_reset();
 
 	// Ignore comments
-	if (cmd[0] == '#')
+	if (cmd[0] == '%')
 	{
 		return;
 	}
 
 	token = strsep(&cmd, " ");
-	match = 0;
+	match = FALSE;
 
     for (i = 0; i < input_cmds->elements; i++)
 	{
@@ -528,7 +577,7 @@ input_process(char *cmd)
 		if(!strcmp(token, cur->name))
 		{
 			cur->callback(cmd);
-			match++;
+			match = TRUE;
 		}
 	}
 

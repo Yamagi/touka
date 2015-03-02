@@ -33,6 +33,8 @@ char *input_history_prev(void);
  */
 void input_history_reset(void);
 
+// --------
+
 /*
  * Returns all matching completions for
  * the input string.
@@ -46,6 +48,8 @@ char *input_complete(char *msg);
  */
 void input_complete_reset(void);
 
+// --------
+
 /*
  * Initializes the input subsystem.
  * The main purpose of this function
@@ -54,16 +58,18 @@ void input_complete_reset(void);
 void input_init(void);
 
 /*
+ * Shuts the input subsystem down.
+ */
+void input_quit(void);
+
+// --------
+
+/*
  * Process user input.
  *
  * input: User supplied string
  */
 void input_process(char *input);
-
-/*
- * Shuts the input subsystem down.
- */
-void input_quit(void);
 
 // --------
 
