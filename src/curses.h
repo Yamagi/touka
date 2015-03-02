@@ -10,8 +10,13 @@
 #ifndef CURSES_H_
 #define CURSES_H_
 
+// --------
+
 #include <stdint.h>
+
 #include "main.h"
+
+// --------
 
 /*
  * Highlight state:
@@ -38,6 +43,13 @@ extern char *curses_prompt;
 void curses_init(void);
 
 /*
+ * Shuts ncurses down.
+ */
+void curses_quit(void);
+
+// --------
+
+/*
  * Processes user key strokes, combines them
  * into a buffer and sends the buffer up into
  * input frontend. This function blocks, until
@@ -45,10 +57,7 @@ void curses_init(void);
  */
 void curses_input(void);
 
-/*
- * Shuts ncurses down.
- */
-void curses_quit(void);
+// --------
 
 /*
  * Prints text to the status bar. The text
@@ -62,6 +71,7 @@ void curses_status(const char *fmt, ...);
 /*
  * Prints a string into the main window.
  *
+ * color: Color in which the text is printed
  * string: Text to print
  */
 void curses_text(uint32_t color, const char *fmt, ...);

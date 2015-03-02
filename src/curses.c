@@ -87,6 +87,12 @@ static char status_line[STATUSBAR];
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                       Callback Functions                          *
+ *                                                                   *
+ *********************************************************************/
+
 /*
  * Callback for the replay buffer destruction.
  */
@@ -98,6 +104,12 @@ curses_replay_callback(repl_msg_s *repl)
 }
 
 // --------
+
+/*********************************************************************
+ *                                                                   *
+ *                        Support Functions                          *
+ *                                                                   *
+ *********************************************************************/
 
 /*
  * Prints text into the main window.
@@ -191,9 +203,6 @@ curses_resize(void)
 	wclear(stdscr);
 	wnoutrefresh(stdscr);
 
-	wresize(text, SCROLLBACK, COLS);
-	wclear(text);
-
 	// Status
 	wresize(status, 1, COLS);
 	mvwin(status, LINES - 2, 0);
@@ -207,6 +216,9 @@ curses_resize(void)
 	wnoutrefresh(input);
 
 	// Replay text
+	wresize(text, SCROLLBACK, COLS);
+	wclear(text);
+
 	cur = repl_buf->first;
 
 	while (cur)
@@ -282,6 +294,12 @@ curses_scroll(int32_t offset)
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                       Startup and Shutdown                        *
+ *                                                                   *
+ *********************************************************************/
+
 void
 curses_init(void)
 {
@@ -354,6 +372,35 @@ curses_init(void)
 	pnoutrefresh(text, 0, 0, 0, 0, LINES - 3, COLS);
 	doupdate();
 }
+
+void
+curses_quit(void)
+{
+	log_info("Shutting down curses");
+
+	delwin(input);
+	delwin(status);
+	delwin(text);
+	endwin();
+
+	if (repl_buf)
+	{
+		list_destroy(repl_buf, curses_replay_callback);
+	}
+
+	if (curses_prompt)
+	{
+		free(curses_prompt);
+	}
+}
+
+// --------
+
+/*********************************************************************
+ *                                                                   *
+ *                        Input Processing                           *
+ *                                                                   *
+ *********************************************************************/
 
 void
 curses_input(void)
@@ -799,26 +846,13 @@ curses_input(void)
 	input_process(buffer);
 }
 
-void
-curses_quit(void)
-{
-	log_info("Shutting down curses");
+// --------
 
-	delwin(input);
-	delwin(status);
-	delwin(text);
-	endwin();
-
-	if (repl_buf)
-	{
-		list_destroy(repl_buf, curses_replay_callback);
-	}
-
-	if (curses_prompt)
-	{
-		free(curses_prompt);
-	}
-}
+/*********************************************************************
+ *                                                                   *
+ *                Status And Text Windows Manipulation               *
+ *                                                                   *
+ *********************************************************************/
 
 void
 curses_status(const char *fmt, ...)
@@ -862,9 +896,9 @@ void
 curses_text(uint32_t color, const char *fmt, ...)
 {
 	char *msg;
-	uint32_t y;
 	repl_msg_s *rep;
 	size_t len;
+	uint32_t y;
 	va_list args;
 
 	// Determine length
