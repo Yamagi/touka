@@ -22,11 +22,25 @@
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                         Signal Handlers                           *
+ *                                                                   *
+ *********************************************************************/
+
 void
-signalhandler(int sig)
+signalhandler_success(int sig)
 {
 	quit_success();
 }
+
+// --------
+
+/*********************************************************************
+ *                                                                   *
+ *                            Main Loop                              *
+ *                                                                   *
+ *********************************************************************/
 
 int
 main(int argc, char *argv[])
@@ -40,8 +54,8 @@ main(int argc, char *argv[])
 	atexit(quit_success);
 
 	// Signal handler
-	signal(SIGINT, signalhandler);
-	signal(SIGTERM, signalhandler);
+	signal(SIGINT, signalhandler_success);
+	signal(SIGTERM, signalhandler_success);
 
 	// Create home directory
 	snprintf(homedir, sizeof(homedir), "%s/%s", getenv("HOME"), HOMEDIR);
