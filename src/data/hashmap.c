@@ -21,6 +21,12 @@
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                        Support Functions                          *
+ *                                                                   *
+ *********************************************************************/
+
 /*
  * An implementation of Jenkins Hash
  */
@@ -50,8 +56,47 @@ hashmap_hash(const char *key)
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                         Public Interface                          *
+ *                                                                   *
+ *********************************************************************/
+
+void
+hashmap_add(hashmap *map, const char *key, void *data, boolean is_alias)
+{
+	hashnode *node;
+	uint16_t bucket;
+
+	assert(map);
+	assert(key);
+	assert(data);
+
+	if ((node = malloc(sizeof(hashnode))) == NULL)
+	{
+		quit_error("Couldn't allocate memory");
+	}
+
+	node->key = key;
+	node->data = data;
+	node->hash = hashmap_hash(key);
+	node->is_alias = is_alias;
+
+	bucket = node->hash % map->buckets;
+
+	if (!map->data[bucket])
+	{
+		map->data[bucket] = darray_create();
+		darray_push(map->data[bucket], node);
+	}
+	else
+	{
+		darray_push(map->data[bucket], node);
+	}
+}
+
 hashmap
-*hashmap_create(int32_t buckets)
+*hashmap_create(uint16_t buckets)
 {
 	hashmap *new;
 
@@ -75,7 +120,7 @@ hashmap_destroy(hashmap *map, void (callback)(void *data))
 {
 	darray *array;
 	hashnode *node;
-	int32_t i;
+	uint16_t i;
 
 	assert(map);
 
@@ -113,6 +158,43 @@ hashmap_destroy(hashmap *map, void (callback)(void *data))
 	free(map);
 }
 
+void
+*hashmap_get(hashmap *map, const char *key)
+{
+	darray *array;
+	hashnode *node;
+	uint16_t bucket;
+	uint16_t i;
+	uint32_t hash;
+
+	assert(map);
+	assert(key);
+
+	hash = hashmap_hash(key);
+	bucket = hash % map->buckets;
+
+	if (!map->data[bucket])
+	{
+		return NULL;
+	}
+	else
+	{
+		array = map->data[bucket];
+
+        for (i = 0; i < array->elements; i++)
+		{
+			node = darray_get(array, i);
+
+			if (node->hash == hash)
+			{
+				return node->data;
+			}
+		}
+	}
+
+	return NULL;
+}
+
 list
 *hashmap_to_list(hashmap *map)
 {
@@ -144,75 +226,5 @@ list
 	}
 
 	return content;
-}
-
-void
-hashmap_add(hashmap *map, const char *key, void *data, boolean is_alias)
-{
-	hashnode *node;
-	int32_t bucket;
-
-	assert(map);
-	assert(key);
-	assert(data);
-
-	if ((node = malloc(sizeof(hashnode))) == NULL)
-	{
-		quit_error("Couldn't allocate memory");
-	}
-
-	node->key = key;
-	node->data = data;
-	node->hash = hashmap_hash(key);
-	node->is_alias = is_alias;
-
-	bucket = node->hash % map->buckets;
-
-	if (!map->data[bucket])
-	{
-		map->data[bucket] = darray_create();
-		darray_push(map->data[bucket], node);
-	}
-	else
-	{
-		darray_push(map->data[bucket], node);
-	}
-}
-
-void
-*hashmap_get(hashmap *map, const char *key)
-{
-	darray *array;
-	hashnode *node;
-	int32_t bucket;
-	int32_t i;
-	uint32_t hash;
-
-	assert(map);
-	assert(key);
-
-	hash = hashmap_hash(key);
-	bucket = hash % map->buckets;
-
-	if (!map->data[bucket])
-	{
-		return NULL;
-	}
-	else
-	{
-		array = map->data[bucket];
-
-        for (i = 0; i < array->elements; i++)
-		{
-			node = darray_get(array, i);
-
-			if (node->hash == hash)
-			{
-				return node->data;
-			}
-		}
-	}
-
-	return NULL;
 }
 
