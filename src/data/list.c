@@ -2,7 +2,7 @@
  * list.c
  * ------
  *
- * A simple, generic double linked list
+ * A simple double linked list
  */
 
 #include <assert.h>
@@ -10,9 +10,16 @@
 #include <stdio.h>
 
 #include "list.h"
+
 #include "../util.h"
 
 // --------
+
+/*********************************************************************
+ *                                                                   *
+ *                          Public Interface                         *
+ *                                                                   *
+ *********************************************************************/
 
 list
 *list_create(void)
@@ -70,38 +77,6 @@ list_destroy(list *lheader, void (*callback)())
 	free(lheader);
 }
 
-// --------
-
-void
-list_push(list *lheader, void *data)
-{
-	listnode *new;
-
-	assert(lheader);
-	assert(data);
-
-	if ((new = calloc(1, sizeof(listnode))) == NULL)
-	{
-		quit_error("Couldn't allocate memory");
-	}
-
-	new->data = data;
-
-	if (!lheader->first)
-	{
-		lheader->first = new;
-		lheader->last = new;
-	}
-	else
-	{
-		new->prev = lheader->last;
-		new->prev->next = new;
-		lheader->last = new;
-	}
-
-	lheader->count++;
-}
-
 void
 *list_pop(list *lheader)
 {
@@ -132,7 +107,7 @@ void
 }
 
 void
-list_unshift(list *lheader, void *data)
+list_push(list *lheader, void *data)
 {
 	listnode *new;
 
@@ -153,9 +128,9 @@ list_unshift(list *lheader, void *data)
 	}
 	else
 	{
-        new->next = lheader->first;
-		lheader->first->prev = new;
-		lheader->first = new;
+		new->prev = lheader->last;
+		new->prev->next = new;
+		lheader->last = new;
 	}
 
 	lheader->count++;
@@ -189,5 +164,35 @@ void
 
 	return data;
 
+}
+
+void
+list_unshift(list *lheader, void *data)
+{
+	listnode *new;
+
+	assert(lheader);
+	assert(data);
+
+	if ((new = calloc(1, sizeof(listnode))) == NULL)
+	{
+		quit_error("Couldn't allocate memory");
+	}
+
+	new->data = data;
+
+	if (!lheader->first)
+	{
+		lheader->first = new;
+		lheader->last = new;
+	}
+	else
+	{
+        new->next = lheader->first;
+		lheader->first->prev = new;
+		lheader->first = new;
+	}
+
+	lheader->count++;
 }
 

@@ -2,13 +2,12 @@
  * list.h
  * ------
  *
- * This is a simple doubled linked list.
- * Elements can be accessed from front
- * and back.
+ * This is a simple doubled linked list. Elements
+ * can be accessed from front and back.
  */
 
-#ifndef LINKEDLIST_H_
-#define LINKEDLIST_H_
+#ifndef LIST_H_
+#define LIST_H_
 
 // --------
 
@@ -32,6 +31,8 @@ typedef struct list
 	int count;
 } list;
 
+// --------
+
 /*
  * Creates a new list.
  */
@@ -51,25 +52,18 @@ list *list_create(void);
 void list_destroy(list *lheader, void (*callback)());
 
 /*
- * Creates an new element and
- * appends it to the list.
+ * Returns the last elements data and removes
+ * the element.
+ */
+void *list_pop(list *lheader);
+
+/*
+ * Creates an new element and appends it
+ * to the list.
  *
  * data: Data to append
  */
 void list_push(list *lheader, void *data);
-
-/*
- * Returns the last elements data
- * and removes the element.
- */
-void *list_pop(list *lheader);
-
-/* Creates an new element and
- * unshifts it into the list.
- *
- * data: Data to unshift
- */
-void list_unshift(list *lheader, void *data);
 
 /*
  * Returns the first elements data
@@ -77,7 +71,14 @@ void list_unshift(list *lheader, void *data);
  */
 void *list_shift(list *lheader);
 
+/* Creates an new element and unshifts it
+ * into the list.
+ *
+ * data: Data to unshift
+ */
+void list_unshift(list *lheader, void *data);
+
 // --------
 
-#endif // LINKEDLIST_H_
+#endif // LIST_H_
 
