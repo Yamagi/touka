@@ -19,6 +19,12 @@
 
 // --------
 
+/*********************************************************************
+ *                                                                   *
+ *                        Support Functions                          *
+ *                                                                   *
+ *********************************************************************/
+
 /*
  * Resizes the array if necessary.
  *
@@ -54,6 +60,12 @@ darray_resize(darray *array)
 
 // ----
 
+/*********************************************************************
+ *                                                                   *
+ *                         Public Interface                          *
+ *                                                                   *
+ *********************************************************************/
+
 darray
 *darray_create(void)
 {
@@ -78,7 +90,7 @@ darray
 void
 darray_destroy(darray *array, void (*callback)(char *msg))
 {
-	int i;
+	int16_t i;
 
 	assert(array);
 
@@ -100,15 +112,12 @@ darray_destroy(darray *array, void (*callback)(char *msg))
 }
 
 void
-darray_push(darray *array, void *data)
+*darray_get(darray *array, uint32_t element)
 {
 	assert(array);
-	assert(data);
+	assert(array->elements > element);
 
-	array->data[array->elements] = data;
-	array->elements++;
-
-	darray_resize(array);
+	return array->data[element];
 }
 
 void
@@ -128,12 +137,15 @@ void
 }
 
 void
-*darray_get(darray *array, int32_t element)
+darray_push(darray *array, void *data)
 {
 	assert(array);
-	assert(array->elements > element);
+	assert(data);
 
-	return array->data[element];
+	array->data[array->elements] = data;
+	array->elements++;
+
+	darray_resize(array);
 }
 
 void
