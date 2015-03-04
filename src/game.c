@@ -381,6 +381,29 @@ game_glossary_destroy_callback(void *data)
 	free(entry);
 }
 
+/*
+ * Callback function to qsort for the glossary.
+ */
+int32_t
+game_glossary_sort_callback(const void *msg1, const void *msg2)
+{
+	const listnode *l1;
+	const listnode *l2;
+	game_glossary_s *g1;
+	game_glossary_s *g2;
+	int32_t ret;
+
+	l1 = *(const listnode **)msg1;
+	l2 = *(const listnode **)msg2;
+
+	g1 = (game_glossary_s *)l1->data;
+	g2 = (game_glossary_s *)l2->data;
+
+	ret = strcmp(g1->name, g2->name);
+
+	return ret;
+}
+
 void
 game_glossary_list(void)
 {
@@ -391,6 +414,7 @@ game_glossary_list(void)
 	uint16_t i;
 
     data = hashmap_to_list(game_glossary);
+	list_sort(data, game_glossary_sort_callback);
 	len_entry = 0;
 
 	if (data)
@@ -551,6 +575,29 @@ game_room_destroy_callback(void *data)
 	free(room);
 }
 
+/*
+ * Callback function to qsort for the rooms.
+ */
+int32_t
+game_room_sort_callback(const void *msg1, const void *msg2)
+{
+	const listnode *l1;
+	const listnode *l2;
+	game_room_s *r1;
+	game_room_s *r2;
+	int32_t ret;
+
+	l1 = *(const listnode **)msg1;
+	l2 = *(const listnode **)msg2;
+
+	r1 = (game_room_s *)l1->data;
+	r2 = (game_room_s *)l2->data;
+
+	ret = strcmp(r1->name, r2->name);
+
+	return ret;
+}
+
 void
 game_room_describe(const char *key)
 {
@@ -626,6 +673,7 @@ game_rooms_list(void)
 	uint16_t i;
 
 	data = hashmap_to_list(game_rooms);
+	list_sort(data, game_room_sort_callback);
 	len = 0;
 
 	if (data)
@@ -760,6 +808,29 @@ game_scene_destroy_callback(void *data)
 }
 
 /*
+ * Callback function to qsort for the rooms.
+ */
+int32_t
+game_scene_sort_callback(const void *msg1, const void *msg2)
+{
+	const listnode *l1;
+	const listnode *l2;
+	game_room_s *r1;
+	game_room_s *r2;
+	int32_t ret;
+
+	l1 = *(const listnode **)msg1;
+	l2 = *(const listnode **)msg2;
+
+	r1 = (game_room_s *)l1->data;
+	r2 = (game_room_s *)l2->data;
+
+	ret = strcmp(r1->name, r2->name);
+
+	return ret;
+}
+
+/*
  * Prints a nice endscreen with the statistics.
  * The prompt is reset to game_header->prompt.
  */
@@ -853,6 +924,7 @@ game_scene_list(void)
 	uint16_t i;
 
 	data = hashmap_to_list(game_scenes);
+	list_sort(data, game_scene_sort_callback);
 	len_scene = 0;
 	len_room = 0;
 

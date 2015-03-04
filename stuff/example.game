@@ -7,8 +7,8 @@
 
 ----
 
-%ROOM: testroom1
-%DESCR: Dies ist Testroom 1
+%ROOM: testroom2
+%DESCR: Dies ist Testroom 2
 %ALIAS: Test Room
 %ALIAS: Testroom1
 
@@ -21,8 +21,8 @@ kodiert. Mal schauen ob dieser hier tut. # Kommentar
 
 ----
 
-%ROOM: testroom2
-%DESCR: Und das hier is Testroom 2
+%ROOM: testroom1
+%DESCR: Und das hier is Testroom 1
 
 Eine kurze Testbeschreibung eines zweiten Raumes ohne Aliases.
 
@@ -55,10 +55,18 @@ Bla, Bla, Bla.
 
 ----
 
-%GLOSSARY: glossary1
+%GLOSSARY: glossary3
 %DESCR: Ein Testeintrag
-%ALIAS: g1
+%ALIAS: TutZug
 
 Dies ist ein Testeintrag im Glossar.
+
+----
+
+%GLOSSARY: glossary1
+%DESCR: Banane
+%ALIAS: g1
+
+HORST lebst!
 
 ----

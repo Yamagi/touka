@@ -167,6 +167,64 @@ void
 }
 
 void
+list_sort(list *lheader, int32_t (*callback)(const void *, const void*))
+{
+	listnode *cur;
+	listnode **larray;
+	uint16_t i;
+
+	assert(lheader);
+
+	if (!lheader->count)
+	{
+		return;
+	}
+
+	if ((larray = malloc(lheader->count * sizeof(listnode *))) == NULL)
+	{
+		quit_error("Couldn't allocate memory");
+	}
+
+	cur = lheader->first;
+	i = 0;
+
+	while (cur)
+	{
+		larray[i] = cur;
+
+		cur = cur->next;
+		i++;
+	}
+
+	qsort(larray, lheader->count, sizeof(listnode *), callback);
+
+    for (i = 0; i < lheader->count; i++)
+	{
+		if (i == 0)
+		{
+			larray[i]->prev = NULL;
+			lheader->first = larray[i];
+		}
+		else
+		{
+			larray[i]->prev = larray[i - 1];
+		}
+
+		if (i == lheader->count - 1)
+		{
+			larray[i]->next = NULL;
+			lheader->last = larray[i];
+		}
+		else
+		{
+			larray[i]->next = larray[i + 1];
+		}
+	}
+
+	free(larray);
+}
+
+void
 list_unshift(list *lheader, void *data)
 {
 	listnode *new;
