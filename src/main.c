@@ -91,14 +91,14 @@ main(int argc, char *argv[])
 	// Load the game
 	game_init(argv[1]);
 
+	// Initialize savegames
+	save_init(homedir);
+
 	// Initialize TUI
 	curses_init();
 
 	// Initialize input
-	input_init();
-
-	// Initialize savegames
-	save_init(homedir);
+	input_init(homedir);
 
 	// Show startscreen
 	game_scene_play(NULL);

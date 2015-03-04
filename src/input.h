@@ -54,8 +54,10 @@ void input_complete_reset(void);
  * Initializes the input subsystem.
  * The main purpose of this function
  * is to register our input cmds.
+ *
+ * homedir: Home directory of the engine
  */
-void input_init(void);
+void input_init(const char *homedir);
 
 /*
  * Shuts the input subsystem down.

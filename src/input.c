@@ -10,11 +10,16 @@
  * is implemented.
  */
 
+#define _WITH_GETLINE
+
 #include <assert.h>
 #include <ctype.h>
+#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "curses.h"
 #include "game.h"
@@ -52,6 +57,10 @@ static int32_t tab_position;
 
 // Buffers the completion stub
 static char *tab_stub;
+
+// Pathes to the command history file
+static char histdir[PATH_MAX];
+static char histfile[PATH_MAX];
 
 // ---------
 
@@ -340,6 +349,110 @@ input_register(const char *name, const char *help, void (*callback)(char *msg), 
  *                                                                   *
  *********************************************************************/
 
+static void
+input_history_load(const char *homedir)
+{
+	FILE *fd;
+	char *line;
+	size_t linecap;
+	ssize_t linelen;
+	struct stat sb;
+
+	assert(homedir);
+
+	snprintf(histdir, sizeof(histdir), "%s/%s", homedir, "history");
+	snprintf(histfile, sizeof(histfile), "%s/%s", histdir, game_header->uid);
+
+	if ((stat(histdir, &sb)) == 0)
+	{
+		if (!S_ISDIR(sb.st_mode))
+		{
+			quit_error("History dir is not a directory\n");
+			exit(1);
+		}
+	}
+	else
+	{
+		return;
+	}
+
+	if ((stat(histfile, &sb)) == 0)
+	{
+		if (!S_ISREG(sb.st_mode))
+		{
+			quit_error("History file is not a regular file\n");
+			exit(1);
+		}
+	}
+	else
+	{
+		return;
+	}
+
+	if ((fd = fopen(histfile, "r")) == NULL)
+	{
+		quit_error("Couldn't load history");
+	}
+
+	line = NULL;
+	linecap = 0;
+
+    while ((linelen = getline(&line, &linecap, fd)) > 0)
+	{
+		while (!strncmp(&line[strlen(line) - 1], "\n", strlen("\n")))
+		{
+			line[strlen(line) - 1] = '\0';
+		}
+
+		list_push(history, strdup(line));
+	}
+
+	hist_position = history->first;
+
+	fclose(fd);
+	free(line);
+}
+
+static void
+input_history_save(void)
+{
+	FILE *fd;
+	listnode *cur;
+	struct stat sb;
+
+	assert(history);
+
+	if ((stat(histdir, &sb)) == 0)
+	{
+		if (!S_ISDIR(sb.st_mode))
+		{
+			quit_error("History dir is not a directory\n");
+			exit(1);
+		}
+	}
+	else
+	{
+		util_rmkdir(histdir);
+	}
+
+	if ((fd = fopen(histfile, "w")) == NULL)
+	{
+		quit_error("Couldn't save history");
+	}
+
+	cur = history->first;
+
+	while (cur)
+	{
+		fwrite(cur->data, strlen(cur->data), 1, fd);
+		fwrite("\n", strlen("\n"), 1, fd);
+		cur = cur->next;
+	}
+
+	fflush(fd);
+	fclose(fd);
+}
+
 char *
 input_history_next(void)
 {
@@ -472,7 +585,7 @@ input_complete_reset(void)
  *********************************************************************/
 
 void
-input_init(void)
+input_init(const char *homedir)
 {
 	log_info("Initializing input");
 
@@ -491,6 +604,7 @@ input_init(void)
 
 	// Initialize history
 	history = list_create();
+	input_history_load(homedir);
 }
 
 void
@@ -498,6 +612,7 @@ input_quit(void)
 {
 	if (history)
 	{
+		input_history_save();
 		list_destroy(history, NULL);
 	}
 
