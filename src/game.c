@@ -59,7 +59,7 @@ boolean game_end;
  * links markers (|) around it. They're removed
  * and the link is matched against all objects.
  * If a match is found, the corresponding color
- * is returned. If there's no match, COLOR_NORM
+ * is returned. If there's no match, TINT_NORM
  * is returned.
  *
  * Please note that the matcher uses a "first
@@ -96,7 +96,7 @@ game_match_link(char *link)
 			game_stats->glossary_mentioned++;
 		}
 
-		return COLOR_GLOSSARY;
+		return TINT_GLOSSARY;
 	}
 
 	// Room
@@ -107,12 +107,12 @@ game_match_link(char *link)
 			room->mentioned = 1;
 		}
 
-		return COLOR_ROOM;
+		return TINT_ROOM;
 	}
 
 	log_warn_f("Link %s didn't match anything", link);
 
-	return COLOR_NORM;
+	return TINT_NORM;
 }
 
 /*
@@ -151,11 +151,11 @@ game_print_description(list *words)
 
 				if (!node->next || !strcmp(cur, "\n"))
 				{
-					curses_text(COLOR_NORM, cur);
+					curses_text(TINT_NORM, cur);
 				}
 				else
 				{
-					curses_text(COLOR_NORM, "%s ", cur);
+					curses_text(TINT_NORM, "%s ", cur);
 				}
 
 				node = node->next;
@@ -221,11 +221,11 @@ game_print_description(list *words)
 
 					if (!node->next || !strcmp(cur, "\n"))
 					{
-						curses_text(COLOR_NORM, cur);
+						curses_text(TINT_NORM, cur);
 					}
 					else
 					{
-						curses_text(COLOR_NORM, "%s ", cur);
+						curses_text(TINT_NORM, "%s ", cur);
 					}
 
 					node = node->next;
@@ -280,13 +280,13 @@ game_print_description(list *words)
 
 				if (!node->next || !strcmp(cur, "\n"))
 				{
-					curses_text(COLOR_NORM, "%s ", link);
-					curses_text(COLOR_NORM, cur);
+					curses_text(TINT_NORM, "%s ", link);
+					curses_text(TINT_NORM, cur);
 				}
 				else
 				{
-					curses_text(COLOR_NORM, "%s ", link);
-					curses_text(COLOR_NORM, "%s ", cur);
+					curses_text(TINT_NORM, "%s ", link);
+					curses_text(TINT_NORM, "%s ", cur);
 				}
 
 				free(link);
@@ -315,11 +315,11 @@ game_print_description(list *words)
 		// Normal word
 		if (!node->next || !strcmp(cur, "\n"))
 		{
-			curses_text(COLOR_NORM, cur);
+			curses_text(TINT_NORM, cur);
 		}
 		else
 		{
-			curses_text(COLOR_NORM, "%s ", cur);
+			curses_text(TINT_NORM, "%s ", cur);
 		}
 
 		node = node->next;
@@ -331,7 +331,7 @@ game_print_description(list *words)
 		log_error("Link still open at end of description");
 	}
 
-	curses_text(COLOR_NORM, "\n");
+	curses_text(TINT_NORM, "\n");
 }
 
 
@@ -451,8 +451,8 @@ game_glossary_list(void)
 		len_entry = strlen("Entry");
 	}
 
-	curses_text(COLOR_NORM, "%-*s %s\n", len_entry + 2, "Entry", "Description");
-	curses_text(COLOR_NORM, "%-*s %s\n", len_entry + 2, "-----", "-----------");
+	curses_text(TINT_NORM, "%-*s %s\n", len_entry + 2, "Entry", "Description");
+	curses_text(TINT_NORM, "%-*s %s\n", len_entry + 2, "-----", "-----------");
 
 	for (i = 0; i <= data->count; i++)
 	{
@@ -465,7 +465,7 @@ game_glossary_list(void)
 		}
 #endif
 
-		curses_text(COLOR_NORM, "%-*s %s\n", len_entry + 2, entry->name, entry->descr);
+		curses_text(TINT_NORM, "%-*s %s\n", len_entry + 2, entry->name, entry->descr);
 	}
 
 	list_destroy(data, NULL);
@@ -483,13 +483,13 @@ game_glossary_print(const char *key)
 
 	if ((entry = hashmap_get(game_glossary, key)) == NULL)
 	{
-		curses_text(COLOR_NORM, "No such glossary entry: %s\n", key);
+		curses_text(TINT_NORM, "No such glossary entry: %s\n", key);
 
 		return;
 	}
 
 #ifndef NDEBUG
-	curses_text(COLOR_HIGH, "%s", entry->name);
+	curses_text(TINT_HIGH, "%s", entry->name);
 
 	if (entry->aliases)
 	{
@@ -498,29 +498,29 @@ game_glossary_print(const char *key)
 			lnode = entry->aliases->first;
 		}
 
-		curses_text(COLOR_NORM, " (");
+		curses_text(TINT_NORM, " (");
 
 		for (i = 0; i < entry->aliases->count; i++)
 		{
 			if (i)
 			{
-				curses_text(COLOR_NORM, ", ");
+				curses_text(TINT_NORM, ", ");
 			}
 
-			curses_text(COLOR_HIGH, lnode->data);
+			curses_text(TINT_HIGH, lnode->data);
 			lnode = lnode->next;
 		}
 
-		curses_text(COLOR_NORM, ")");
+		curses_text(TINT_NORM, ")");
 	}
 
-	curses_text(COLOR_NORM, ":\n");
+	curses_text(TINT_NORM, ":\n");
 
 #else
 
 	if (!entry->mentioned)
 	{
-		curses_text(COLOR_NORM, "No such glossary entry: %s\n", key);
+		curses_text(TINT_NORM, "No such glossary entry: %s\n", key);
 
 		return;
 	}
@@ -609,13 +609,13 @@ game_room_describe(const char *key)
 
 	if ((room = hashmap_get(game_rooms, key)) == NULL)
 	{
-		curses_text(COLOR_NORM, "No such room: %s\n", key);
+		curses_text(TINT_NORM, "No such room: %s\n", key);
 
 		return;
 	}
 
 #ifndef NDEBUG
-	curses_text(COLOR_HIGH, "%s", room->name);
+	curses_text(TINT_HIGH, "%s", room->name);
 
 	if (room->aliases)
 	{
@@ -624,36 +624,36 @@ game_room_describe(const char *key)
 			lnode = room->aliases->first;
 		}
 
-		curses_text(COLOR_NORM, " (");
+		curses_text(TINT_NORM, " (");
 
 		for (i = 0; i < room->aliases->count; i++)
 		{
 			if (i)
 			{
-				curses_text(COLOR_NORM, ", ");
+				curses_text(TINT_NORM, ", ");
 			}
 
-			curses_text(COLOR_HIGH, lnode->data);
+			curses_text(TINT_HIGH, lnode->data);
 			lnode = lnode->next;
 		}
 
-		curses_text(COLOR_NORM, ")");
+		curses_text(TINT_NORM, ")");
 	}
 
-	curses_text(COLOR_NORM, ":\n");
+	curses_text(TINT_NORM, ":\n");
 
 #else
 
 	if (room->mentioned && !room->visited)
 	{
-		curses_text(COLOR_NORM, "Room %s was mentioned but not visited\n", key);
+		curses_text(TINT_NORM, "Room %s was mentioned but not visited\n", key);
 
 		return;
 	}
 
 	if (!room->visited)
 	{
-		curses_text(COLOR_NORM, "No such room: %s\n", key);
+		curses_text(TINT_NORM, "No such room: %s\n", key);
 
 		return;
 	}
@@ -710,8 +710,8 @@ game_rooms_list(void)
 		len = strlen("Name");
 	}
 
-	curses_text(COLOR_NORM, "%-*s %-*s %s\n", len + 1, "Name", 6, "State", "Description");
-	curses_text(COLOR_NORM, "%-*s %-*s %s\n", len + 1, "----", 6, "-----", "-----------");
+	curses_text(TINT_NORM, "%-*s %-*s %s\n", len + 1, "Name", 6, "State", "Description");
+	curses_text(TINT_NORM, "%-*s %-*s %s\n", len + 1, "----", 6, "-----", "-----------");
 
 	for (i = 0; i <= data->count; i++)
 	{
@@ -724,22 +724,22 @@ game_rooms_list(void)
 		}
 #endif
 
-		curses_text(COLOR_NORM, "%-*s", len + 2, room->name);
+		curses_text(TINT_NORM, "%-*s", len + 2, room->name);
 
         if (room->visited)
 		{
-			curses_text(COLOR_NORM, "%-*s", 7, "S");
+			curses_text(TINT_NORM, "%-*s", 7, "S");
 		}
 		else if (room->mentioned)
 		{
-			curses_text(COLOR_NORM, "%-*s", 7, "M");
+			curses_text(TINT_NORM, "%-*s", 7, "M");
 		}
 		else
 		{
-			curses_text(COLOR_NORM, "%-*s", 7, "-");
+			curses_text(TINT_NORM, "%-*s", 7, "-");
 		}
 
-		curses_text(COLOR_NORM, "%s\n", room->descr);
+		curses_text(TINT_NORM, "%s\n", room->descr);
 	}
 
 	list_destroy(data, NULL);
@@ -839,16 +839,16 @@ game_scene_endscreen(void)
 {
 	log_info("Game has ended");
 
-	curses_text(COLOR_NORM, "Congratulations! You have successfull completed ");
-	curses_text(COLOR_HIGH, "%s", game_header->game);
-	curses_text(COLOR_NORM, ".\n\n");
+	curses_text(TINT_NORM, "Congratulations! You have successfull completed ");
+	curses_text(TINT_HIGH, "%s", game_header->game);
+	curses_text(TINT_NORM, ".\n\n");
 
-	curses_text(COLOR_NORM, "Your track record is:\n");
-	curses_text(COLOR_NORM, " - %i from %i glossar entries seen\n", game_stats->glossary_mentioned,
+	curses_text(TINT_NORM, "Your track record is:\n");
+	curses_text(TINT_NORM, " - %i from %i glossar entries seen\n", game_stats->glossary_mentioned,
 			game_stats->glossary_total);
-	curses_text(COLOR_NORM, " - %i from %i rooms visited\n", game_stats->rooms_visited,
+	curses_text(TINT_NORM, " - %i from %i rooms visited\n", game_stats->rooms_visited,
 			game_stats->rooms_total);
-	curses_text(COLOR_NORM, " - %i from %i scenes played\n\n", game_stats->scenes_visited,
+	curses_text(TINT_NORM, " - %i from %i scenes played\n\n", game_stats->scenes_visited,
 			game_stats->scenes_total);
 
 	curses_status("Game is finished");
@@ -880,20 +880,20 @@ game_scene_startscreen(void)
 {
 	log_info("Game has started");
 
-	curses_text(COLOR_NORM, "Welcome to ");
-	curses_text(COLOR_HIGH, "%s\n", game_header->game);
-	curses_text(COLOR_NORM, "Written by %s\n\n", game_header->author);
+	curses_text(TINT_NORM, "Welcome to ");
+	curses_text(TINT_HIGH, "%s\n", game_header->game);
+	curses_text(TINT_NORM, "Written by %s\n\n", game_header->author);
 
-	curses_text(COLOR_NORM, "This game has:\n");
-	curses_text(COLOR_NORM, " - %i glossar entries\n", game_stats->glossary_total);
-	curses_text(COLOR_NORM, " - %i rooms\n", game_stats->rooms_total);
-	curses_text(COLOR_NORM, " - %i scenes\n\n", game_stats->scenes_total);
+	curses_text(TINT_NORM, "This game has:\n");
+	curses_text(TINT_NORM, " - %i glossar entries\n", game_stats->glossary_total);
+	curses_text(TINT_NORM, " - %i rooms\n", game_stats->rooms_total);
+	curses_text(TINT_NORM, " - %i scenes\n\n", game_stats->scenes_total);
 
-	curses_text(COLOR_NORM, "Type ");
-	curses_text(COLOR_HIGH, "help ");
-	curses_text(COLOR_NORM, "for help, or ");
-	curses_text(COLOR_HIGH, "next ");
-	curses_text(COLOR_NORM, "to start the game.\n\n");
+	curses_text(TINT_NORM, "Type ");
+	curses_text(TINT_HIGH, "help ");
+	curses_text(TINT_NORM, "for help, or ");
+	curses_text(TINT_HIGH, "next ");
+	curses_text(TINT_NORM, "to start the game.\n\n");
 
 	curses_status("Welcome to %s", game_header->game);
 
@@ -967,9 +967,9 @@ game_scene_list(void)
 		len_scene = strlen("Name");
 	}
 
-	curses_text(COLOR_NORM, "%-*s %-*s %s\n", len_scene + 1, "Name", len_room + 1,
+	curses_text(TINT_NORM, "%-*s %-*s %s\n", len_scene + 1, "Name", len_room + 1,
 			"Room", "Description");
-	curses_text(COLOR_NORM, "%-*s %-*s %s\n", len_scene + 1, "----", len_room + 1,
+	curses_text(TINT_NORM, "%-*s %-*s %s\n", len_scene + 1, "----", len_room + 1,
 			"----", "-----------");
 
 	for (i = 0; i <= data->count; i++)
@@ -983,9 +983,9 @@ game_scene_list(void)
 		}
 #endif
 
-		curses_text(COLOR_NORM, "%-*s", len_scene + 2, scene->name);
-		curses_text(COLOR_NORM, "%-*s", len_room + 2, scene->room);
-		curses_text(COLOR_NORM, "%s\n", scene->descr);
+		curses_text(TINT_NORM, "%-*s", len_scene + 2, scene->name);
+		curses_text(TINT_NORM, "%-*s", len_room + 2, scene->room);
+		curses_text(TINT_NORM, "%s\n", scene->descr);
 	}
 
 	list_destroy(data, NULL);
@@ -1021,13 +1021,13 @@ game_scene_next(uint8_t choice)
 		{
 			if (current_scene->next->elements == 1)
 			{
-				curses_text(COLOR_NORM, "No choice possible");
+				curses_text(TINT_NORM, "No choice possible");
 
 				return FALSE;
 			}
 			if (choice > current_scene->next->elements)
 			{
-				curses_text(COLOR_NORM, "Invalid choice");
+				curses_text(TINT_NORM, "Invalid choice");
 
 				return FALSE;
 			}
@@ -1056,7 +1056,7 @@ game_scene_next(uint8_t choice)
 		{
 			if (current_scene->next->elements > 1)
 			{
-				curses_text(COLOR_NORM, "Make your choice\n");
+				curses_text(TINT_NORM, "Make your choice\n");
 
 				return FALSE;
 			}
@@ -1096,7 +1096,7 @@ game_scene_play(const char *key)
 	{
 		if ((scene = hashmap_get(game_scenes, key)) == NULL)
 		{
-			curses_text(COLOR_NORM, "No such scene: %s\n", key);
+			curses_text(TINT_NORM, "No such scene: %s\n", key);
 
 			return;
 		}
@@ -1104,7 +1104,7 @@ game_scene_play(const char *key)
 #ifdef NDEBUG
 		if (!scene->visited)
 		{
-			curses_text(COLOR_NORM, "No such scene: %s\n", key);
+			curses_text(TINT_NORM, "No such scene: %s\n", key);
 
 			return;
 		}

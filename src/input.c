@@ -102,8 +102,8 @@ cmd_help(char *msg)
 		}
 	}
 
-	curses_text(COLOR_NORM, "%-*s %s\n", len + 1, "Command", "Description");
-	curses_text(COLOR_NORM, "%-*s %s\n", len + 1, "-------", "-----------");
+	curses_text(TINT_NORM, "%-*s %s\n", len + 1, "Command", "Description");
+	curses_text(TINT_NORM, "%-*s %s\n", len + 1, "-------", "-----------");
 
 	for (i = 0; i < input_cmds->elements; i++)
 	{
@@ -114,7 +114,7 @@ cmd_help(char *msg)
 			continue;
 		}
 
-		curses_text(COLOR_NORM, "%-*s %s\n", len + 1, cur->name, cur->help);
+		curses_text(TINT_NORM, "%-*s %s\n", len + 1, cur->name, cur->help);
 	}
 
 	log_info_f("Listed %i commands", i);
@@ -126,12 +126,12 @@ cmd_help(char *msg)
 static void
 cmd_info(char *msg)
 {
-	curses_text(COLOR_NORM, "Attribute  Value\n");
-	curses_text(COLOR_NORM, "---------  -----\n");
-	curses_text(COLOR_NORM, "Game       %s\n", game_header->game);
-	curses_text(COLOR_NORM, "Author     %s\n", game_header->author);
-	curses_text(COLOR_NORM, "Date       %s\n", game_header->date);
-	curses_text(COLOR_NORM, "UID        %s\n", game_header->uid);
+	curses_text(TINT_NORM, "Attribute  Value\n");
+	curses_text(TINT_NORM, "---------  -----\n");
+	curses_text(TINT_NORM, "Game       %s\n", game_header->game);
+	curses_text(TINT_NORM, "Author     %s\n", game_header->author);
+	curses_text(TINT_NORM, "Date       %s\n", game_header->date);
+	curses_text(TINT_NORM, "UID        %s\n", game_header->uid);
 }
 
 /*
@@ -174,7 +174,7 @@ cmd_next(char *msg)
 	{
 		if (strlen(msg) != 1)
 		{
-			curses_text(COLOR_NORM, "Invalid choice");
+			curses_text(TINT_NORM, "Invalid choice");
 
 			return;
 		}
@@ -186,7 +186,7 @@ cmd_next(char *msg)
 
 				if (!choice)
 				{
-					curses_text(COLOR_NORM, "Invalid choice");
+					curses_text(TINT_NORM, "Invalid choice");
 
 					return;
 				}
@@ -266,8 +266,8 @@ cmd_scene(char *msg)
 static void
 cmd_version(char *msg)
 {
-	curses_text(COLOR_NORM, "This is %s %s, (c) %s %s\n", APPNAME, VERSION, YEAR, AUTHOR);
-	curses_text(COLOR_NORM, "This binary was build on %s\n", __DATE__);
+	curses_text(TINT_NORM, "This is %s %s, (c) %s %s\n", APPNAME, VERSION, YEAR, AUTHOR);
+	curses_text(TINT_NORM, "This binary was build on %s\n", __DATE__);
 }
 
 // ---------
@@ -546,8 +546,8 @@ input_process(char *cmd)
 	}
 
 	// Echo the input
-	curses_text(COLOR_PROMPT, "> ");
-	curses_text(COLOR_NORM, "%s\n", cmd);
+	curses_text(TINT_PROMPT, "> ");
+	curses_text(TINT_NORM, "%s\n", cmd);
 
 	// And put into history
 	list_unshift(history, strdup(cmd));
@@ -583,10 +583,10 @@ input_process(char *cmd)
 
 	if (!match)
 	{
-		curses_text(COLOR_NORM, "%s: command not found\n", token);
+		curses_text(TINT_NORM, "%s: command not found\n", token);
 	}
 
 	// Empty line after each cmd-output
-	curses_text(COLOR_NORM, "\n");
+	curses_text(TINT_NORM, "\n");
 }
 

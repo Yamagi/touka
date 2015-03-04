@@ -19,17 +19,15 @@
 // --------
 
 /*
- * Highlight state:
- *  - COLOR_NORM: White on black
- *  - COLOR_HIGH: Green on Black
+ * Color in which the text is printed
  */
 enum
 {
-	COLOR_GLOSSARY = 0,
-	COLOR_HIGH,
-	COLOR_NORM,
-	COLOR_PROMPT,
-	COLOR_ROOM
+	TINT_GLOSSARY = 0,
+	TINT_HIGH,
+	TINT_NORM,
+	TINT_PROMPT,
+	TINT_ROOM
 };
 
 // The prompt

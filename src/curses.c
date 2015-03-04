@@ -125,19 +125,19 @@ curses_print(uint32_t color, const char *msg)
 	int16_t i;
 	uint32_t x;
 
-	if (color == COLOR_GLOSSARY)
+	if (color == TINT_GLOSSARY)
 	{
 		wattron(text, COLOR_PAIR(PAIR_GLOSSARY));
 	}
-	else if (color == COLOR_HIGH)
+	else if (color == TINT_HIGH)
 	{
 		wattron(text, COLOR_PAIR(PAIR_HIGHLIGHT));
 	}
-	else if (color == COLOR_PROMPT)
+	else if (color == TINT_PROMPT)
 	{
 		wattron(text, COLOR_PAIR(PAIR_PROMPT));
 	}
-	else if (color == COLOR_ROOM)
+	else if (color == TINT_ROOM)
 	{
 		wattron(text, COLOR_PAIR(PAIR_ROOM));
 	}

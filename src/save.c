@@ -157,8 +157,8 @@ save_list(void)
 
 	count = 0;
 
-	curses_text(COLOR_NORM, "Saves:\n");
-	curses_text(COLOR_NORM, "------\n");
+	curses_text(TINT_NORM, "Saves:\n");
+	curses_text(TINT_NORM, "------\n");
 
 	while ((cur = readdir(dir)) != NULL)
 	{
@@ -172,7 +172,7 @@ save_list(void)
 				if (!strcmp(&cur->d_name[strlen(cur->d_name) - strlen(".sav")], ".sav"))
 				{
 					snprintf(buf, strlen(cur->d_name) - strlen(".sav") + 1, "%s", cur->d_name);
-					curses_text(COLOR_NORM, "%s\n", buf);
+					curses_text(TINT_NORM, "%s\n", buf);
 					count++;
 				}
 			}
@@ -231,14 +231,14 @@ save_read(char *name)
 	{
 		if (!S_ISREG(sb.st_mode))
 		{
-			curses_text(COLOR_NORM, "Savegame %s doesn't exists\n", name);
+			curses_text(TINT_NORM, "Savegame %s doesn't exists\n", name);
 
 			return FALSE;
 		}
 	}
 	else
 	{
-			curses_text(COLOR_NORM, "Savegame %s doesn't exists\n", name);
+			curses_text(TINT_NORM, "Savegame %s doesn't exists\n", name);
 
 			return FALSE;
 	}
@@ -328,7 +328,7 @@ save_read(char *name)
 			{
 				if (strcmp(cur, game_header->uid))
 				{
-					curses_text(COLOR_NORM, "Savegame from another game\n");
+					curses_text(TINT_NORM, "Savegame from another game\n");
 
 					return FALSE;
 				}
