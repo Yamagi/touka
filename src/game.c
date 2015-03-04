@@ -483,7 +483,7 @@ game_glossary_print(const char *key)
 
 	if ((entry = hashmap_get(game_glossary, key)) == NULL)
 	{
-		curses_text(TINT_NORM, "No such glossary entry: %s\n", key);
+		curses_text(TINT_NORM, "No such entry: %s\n", key);
 
 		return;
 	}
