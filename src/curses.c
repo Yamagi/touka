@@ -408,11 +408,11 @@ curses_input(void)
 	char buffer[INPUTBUF];
 	char *tmp;
 	boolean fin;
+	int16_t i;
 	int16_t key;
 	int32_t chars;
 	int32_t num;
 	int32_t start;
-	uint16_t i;
 	uint32_t begin;
     uint32_t position;
 	uint32_t x, y;
@@ -476,8 +476,9 @@ curses_input(void)
 				wclrtoeol(input);
 
 				memset(buffer, 0, sizeof(buffer));
-				start = 0;
+				chars = 0;
 				position = 0;
+				start = 0;
 
 				input_history_reset();
 				input_complete_reset();
