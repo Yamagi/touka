@@ -18,8 +18,8 @@
 #include "log.h"
 #include "main.h"
 #include "misc.h"
+#include "quit.h"
 #include "save.h"
-#include "util.h"
 
 // --------
 

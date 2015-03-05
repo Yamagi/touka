@@ -20,8 +20,8 @@
 #include "curses.h"
 #include "game.h"
 #include "log.h"
+#include "quit.h"
 
-#include "util.h"
 #include "data/list.h"
 
 // --------

@@ -22,7 +22,7 @@
 #include "log.h"
 #include "main.h"
 #include "misc.h"
-#include "util.h"
+#include "quit.h"
 
 #include "data/hashmap.h"
 #include "data/list.h"

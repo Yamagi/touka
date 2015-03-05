@@ -18,7 +18,7 @@
 #include "log.h"
 #include "main.h"
 #include "parser.h"
-#include "util.h"
+#include "quit.h"
 
 #include "data/hashmap.h"
 #include "data/list.h"

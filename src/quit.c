@@ -1,9 +1,8 @@
 /*
- * utility.c:
- * ----------
+ * quit.c:
+ * -------
  *
- * Various stuff like global utility functions
- * or the shutdown code.
+ * Application shutdown.
  */
 
 #include <errno.h>
@@ -17,9 +16,15 @@
 #include "input.h"
 #include "log.h"
 #include "save.h"
-#include "util.h"
+#include "quit.h"
 
 // --------
+
+/*********************************************************************
+ *                                                                   *
+ *                          Public Interface                         *
+ *                                                                   *
+ *********************************************************************/
 
 void
 quit_error(const char *msg)

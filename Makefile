@@ -84,8 +84,8 @@ OBJS_ = \
 	src/main.o \
 	src/misc.o \
 	src/parser.o \
-	src/save.o \
-	src/util.o
+	src/quit.o \
+	src/save.o
 
 # Buildpath
 OBJS = $(patsubst %,build/%,$(OBJS_))

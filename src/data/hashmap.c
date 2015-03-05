@@ -17,7 +17,7 @@
 #include "list.h"
 
 #include "../main.h"
-#include "../util.h"
+#include "../quit.h"
 
 // --------
 

@@ -11,9 +11,15 @@
 #include <sys/stat.h>
 
 #include "log.h"
-#include "util.h"
+#include "quit.h"
 
 // --------
+
+/*********************************************************************
+ *                                                                   *
+ *                          Public Interface                         *
+ *                                                                   *
+ *********************************************************************/
 
 void
 misc_rmkdir(const char *dir)

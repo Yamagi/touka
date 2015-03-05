@@ -17,7 +17,7 @@
 #include "main.h"
 #include "input.h"
 #include "log.h"
-#include "util.h"
+#include "quit.h"
 
 #include "data/list.h"
 

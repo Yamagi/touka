@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 #include "darray.h"
-#include "../util.h"
+#include "../quit.h"
 
 // Initial number of elements
 #define INT_ELEMENTS 16

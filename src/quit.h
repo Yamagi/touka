@@ -1,14 +1,12 @@
 /*
- * util.h
+ * quit.h
  * ------
  *
- * A collection of various more or less
- * usefull utility functions, that don't
- * fit anywhere else.
+ * Application shutdown.
  */
 
-#ifndef UTIL_H_
-#define UTIL_H_
+#ifndef QUIT_H_
+#define QUIT_H_
 
 // ---------
 
@@ -24,5 +22,5 @@ void quit_success(void);
 
 // --------
 
-#endif // UTIL_H_
+#endif // QUIT_H_
 

@@ -27,8 +27,8 @@
 #include "main.h"
 #include "misc.h"
 #include "log.h"
+#include "quit.h"
 #include "save.h"
-#include "util.h"
 
 #include "data/darray.h"
 #include "data/list.h"
