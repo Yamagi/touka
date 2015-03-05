@@ -8,6 +8,11 @@ CFLAGS := -MMD -std=c99 -Wall -Werror -pedantic
 
 # ----
 
+# Translation
+I18N := english
+
+# ----
+
 # GNU libc crap
 ifeq ($(OS),Linux)
 CFLAGS += -D_GNU_SOURCE
@@ -85,7 +90,8 @@ OBJS_ = \
 	src/misc.o \
 	src/parser.o \
 	src/quit.o \
-	src/save.o
+	src/save.o \
+	src/i18n/$(I18N).o
 
 # Buildpath
 OBJS = $(patsubst %,build/%,$(OBJS_))
