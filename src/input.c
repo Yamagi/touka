@@ -25,6 +25,7 @@
 #include "game.h"
 #include "input.h"
 #include "main.h"
+#include "misc.h"
 #include "log.h"
 #include "save.h"
 #include "util.h"
@@ -432,7 +433,7 @@ input_history_save(void)
 	}
 	else
 	{
-		util_rmkdir(histdir);
+		misc_rmkdir(histdir);
 	}
 
 	if ((fd = fopen(histfile, "w")) == NULL)

@@ -17,6 +17,7 @@
 #include "input.h"
 #include "log.h"
 #include "main.h"
+#include "misc.h"
 #include "save.h"
 #include "util.h"
 
@@ -71,7 +72,7 @@ main(int argc, char *argv[])
 	}
 	else
 	{
-		util_rmkdir(homedir);
+		misc_rmkdir(homedir);
 	}
 
 	// Bring up logging

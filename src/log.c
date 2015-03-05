@@ -20,6 +20,7 @@
 
 #include "log.h"
 #include "main.h"
+#include "misc.h"
 #include "util.h"
 
 // --------
@@ -175,7 +176,7 @@ log_init(const char *path, const char *name, int16_t seg)
 	}
 	else
 	{
-		util_rmkdir(path);
+		misc_rmkdir(path);
 	}
 
     // Rotate logs

@@ -21,6 +21,7 @@
 #include "game.h"
 #include "log.h"
 #include "main.h"
+#include "misc.h"
 #include "util.h"
 
 #include "data/hashmap.h"
@@ -137,7 +138,7 @@ save_init(const char *homedir)
 	}
 	else
 	{
-		util_rmkdir(savedir);
+		misc_rmkdir(savedir);
 	}
 }
 

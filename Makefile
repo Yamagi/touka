@@ -82,6 +82,7 @@ OBJS_ = \
 	src/input.o \
 	src/log.o \
 	src/main.o \
+	src/misc.o \
 	src/parser.o \
 	src/save.o \
 	src/util.o
