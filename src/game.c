@@ -22,6 +22,7 @@
 
 #include "data/hashmap.h"
 #include "data/list.h"
+#include "i18n/i18n.h"
 
 // --------
 
@@ -110,7 +111,7 @@ game_match_link(char *link)
 		return TINT_ROOM;
 	}
 
-	log_warn_f("Link %s didn't match anything", link);
+	log_warn_f("%s: %s", i18n_linkmatch, link);
 
 	return TINT_NORM;
 }
@@ -147,7 +148,7 @@ game_print_description(list *words)
 		{
 			if (link)
 			{
-				log_error("Nested link detected");
+				log_error(i18n_linknested);
 
 				if (!node->next || !strcmp(cur, "\n"))
 				{
@@ -217,7 +218,7 @@ game_print_description(list *words)
 			{
 				if (!link)
 				{
-					log_error("Closing an unopened link");
+					log_error(i18n_linkunopened);
 
 					if (!node->next || !strcmp(cur, "\n"))
 					{
@@ -276,7 +277,7 @@ game_print_description(list *words)
 		{
 			if (!strcmp(cur, "\n"))
 			{
-				log_error("Line break in link");
+				log_error(i18n_linkbreak);
 
 				if (!node->next || !strcmp(cur, "\n"))
 				{
@@ -328,7 +329,7 @@ game_print_description(list *words)
 	// Link still open
 	if (link)
 	{
-		log_error("Link still open at end of description");
+		log_error(i18n_linkstillopen);
 	}
 
 	curses_text(TINT_NORM, "\n");

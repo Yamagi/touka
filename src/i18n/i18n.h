@@ -20,6 +20,21 @@ extern const char *i18n_cursesinit;
 // Curses shutdown
 extern const char *i18n_cursesquit;
 
+// Line break in link
+extern const char *i18n_linkbreak;
+
+// Link didn't match
+extern const char *i18n_linkmatch;
+
+// Nested link
+extern const char *i18n_linknested;
+
+// Link still open
+extern const char *i18n_linkstillopen;
+
+// Unopened link closed
+extern const char *i18n_linkunopened;
+
 // New terminal size
 extern const char *i18n_newtermsize;
 
