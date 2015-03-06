@@ -447,13 +447,26 @@ game_glossary_list(void)
 		}
 	}
 
-	if (len_entry < strlen("Entry"))
+	if (len_entry < strlen(i18n_entry))
 	{
-		len_entry = strlen("Entry");
+		len_entry = strlen(i18n_entry);
 	}
 
-	curses_text(TINT_NORM, "%-*s %s\n", len_entry + 2, "Entry", "Description");
-	curses_text(TINT_NORM, "%-*s %s\n", len_entry + 2, "-----", "-----------");
+	curses_text(TINT_NORM, "%-*s %s\n", len_entry + 2, i18n_entry, i18n_description);
+
+	for (i = 0; i < strlen(i18n_entry); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "%-*s", len_entry + 2 - strlen(i18n_entry) + 1, " ");
+
+	for (i = 0; i < strlen(i18n_description); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "\n");
 
 	for (i = 0; i <= data->count; i++)
 	{
@@ -470,7 +483,7 @@ game_glossary_list(void)
 	}
 
 	list_destroy(data, NULL);
-	log_info_f("Listed %i glossary entries", i);
+	log_info_f("%s: %i", i18n_glossaryentries, i);
 }
 
 void
@@ -484,7 +497,7 @@ game_glossary_print(const char *key)
 
 	if ((entry = hashmap_get(game_glossary, key)) == NULL)
 	{
-		curses_text(TINT_NORM, "No such entry: %s\n", key);
+		curses_text(TINT_NORM, "%s: %s\n", i18n_glossarynoentry, key);
 
 		return;
 	}
@@ -521,7 +534,7 @@ game_glossary_print(const char *key)
 
 	if (!entry->mentioned)
 	{
-		curses_text(TINT_NORM, "No such glossary entry: %s\n", key);
+		curses_text(TINT_NORM, "%s: %s\n", i18n_glossarynoentry, key);
 
 		return;
 	}
@@ -610,7 +623,7 @@ game_room_describe(const char *key)
 
 	if ((room = hashmap_get(game_rooms, key)) == NULL)
 	{
-		curses_text(TINT_NORM, "No such room: %s\n", key);
+		curses_text(TINT_NORM, "%s\n", i18n_roomnotfound, key);
 
 		return;
 	}
@@ -647,14 +660,14 @@ game_room_describe(const char *key)
 
 	if (room->mentioned && !room->visited)
 	{
-		curses_text(TINT_NORM, "Room %s was mentioned but not visited\n", key);
+		curses_text(TINT_NORM, "%s\n", i18n_roommentioned);
 
 		return;
 	}
 
 	if (!room->visited)
 	{
-		curses_text(TINT_NORM, "No such room: %s\n", key);
+		curses_text(TINT_NORM, "%s\n", i18n_roomnotfound, key);
 
 		return;
 	}
@@ -706,13 +719,34 @@ game_rooms_list(void)
 		}
 	}
 
-	if (len < strlen("Name"))
+	if (len < strlen(i18n_name))
 	{
-		len = strlen("Name");
+		len = strlen(i18n_name);
 	}
 
-	curses_text(TINT_NORM, "%-*s %-*s %s\n", len + 1, "Name", 6, "State", "Description");
-	curses_text(TINT_NORM, "%-*s %-*s %s\n", len + 1, "----", 6, "-----", "-----------");
+	curses_text(TINT_NORM, "%-*s %-*s %s\n", len + 1, i18n_name, strlen(i18n_state) + 1,
+		   	i18n_state, i18n_description);
+
+	for (i = 0; i < strlen(i18n_name); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "%-*s", len + 2 - strlen(i18n_name), " ");
+
+	for (i = 0; i < strlen(i18n_state); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "%-*s", 2, " ");
+
+	for (i = 0; i < strlen(i18n_description); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "\n");
 
 	for (i = 0; i <= data->count; i++)
 	{
@@ -729,22 +763,22 @@ game_rooms_list(void)
 
         if (room->visited)
 		{
-			curses_text(TINT_NORM, "%-*s", 7, "S");
+			curses_text(TINT_NORM, "%-*s", strlen(i18n_state) + 2, "S");
 		}
 		else if (room->mentioned)
 		{
-			curses_text(TINT_NORM, "%-*s", 7, "M");
+			curses_text(TINT_NORM, "%-*s", strlen(i18n_state) + 2, "M");
 		}
 		else
 		{
-			curses_text(TINT_NORM, "%-*s", 7, "-");
+			curses_text(TINT_NORM, "%-*s", strlen(i18n_state) + 2, "-");
 		}
 
 		curses_text(TINT_NORM, "%s\n", room->descr);
 	}
 
 	list_destroy(data, NULL);
-	log_info_f("Listed %i rooms", i);
+	log_info_f("%s: %i", i18n_roomlisted, i);
 }
 
 // --------
@@ -838,21 +872,21 @@ game_scene_sort_callback(const void *msg1, const void *msg2)
 static void
 game_scene_endscreen(void)
 {
-	log_info("Game has ended");
+	log_info(i18n_end);
 
-	curses_text(TINT_NORM, "Congratulations! You have successfull completed ");
+	curses_text(TINT_NORM, "%s ", i18n_endcongrat);
 	curses_text(TINT_HIGH, "%s", game_header->game);
 	curses_text(TINT_NORM, ".\n\n");
 
-	curses_text(TINT_NORM, "Your track record is:\n");
-	curses_text(TINT_NORM, " - %i from %i glossar entries seen\n", game_stats->glossary_mentioned,
-			game_stats->glossary_total);
-	curses_text(TINT_NORM, " - %i from %i rooms visited\n", game_stats->rooms_visited,
-			game_stats->rooms_total);
-	curses_text(TINT_NORM, " - %i from %i scenes played\n\n", game_stats->scenes_visited,
-			game_stats->scenes_total);
+	curses_text(TINT_NORM, "%s:\n", i18n_endstats);
+	curses_text(TINT_NORM, " - %i %s %i %s\n", game_stats->glossary_mentioned,
+			i18n_from, game_stats->glossary_total, i18n_endentriesseen);
+	curses_text(TINT_NORM, " - %i %s %i %s\n", game_stats->rooms_visited,
+			i18n_from, game_stats->rooms_total, i18n_endroomsvisited);
+	curses_text(TINT_NORM, " - %i %s %i %s\n\n", game_stats->scenes_visited,
+			i18n_from, game_stats->scenes_total, i18n_endscenesplayed);
 
-	curses_status("Game is finished");
+	curses_status(i18n_endstatusbar);
 
 	// Set prompt
 	if (game_header->prompt)
@@ -879,24 +913,24 @@ game_scene_endscreen(void)
 static void
 game_scene_startscreen(void)
 {
-	log_info("Game has started");
+	log_info(i18n_start);
 
-	curses_text(TINT_NORM, "Welcome to ");
+	curses_text(TINT_NORM, "%s ", i18n_startwelcome);
 	curses_text(TINT_HIGH, "%s\n", game_header->game);
-	curses_text(TINT_NORM, "Written by %s\n\n", game_header->author);
+	curses_text(TINT_NORM, "%s %s\n\n", i18n_startauthor, game_header->author);
 
-	curses_text(TINT_NORM, "This game has:\n");
-	curses_text(TINT_NORM, " - %i glossar entries\n", game_stats->glossary_total);
-	curses_text(TINT_NORM, " - %i rooms\n", game_stats->rooms_total);
-	curses_text(TINT_NORM, " - %i scenes\n\n", game_stats->scenes_total);
+	curses_text(TINT_NORM, "%s:\n", i18n_startstats);
+	curses_text(TINT_NORM, " - %i %s\n", game_stats->glossary_total, i18n_glossaryentries);
+	curses_text(TINT_NORM, " - %i %s\n", game_stats->rooms_total, i18n_startrooms);
+	curses_text(TINT_NORM, " - %i %s\n\n", game_stats->scenes_total, i18n_startscenes);
 
-	curses_text(TINT_NORM, "Type ");
-	curses_text(TINT_HIGH, "help ");
-	curses_text(TINT_NORM, "for help, or ");
-	curses_text(TINT_HIGH, "next ");
-	curses_text(TINT_NORM, "to start the game.\n\n");
+	curses_text(TINT_NORM, "%s ", i18n_starthelp1);
+	curses_text(TINT_HIGH, "%s ", i18n_cmdhelp);
+	curses_text(TINT_NORM, "%s ", i18n_starthelp2);
+	curses_text(TINT_HIGH, "%s ", i18n_cmdnext);
+	curses_text(TINT_NORM, "%s.\n\n", i18n_starthelp3);
 
-	curses_status("Welcome to %s", game_header->game);
+	curses_status("%s %s", i18n_startstatusbar, game_header->game);
 
 	// Set prompt
 	if (game_header->prompt)
@@ -963,15 +997,34 @@ game_scene_list(void)
 		}
 	}
 
-	if (len_scene < strlen("Name"))
+	if (len_scene < strlen(i18n_name))
 	{
-		len_scene = strlen("Name");
+		len_scene = strlen(i18n_name);
 	}
 
-	curses_text(TINT_NORM, "%-*s %-*s %s\n", len_scene + 1, "Name", len_room + 1,
-			"Room", "Description");
-	curses_text(TINT_NORM, "%-*s %-*s %s\n", len_scene + 1, "----", len_room + 1,
-			"----", "-----------");
+	curses_text(TINT_NORM, "%-*s %-*s %s\n", len_scene + 1, i18n_name, len_room + 1,
+			i18n_room, i18n_description);
+
+	for (i = 0; i < strlen(i18n_name); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "%-*s", len_scene + 2 - strlen(i18n_name), " ");
+
+	for (i = 0; i < strlen(i18n_room); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "%-*s", len_room + 2 - strlen(i18n_room), " ");
+
+	for (i = 0; i < strlen(i18n_description); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "\n");
 
 	for (i = 0; i <= data->count; i++)
 	{
@@ -990,7 +1043,7 @@ game_scene_list(void)
 	}
 
 	list_destroy(data, NULL);
-	log_info_f("Listed %i scenes", i);
+	log_info_f("%s: %i", i18n_sceneslisted, i);
 }
 
 boolean
@@ -1001,18 +1054,18 @@ game_scene_next(uint8_t choice)
 
 	if (choice)
 	{
-		log_info_f("Advancing to the next scene. Player's choice: %i", choice);
+		log_info_f("%s: %i", i18n_scenenextchoice, choice);
 	}
 	else
 	{
-		log_info("Advancing to the next scene");
+		log_info(i18n_scenenext);
 	}
 
 	if (!current_scene)
 	{
 		if ((current_scene = hashmap_get(game_scenes, game_header->first_scene)) == NULL)
 		{
-			log_error_f("First scene %i doesn't exists\n", game_header->first_scene);
+			log_error_f("%s: %i\n", i18n_scenefirstnot,  game_header->first_scene);
 			quit_error("First scene doesn't exists\n");
 		}
 	}
@@ -1022,13 +1075,13 @@ game_scene_next(uint8_t choice)
 		{
 			if (current_scene->next->elements == 1)
 			{
-				curses_text(TINT_NORM, "No choice possible");
+				curses_text(TINT_NORM, i18n_scenenochoice);
 
 				return FALSE;
 			}
 			if (choice > current_scene->next->elements)
 			{
-				curses_text(TINT_NORM, "Invalid choice");
+				curses_text(TINT_NORM, i18n_sceneinvchoice);
 
 				return FALSE;
 			}
@@ -1045,7 +1098,7 @@ game_scene_next(uint8_t choice)
 
 			if ((scene = hashmap_get(game_scenes, key)) == NULL)
 			{
-				log_error_f("Scene %s doesn't exists\n", game_header->first_scene);
+				log_error_f("%s: %s\n", i18n_scenedoesnot, game_header->first_scene);
 				quit_error("A Scene doesn't exists\n");
 			}
 			else
@@ -1057,7 +1110,7 @@ game_scene_next(uint8_t choice)
 		{
 			if (current_scene->next->elements > 1)
 			{
-				curses_text(TINT_NORM, "Make your choice\n");
+				curses_text(TINT_NORM, "%s\n", i18n_scenechoice);
 
 				return FALSE;
 			}
@@ -1074,7 +1127,7 @@ game_scene_next(uint8_t choice)
 
 			if ((scene = hashmap_get(game_scenes, key)) == NULL)
 			{
-				log_error_f("Scene %s doesn't exists\n", game_header->first_scene);
+				log_error_f("%s: %s\n", i18n_scenedoesnot, game_header->first_scene);
 				quit_error("A Scene doesn't exists\n");
 			}
 			else
@@ -1097,7 +1150,7 @@ game_scene_play(const char *key)
 	{
 		if ((scene = hashmap_get(game_scenes, key)) == NULL)
 		{
-			curses_text(TINT_NORM, "No such scene: %s\n", key);
+			curses_text(TINT_NORM, "%s: %s\n", i18n_scenedoesnot, key);
 
 			return;
 		}
@@ -1105,7 +1158,7 @@ game_scene_play(const char *key)
 #ifdef NDEBUG
 		if (!scene->visited)
 		{
-			curses_text(TINT_NORM, "No such scene: %s\n", key);
+			curses_text(TINT_NORM, "%s: %s\n", i18n_scenedoesnot, key);
 
 			return;
 		}
@@ -1130,7 +1183,7 @@ game_scene_play(const char *key)
 		return;
 	}
 
-	log_info_f("Playing scene %s", current_scene->name);
+	log_info_f("%s %s", i18n_sceneplay, current_scene->name);
 
 	// Mark scene as visited
 	if (!scene->visited)
@@ -1142,7 +1195,7 @@ game_scene_play(const char *key)
 	// Mark room as visited
 	if ((room = hashmap_get(game_rooms, scene->room)) == NULL)
 	{
-		log_error_f("Room %s doesn't exist", scene->room);
+		log_error_f("%s: %s", i18n_roomnotfound, scene->room);
 		quit_error("Room doesn't exist");
 	}
 
@@ -1154,7 +1207,7 @@ game_scene_play(const char *key)
 	}
 
 	// Set statusbar
-	curses_status("Scene: %i/%i || Room: %s", game_stats->scenes_visited,
+	curses_status("%s: %i/%i || %s: %s", i18n_scene, i18n_room, game_stats->scenes_visited,
 			game_stats->scenes_total, room->descr);
 
 	// Set prompt
@@ -1190,7 +1243,7 @@ game_init(const char *file)
 {
 	assert(file);
 
-    log_info("Initializing game");
+    log_info(i18n_gameinit);
 
 	if (!game_header)
 	{
@@ -1229,7 +1282,7 @@ game_init(const char *file)
 void
 game_quit(void)
 {
-	log_info("Shutting down game");
+	log_info(i18n_gamequit);
 
 	if (game_header)
 	{
