@@ -14,11 +14,76 @@
 // Only 8 colors supported
 extern const char *i18n_8colorsonly;
 
+// Glossary command
+extern const char *i18n_cmdglossary;
+extern const char *i18n_cmdglossaryhelp;
+extern const char *i18n_cmdglossaryshort;
+
 // 'help' Command
 extern const char *i18n_cmdhelp;
+extern const char *i18n_cmdhelphelp;
+extern const char *i18n_cmdhelpshort;
+
+// Info command
+extern const char *i18n_cmdinfo;
+extern const char *i18n_cmdinfohelp;
+extern const char *i18n_cmdinfoshort;
+
+// Load command
+extern const char *i18n_cmdload;
+extern const char *i18n_cmdloadhelp;
+extern const char *i18n_cmdloadshort;
 
 // 'next' Command
 extern const char *i18n_cmdnext;
+extern const char *i18n_cmdnexthelp;
+extern const char *i18n_cmdnextshort;
+
+// quit Comand
+extern const char *i18n_cmdquit;
+extern const char *i18n_cmdquithelp;
+extern const char *i18n_cmdquitshort;
+
+// romm Command
+extern const char *i18n_cmdroom;
+extern const char *i18n_cmdroomhelp;
+extern const char *i18n_cmdroomshort;
+
+// save Command
+extern const char *i18n_cmdsave;
+extern const char *i18n_cmdsavehelp;
+extern const char *i18n_cmdsaveshort;
+
+// scene Command
+extern const char *i18n_cmdscene;
+extern const char *i18n_cmdscenehelp;
+extern const char *i18n_cmdsceneshort;
+
+// Version command
+extern const char *i18n_cmdversion;
+extern const char *i18n_cmdversionhelp;
+extern const char *i18n_cmdversionshort;
+
+// Command
+extern const char *i18n_command;
+
+// Binary build on
+extern const char *i18n_commandbuildon;
+
+// Input initialization
+extern const char *i18n_commandinit;
+
+// Listed commands
+extern const char *i18n_commandlisted;
+
+// Command not found
+extern const char *i18n_commandnotfound;
+
+// Input shutdown
+extern const char *i18n_commandquit;
+
+// This is
+extern const char *i18n_commandthisis;
 
 // Curses initialized
 extern const char *i18n_cursesinit;

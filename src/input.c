@@ -30,6 +30,7 @@
 #include "quit.h"
 #include "save.h"
 
+#include "i18n/i18n.h"
 #include "data/darray.h"
 #include "data/list.h"
 
@@ -112,8 +113,26 @@ cmd_help(char *msg)
 		}
 	}
 
-	curses_text(TINT_NORM, "%-*s %s\n", len + 1, "Command", "Description");
-	curses_text(TINT_NORM, "%-*s %s\n", len + 1, "-------", "-----------");
+	if (len < strlen(i18n_command))
+	{
+		len = strlen(i18n_command);
+	}
+
+	curses_text(TINT_NORM, "%-*s %s\n", len + 1, i18n_command, i18n_description);
+
+	for (i = 0; i < strlen(i18n_command); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "%-*s", len + 2 - strlen(i18n_command), " ");
+
+	for (i = 0; i < strlen(i18n_description); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "\n");
 
 	for (i = 0; i < input_cmds->elements; i++)
 	{
@@ -127,7 +146,7 @@ cmd_help(char *msg)
 		curses_text(TINT_NORM, "%-*s %s\n", len + 1, cur->name, cur->help);
 	}
 
-	log_info_f("Listed %i commands", i);
+	log_info_f("%s: %i", i18n_commandlisted, i);
 }
 
 /*
@@ -184,7 +203,7 @@ cmd_next(char *msg)
 	{
 		if (strlen(msg) != 1)
 		{
-			curses_text(TINT_NORM, "Invalid choice");
+			curses_text(TINT_NORM, i18n_sceneinvchoice);
 
 			return;
 		}
@@ -196,7 +215,7 @@ cmd_next(char *msg)
 
 				if (!choice)
 				{
-					curses_text(TINT_NORM, "Invalid choice");
+					curses_text(TINT_NORM, i18n_sceneinvchoice);
 
 					return;
 				}
@@ -276,8 +295,8 @@ cmd_scene(char *msg)
 static void
 cmd_version(char *msg)
 {
-	curses_text(TINT_NORM, "This is %s %s, (c) %s %s\n", APPNAME, VERSION, YEAR, AUTHOR);
-	curses_text(TINT_NORM, "This binary was build on %s\n", __DATE__);
+	curses_text(TINT_NORM, "%s %s %s, (c) %s %s\n",i18n_commandthisis, APPNAME, VERSION, YEAR, AUTHOR);
+	curses_text(TINT_NORM, "%s %s\n", i18n_commandbuildon, __DATE__);
 }
 
 // ---------
@@ -588,20 +607,38 @@ input_complete_reset(void)
 void
 input_init(const char *homedir)
 {
-	log_info("Initializing input");
+	log_info(i18n_commandinit);
 
 	// Register commands
-	input_register("glossary", "Prints a glossary entry", cmd_glossary, FALSE);
-	input_register("help", "Prints this help", cmd_help, FALSE);
-	input_register("info", "Prints informations about the current game", cmd_info, FALSE);
-	input_register("load", "Loads a saved game", cmd_load, FALSE);
-	input_register("n", "Advances to the next scene", cmd_next, TRUE);
-	input_register("next", "Advances to the next scene", cmd_next, FALSE);
-	input_register("quit", "Exits the application", cmd_quit, FALSE);
-	input_register("room", "Descripes a room", cmd_room, FALSE);
-	input_register("save", "Saves the game", cmd_save, FALSE);
-	input_register("scene", "Replays a scene", cmd_scene, FALSE);
-	input_register("version", "Prints the version number", cmd_version, FALSE);
+	input_register(i18n_cmdglossary, i18n_cmdglossaryhelp, cmd_glossary, FALSE);
+	input_register(i18n_cmdglossaryshort, i18n_cmdglossaryhelp, cmd_glossary, TRUE);
+
+	input_register(i18n_cmdhelp, i18n_cmdhelphelp, cmd_help, FALSE);
+	input_register(i18n_cmdhelpshort, i18n_cmdhelpshort, cmd_help, TRUE);
+
+	input_register(i18n_cmdinfo, i18n_cmdinfohelp, cmd_info, FALSE);
+	input_register(i18n_cmdinfoshort, i18n_cmdinfohelp, cmd_info, TRUE);
+
+	input_register(i18n_cmdload, i18n_cmdloadhelp, cmd_load, FALSE);
+	input_register(i18n_cmdloadshort, i18n_cmdloadhelp, cmd_load, TRUE);
+
+	input_register(i18n_cmdnext, i18n_cmdnexthelp, cmd_next, FALSE);
+	input_register(i18n_cmdnextshort, i18n_cmdnexthelp, cmd_next, TRUE);
+
+	input_register(i18n_cmdquit, i18n_cmdquithelp, cmd_quit, FALSE);
+	input_register(i18n_cmdquitshort, i18n_cmdquithelp, cmd_quit, TRUE);
+
+	input_register(i18n_cmdroom, i18n_cmdroomhelp, cmd_room, FALSE);
+	input_register(i18n_cmdroomshort, i18n_cmdroomhelp, cmd_room, TRUE);
+
+	input_register(i18n_cmdsave, i18n_cmdsavehelp, cmd_save, FALSE);
+	input_register(i18n_cmdsaveshort, i18n_cmdsavehelp, cmd_save, TRUE);
+
+	input_register(i18n_cmdscene, i18n_cmdsavehelp, cmd_scene, FALSE);
+	input_register(i18n_cmdsceneshort, i18n_cmdsavehelp, cmd_scene, TRUE);
+
+	input_register(i18n_cmdversion, i18n_cmdversionhelp, cmd_version, FALSE);
+	input_register(i18n_cmdversionshort, i18n_cmdversionhelp, cmd_version, TRUE);
 
 	// Initialize history
 	history = list_create();
@@ -611,6 +648,8 @@ input_init(const char *homedir)
 void
 input_quit(void)
 {
+	log_info(i18n_commandquit);
+
 	if (history)
 	{
 		input_history_save();
@@ -658,7 +697,7 @@ input_process(char *cmd)
 	// Null command is an alias for "next"
 	if (!strlen(cmd))
 	{
-		cmd = "next";
+		cmd = (char *)i18n_commandquit;
 	}
 
 	// Echo the input
@@ -699,7 +738,7 @@ input_process(char *cmd)
 
 	if (!match)
 	{
-		curses_text(TINT_NORM, "%s: command not found\n", token);
+		curses_text(TINT_NORM, "%s: %s\n", i18n_commandnotfound, token);
 	}
 
 	// Empty line after each cmd-output
