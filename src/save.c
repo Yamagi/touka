@@ -151,6 +151,7 @@ save_list(void)
 	struct dirent *cur;
 	struct stat sb;
 	uint16_t count;
+	uint16_t i;
 
 	if ((dir = opendir(savedir)) == NULL)
 	{
@@ -159,8 +160,14 @@ save_list(void)
 
 	count = 0;
 
-	curses_text(TINT_NORM, "Saves:\n");
-	curses_text(TINT_NORM, "------\n");
+	curses_text(TINT_NORM, "%s\n", i18n_saves);
+
+	for (i = 0; i < strlen(i18n_saves); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "\n");
 
 	while ((cur = readdir(dir)) != NULL)
 	{
@@ -181,7 +188,7 @@ save_list(void)
 		}
 	}
 
-	log_info_f("Listed %i savegames", count);
+	log_info_f("%s: %i", i18n_saveslisted, count);
 }
 
 boolean
@@ -233,14 +240,14 @@ save_read(char *name)
 	{
 		if (!S_ISREG(sb.st_mode))
 		{
-			curses_text(TINT_NORM, "Savegame %s doesn't exists\n", name);
+			curses_text(TINT_NORM, "%s\n", i18n_savedoesnexists, name);
 
 			return FALSE;
 		}
 	}
 	else
 	{
-			curses_text(TINT_NORM, "Savegame %s doesn't exists\n", name);
+			curses_text(TINT_NORM, "%s\n", i18n_savedoesnexists, name);
 
 			return FALSE;
 	}
@@ -330,7 +337,7 @@ save_read(char *name)
 			{
 				if (strcmp(cur, game_header->uid))
 				{
-					curses_text(TINT_NORM, "Savegame from another game\n");
+					curses_text(TINT_NORM, "%s\n", i18n_saveanothergame);
 
 					return FALSE;
 				}

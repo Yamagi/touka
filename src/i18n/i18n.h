@@ -196,8 +196,20 @@ extern const char *i18n_roommentioned;
 // Room not found
 extern const char *i18n_roomnotfound;
 
+// Savegame from another game
+extern const char *i18n_saveanothergame;
+
+// Savegame doesn't exists
+extern const char *i18n_savedoesnexists;
+
 // Savegame init
 extern const char *i18n_saveinit;
+
+// Saves
+extern const char *i18n_saves;
+
+// Savegames listed
+extern const char *i18n_saveslisted;
 
 // Scene
 extern const char *i18n_scene;
