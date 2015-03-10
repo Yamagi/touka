@@ -28,7 +28,6 @@ misc_rmkdir(const char *dir)
 	char tmp[PATH_MAX];
 	size_t len;
 
-	log_info_f("Creating path %s", dir);
 	stpncpy(tmp, dir, sizeof(tmp));
 	len = strlen(tmp);
 
