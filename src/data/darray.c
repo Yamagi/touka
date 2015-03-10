@@ -41,7 +41,7 @@ darray_resize(darray *array)
 	{
 		new = (array->elements * sizeof(void *)) * sizeof(void *);
 	}
-	else if (array->end - array->elements > array->end / 2)
+	else if (array->end - array->elements > array->end / 2 && array->end > INT_ELEMENTS)
 	{
 		new = (array->end * sizeof(void *)) / 2;
 	}
