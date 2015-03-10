@@ -14,6 +14,12 @@
 // Only 8 colors supported
 extern const char *i18n_8colorsonly;
 
+// Aliases
+extern const char *i18n_aliases;
+
+// Choices
+extern const char *i18n_choices;
+
 // Glossary command
 extern const char *i18n_cmdglossary;
 extern const char *i18n_cmdglossaryhelp;
@@ -151,6 +157,30 @@ extern const char *i18n_linkunopened;
 // New terminal size
 extern const char *i18n_newtermsize;
 
+// Parser error
+extern const char *i18n_parsererror;
+
+// Parsing file
+extern const char *i18n_parserfile;
+
+// Game specifications
+extern const char *i18n_parserspecs;
+
+// Glossary entry is already there
+extern const char *i18n_parserglosalready;
+
+// New glossary entry
+extern const char *i18n_parserglosentry;
+
+// Lines parsed
+extern const char *i18n_parserlines;
+
+// Parser room is already there
+extern const char *i18n_parserroomalready;
+
+// Scenes is already there
+extern const char *i18n_parserscenealready;
+
 // Room
 extern const char *i18n_name;
 
@@ -236,6 +266,9 @@ extern const char *i18n_termsize;
 
 // User input
 extern const char *i18n_userinput;
+
+// Words
+extern const char *i18n_words;
 
 // --------
 

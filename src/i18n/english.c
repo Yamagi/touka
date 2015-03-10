@@ -10,6 +10,8 @@
 // ---------
 
 const char *i18n_8colorsonly = "Terminal cannot change colors, using unfancy standard colors";
+const char *i18n_aliases = "aliases";
+const char *i18n_choices = "i18n_choices";
 const char *i18n_cmdglossary = "glossary";
 const char *i18n_cmdglossaryhelp = "Prints a glossay entry";
 const char *i18n_cmdglossaryshort = "g";
@@ -70,6 +72,14 @@ const char *i18n_linkstillopen = "Link still open at end of description";
 const char *i18n_linkunopened = "Closing an unopened link";
 const char *i18n_name = "Name";
 const char *i18n_newtermsize = "New terminal size is";
+const char *i18n_parsererror = "Parser error in line";
+const char *i18n_parserfile = "Parsing game file";
+const char *i18n_parserglosalready = "There's already a glossary entry with name or alias";
+const char *i18n_parserglosentry = "Glossary entry";
+const char *i18n_parserlines = "Lines parsed";
+const char *i18n_parserspecs = "Game specifications are";
+const char *i18n_parserroomalready = "There's already a room with name or alias";
+const char *i18n_parserscenealready = "There's already a scene with name or alias";
 const char *i18n_room = "Room";
 const char *i18n_roomlisted = "Rooms listed";
 const char *i18n_roommentioned = "Room was mentioned but not visited";
@@ -99,4 +109,5 @@ const char *i18n_state = "State";
 const char *i18n_termresize = "Terminal resize detected";
 const char *i18n_termsize = "Terminal size is";
 const char *i18n_userinput = "User input";
+const char *i18n_words = "words";
 

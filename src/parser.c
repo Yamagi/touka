@@ -23,6 +23,7 @@
 #include "quit.h"
 
 #include "data/list.h"
+#include "i18n/i18n.h"
 
 // --------
 
@@ -102,7 +103,7 @@ static char
 static void
 parser_error(void)
 {
-	log_error_f("Parser error in line %i of file\n", count);
+	log_error_f("Parser error in line %i\n", count);
 
 	quit_error("Parser error");
 }
@@ -209,7 +210,7 @@ parser_check_header(void)
 		quit_error("No starting scene specified");
 	}
 
-	log_info("Game specifications are:");
+	log_info_f("%s:", i18n_parserspecs);
 	log_info_f("Game:   %s", game_header->game);
 	log_info_f("Author: %s", game_header->author);
 	log_info_f("Date:   %s", game_header->date);
@@ -349,13 +350,15 @@ parser_check_glossary(game_glossary_s *entry)
 
 	if (!entry->aliases)
 	{
-		log_info_f("Glossary entry: %s (0 aliases, %i words)", entry->name,
-				entry->words->count);
+		log_info_f("%s: %s (0 %s, %i %s)", i18n_parserglosentry,
+				entry->name, i18n_aliases, entry->words->count,
+				i18n_words);
 	}
 	else
 	{
-		log_info_f("Glossary entry: %s (%i aliases, %i words)", entry->name,
-				entry->aliases->count, entry->words->count);
+		log_info_f("%s: %s (%i %s, %i %s)", i18n_parserglosentry,
+				entry->name, entry->aliases->count, i18n_aliases,
+				i18n_words, entry->words->count);
 	}
 }
 
@@ -377,7 +380,7 @@ parser_add_glossary(game_glossary_s *entry)
 
 	if ((test = hashmap_get(game_glossary, entry->name)) != NULL)
 	{
-		log_warn_f("There's already a glossary entry with name or alias %s", entry->name);
+		log_warn_f("%s %s", i18n_parserglosalready, entry->name);
 	}
 
 	hashmap_add(game_glossary, entry->name, entry, FALSE);
@@ -394,7 +397,7 @@ parser_add_glossary(game_glossary_s *entry)
 			{
 				if ((test = hashmap_get(game_glossary, lnode->data)) != NULL)
 				{
-					log_warn_f("There's already a glossary entry with name or alias %s", entry->name);
+					log_warn_f("%s %s", i18n_parserglosalready,  entry->name);
 				}
 			}
 
@@ -564,13 +567,14 @@ parser_check_room(game_room_s *room)
 
 	if (!room->aliases)
 	{
-		log_info_f("Room: %s (0 aliases, %i words)", room->name,
-				room->words->count);
+		log_info_f("%s: %s (0 %s, %i %s)", i18n_room, room->name,
+				i18n_aliases, room->words->count, i18n_words);
 	}
 	else
 	{
-		log_info_f("Room: %s (%i aliases, %i words)", room->name,
-				room->aliases->count, room->words->count);
+		log_info_f("%s: %s (%i %s, %i %s)", i18n_room, room->name,
+				room->aliases->count, i18n_aliases, room->words->count,
+				i18n_words);
 	}
 }
 
@@ -592,7 +596,7 @@ parser_add_room(game_room_s *room)
 
     if ((test = hashmap_get(game_rooms, room->name)) != NULL)
 	{
-		log_warn_f("There's already a room with name or alias %s", room->name);
+		log_warn_f("%s %s", i18n_parserroomalready, room->name);
 	}
 
 	hashmap_add(game_rooms, room->name, room, FALSE);
@@ -609,7 +613,7 @@ parser_add_room(game_room_s *room)
 			{
 				if ((test = hashmap_get(game_rooms, lnode->data)) != NULL)
 				{
-					log_warn_f("There's already a room with name or alias %s", room->name);
+					log_warn_f("%s %s", i18n_parserroomalready, room->name);
 				}
 
 				hashmap_add(game_rooms, lnode->data, room, TRUE);
@@ -795,14 +799,15 @@ parser_check_scene(game_scene_s *scene)
 
 	if (!scene->aliases)
 	{
-		log_info_f("Scene: %s (0 aliases, %i choices, %i words)",
-				scene->name, scene->next->elements, scene->words->count);
+		log_info_f("%s: %s (0 %s, %i %s, %i %s)", i18n_scene, scene->name,
+				i18n_aliases, scene->next->elements, i18n_choices, i18n_words,
+				scene->words->count);
 	}
 	else
 	{
-		log_info_f("Scene: %s (%i aliases, %i choices, %i words)",
-				scene->name, scene->aliases->count, scene->next->elements,
-				scene->words->count);
+		log_info_f("%s: %s (%i %s, %i %s, %i %s)", i18n_scene, scene->name,
+				scene->aliases->count, i18n_aliases, scene->next->elements,
+				i18n_choices, scene->words->count, i18n_words);
 	}
 }
 
@@ -824,7 +829,7 @@ parser_add_scene(game_scene_s *scene)
 
     if ((test = hashmap_get(game_scenes, scene->name)) != NULL)
 	{
-		log_warn_f("There's already a scene with name or alias %s", scene->name);
+		log_warn_f("%s %s", i18n_parserscenealready, scene->name);
 	}
 
 	hashmap_add(game_scenes, scene->name, scene, FALSE);
@@ -841,7 +846,7 @@ parser_add_scene(game_scene_s *scene)
 			{
 				if ((test = hashmap_get(game_scenes, lnode->data)) != NULL)
 				{
-					log_warn_f("There's already a scene with name or alias %s", scene->name);
+					log_warn_f("%s %s", i18n_parserscenealready, scene->name);
 				}
 
 				hashmap_add(game_scenes, lnode->data, scene, TRUE);
@@ -1041,7 +1046,7 @@ parser_game(const char *file)
 		quit_error("Couldn't open game file");
 	}
 
-	log_info_f("Parsing game file: %s", file);
+	log_info_f("%s: %s", i18n_parserfile, file);
 
 	line = NULL;
 	linecap = 0;
@@ -1120,6 +1125,6 @@ parser_game(const char *file)
 	}
 
 	free(line);
-	log_info_f("Parsed %i lines", count);
+	log_info_f("%s: %i", i18n_parserlines, count);
 }
 
