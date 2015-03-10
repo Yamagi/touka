@@ -1207,8 +1207,8 @@ game_scene_play(const char *key)
 	}
 
 	// Set statusbar
-	curses_status("%s: %i/%i || %s: %s", i18n_scene, i18n_room, game_stats->scenes_visited,
-			game_stats->scenes_total, room->descr);
+	curses_status("%s: %i/%i || %s: %s", i18n_scene, game_stats->scenes_visited,
+			game_stats->scenes_total, i18n_room, room->descr);
 
 	// Set prompt
 	if (scene->prompt)

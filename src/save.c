@@ -26,6 +26,7 @@
 
 #include "data/hashmap.h"
 #include "data/list.h"
+#include "i18n/i18n.h"
 
 // --------
 
@@ -125,7 +126,7 @@ save_init(const char *homedir)
 	assert(game_header);
 	assert(homedir);
 
-	log_info("Initializing savegames");
+	log_info(i18n_saveinit);
 	snprintf(savedir, sizeof(savedir), "%s/%s/%s", homedir, "save", game_header->uid);
 
 	if ((stat(savedir, &sb)) == 0)

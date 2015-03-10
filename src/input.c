@@ -697,7 +697,7 @@ input_process(char *cmd)
 	// Null command is an alias for "next"
 	if (!strlen(cmd))
 	{
-		cmd = (char *)i18n_commandquit;
+		cmd = (char *)i18n_cmdnext;
 	}
 
 	// Echo the input

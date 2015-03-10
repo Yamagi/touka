@@ -358,7 +358,7 @@ parser_check_glossary(game_glossary_s *entry)
 	{
 		log_info_f("%s: %s (%i %s, %i %s)", i18n_parserglosentry,
 				entry->name, entry->aliases->count, i18n_aliases,
-				i18n_words, entry->words->count);
+				entry->words->count, i18n_words);
 	}
 }
 
@@ -800,8 +800,8 @@ parser_check_scene(game_scene_s *scene)
 	if (!scene->aliases)
 	{
 		log_info_f("%s: %s (0 %s, %i %s, %i %s)", i18n_scene, scene->name,
-				i18n_aliases, scene->next->elements, i18n_choices, i18n_words,
-				scene->words->count);
+				i18n_aliases, scene->next->elements, i18n_choices, scene->words->count,
+				i18n_words);
 	}
 	else
 	{
