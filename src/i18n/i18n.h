@@ -23,9 +23,11 @@ extern const char *i18n_scene;
 // ---------
 
 // Table headers
+extern const char *i18n_head_attribute;
 extern const char *i18n_head_description;
 extern const char *i18n_head_saves;
 extern const char *i18n_head_state;
+extern const char *i18n_head_value;
 
 // ---------
 
@@ -198,6 +200,13 @@ extern const char *i18n_save_listedsaves;
 // Misc
 extern const char *i18n_from;
 extern const char *i18n_name;
+
+// --------
+
+extern const char *i18n_info_author;
+extern const char *i18n_info_date;
+extern const char *i18n_info_game;
+extern const char *i18n_info_uid;
 
 // --------
 

@@ -156,12 +156,51 @@ cmd_help(char *msg)
 static void
 cmd_info(char *msg)
 {
-	curses_text(TINT_NORM, "Attribute  Value\n");
-	curses_text(TINT_NORM, "---------  -----\n");
-	curses_text(TINT_NORM, "Game       %s\n", game_header->game);
-	curses_text(TINT_NORM, "Author     %s\n", game_header->author);
-	curses_text(TINT_NORM, "Date       %s\n", game_header->date);
-	curses_text(TINT_NORM, "UID        %s\n", game_header->uid);
+	size_t len;
+	uint16_t i;
+
+    len = strlen(i18n_info_author);
+
+	if (len < strlen(i18n_info_date))
+	{
+		len = strlen(i18n_info_date);
+	}
+
+	if (len < strlen(i18n_info_game))
+	{
+		len = strlen(i18n_info_game);
+	}
+
+	if (len < strlen(i18n_info_uid))
+	{
+		len = strlen(i18n_info_uid);
+	}
+
+	if (len < strlen(i18n_head_attribute))
+	{
+		len = strlen(i18n_head_attribute);
+	}
+
+	curses_text(TINT_NORM, "%-*s %s\n", len + 1, i18n_head_attribute, i18n_head_value);
+
+	for (i = 0; i < strlen(i18n_head_attribute); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "%-*s", len + 2 - strlen(i18n_head_attribute), " ");
+
+	for (i = 0; i < strlen(i18n_head_value); i++)
+	{
+		curses_text(TINT_NORM, "-");
+	}
+
+	curses_text(TINT_NORM, "\n");
+
+	curses_text(TINT_NORM, "%-*s %s\n", len + 1, i18n_info_game, game_header->game);
+	curses_text(TINT_NORM, "%-*s %s\n", len + 1, i18n_info_author, game_header->author);
+	curses_text(TINT_NORM, "%-*s %s\n", len + 1, i18n_info_date, game_header->date);
+	curses_text(TINT_NORM, "%-*s %s\n", len + 1, i18n_info_uid, game_header->uid);
 }
 
 /*

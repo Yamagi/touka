@@ -211,10 +211,10 @@ parser_check_header(void)
 	}
 
 	log_info_f("%s:", i18n_parser_gamespecs);
-	log_info_f("Game:   %s", game_header->game);
-	log_info_f("Author: %s", game_header->author);
-	log_info_f("Date:   %s", game_header->date);
-	log_info_f("UID:    %s", game_header->uid);
+	log_info_f("%s: %s", i18n_info_game, game_header->game);
+	log_info_f("%s: %s", i18n_info_author, game_header->author);
+	log_info_f("%s: %s", i18n_info_date, game_header->date);
+	log_info_f("%s: %s", i18n_info_uid, game_header->uid);
 }
 
 /*

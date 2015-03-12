@@ -21,9 +21,11 @@ const char *i18n_scene = "Scene";
 // ---------
 
 // Table headers
+const char *i18n_head_attribute = "Attribute";
 const char *i18n_head_description = "Description";
 const char *i18n_head_saves = "Saves";
 const char *i18n_head_state = "State";
+const char *i18n_head_value = "Value";
 
 // ---------
 
@@ -196,4 +198,11 @@ const char *i18n_save_listedsaves = "Savegames listed";
 // Misc
 const char *i18n_from = "from";
 const char *i18n_name = "Name";
+
+// ---------
+
+const char *i18n_info_author = "Author";
+const char *i18n_info_date = "Date";
+const char *i18n_info_game = "Game";
+const char *i18n_info_uid = "UID";
 
