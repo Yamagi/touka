@@ -126,7 +126,7 @@ save_init(const char *homedir)
 	assert(game_header);
 	assert(homedir);
 
-	log_info(i18n_saveinit);
+	log_info(i18n_save_init);
 	snprintf(savedir, sizeof(savedir), "%s/%s/%s", homedir, "save", game_header->uid);
 
 	if ((stat(savedir, &sb)) == 0)
@@ -160,9 +160,9 @@ save_list(void)
 
 	count = 0;
 
-	curses_text(TINT_NORM, "%s\n", i18n_saves);
+	curses_text(TINT_NORM, "%s\n", i18n_head_saves);
 
-	for (i = 0; i < strlen(i18n_saves); i++)
+	for (i = 0; i < strlen(i18n_head_saves); i++)
 	{
 		curses_text(TINT_NORM, "-");
 	}
@@ -188,7 +188,7 @@ save_list(void)
 		}
 	}
 
-	log_info_f("%s: %i", i18n_saveslisted, count);
+	log_info_f("%s: %i", i18n_save_listedsaves, count);
 }
 
 boolean
@@ -240,14 +240,14 @@ save_read(char *name)
 	{
 		if (!S_ISREG(sb.st_mode))
 		{
-			curses_text(TINT_NORM, "%s\n", i18n_savedoesnexists, name);
+			curses_text(TINT_NORM, "%s\n", i18n_save_filedoesnexists, name);
 
 			return FALSE;
 		}
 	}
 	else
 	{
-			curses_text(TINT_NORM, "%s\n", i18n_savedoesnexists, name);
+			curses_text(TINT_NORM, "%s\n", i18n_save_filedoesnexists, name);
 
 			return FALSE;
 	}
@@ -337,7 +337,7 @@ save_read(char *name)
 			{
 				if (strcmp(cur, game_header->uid))
 				{
-					curses_text(TINT_NORM, "%s\n", i18n_saveanothergame);
+					curses_text(TINT_NORM, "%s\n", i18n_save_fromanothergame);
 
 					return FALSE;
 				}

@@ -81,8 +81,8 @@ main(int argc, char *argv[])
 	log_init(logdir, LOGNAME, LOGNUM);
 
 	snprintf(logbuf, sizeof(logbuf), "This it %s %s.", APPNAME, VERSION);
-	log_info_f("%s %s %s, (c) %s %s", i18n_commandthisis, APPNAME, VERSION, YEAR, AUTHOR);
-	log_info_f("%s %s.", i18n_commandbuildon, __DATE__);
+	log_info_f("%s %s %s, (c) %s %s", i18n_version_thisis, APPNAME, VERSION, YEAR, AUTHOR);
+	log_info_f("%s %s.", i18n_version_buildon, __DATE__);
 
 	// Check cmd arguments
 	if (argc != 2)

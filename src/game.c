@@ -111,7 +111,7 @@ game_match_link(char *link)
 		return TINT_ROOM;
 	}
 
-	log_warn_f("%s: %s", i18n_linkmatch, link);
+	log_warn_f("%s: %s", i18n_link_didntmatch, link);
 
 	return TINT_NORM;
 }
@@ -148,7 +148,7 @@ game_print_description(list *words)
 		{
 			if (link)
 			{
-				log_error(i18n_linknested);
+				log_error(i18n_link_nestedlink);
 
 				if (!node->next || !strcmp(cur, "\n"))
 				{
@@ -218,7 +218,7 @@ game_print_description(list *words)
 			{
 				if (!link)
 				{
-					log_error(i18n_linkunopened);
+					log_error(i18n_link_notopened);
 
 					if (!node->next || !strcmp(cur, "\n"))
 					{
@@ -277,7 +277,7 @@ game_print_description(list *words)
 		{
 			if (!strcmp(cur, "\n"))
 			{
-				log_error(i18n_linkbreak);
+				log_error(i18n_link_linebreak);
 
 				if (!node->next || !strcmp(cur, "\n"))
 				{
@@ -329,7 +329,7 @@ game_print_description(list *words)
 	// Link still open
 	if (link)
 	{
-		log_error(i18n_linkstillopen);
+		log_error(i18n_link_openatend);
 	}
 
 	curses_text(TINT_NORM, "\n");
@@ -452,7 +452,7 @@ game_glossary_list(void)
 		len_entry = strlen(i18n_entry);
 	}
 
-	curses_text(TINT_NORM, "%-*s %s\n", len_entry + 2, i18n_entry, i18n_description);
+	curses_text(TINT_NORM, "%-*s %s\n", len_entry + 2, i18n_entry, i18n_head_description);
 
 	for (i = 0; i < strlen(i18n_entry); i++)
 	{
@@ -461,7 +461,7 @@ game_glossary_list(void)
 
 	curses_text(TINT_NORM, "%-*s", len_entry + 2 - strlen(i18n_entry) + 1, " ");
 
-	for (i = 0; i < strlen(i18n_description); i++)
+	for (i = 0; i < strlen(i18n_head_description); i++)
 	{
 		curses_text(TINT_NORM, "-");
 	}
@@ -483,7 +483,7 @@ game_glossary_list(void)
 	}
 
 	list_destroy(data, NULL);
-	log_info_f("%s: %i", i18n_glossaryentries, i);
+	log_info_f("%s: %i", i18n_glossary_entrieslisted, i);
 }
 
 void
@@ -497,7 +497,7 @@ game_glossary_print(const char *key)
 
 	if ((entry = hashmap_get(game_glossary, key)) == NULL)
 	{
-		curses_text(TINT_NORM, "%s: %s\n", i18n_glossarynoentry, key);
+		curses_text(TINT_NORM, "%s: %s\n", i18n_glossary_notfound, key);
 
 		return;
 	}
@@ -534,7 +534,7 @@ game_glossary_print(const char *key)
 
 	if (!entry->mentioned)
 	{
-		curses_text(TINT_NORM, "%s: %s\n", i18n_glossarynoentry, key);
+		curses_text(TINT_NORM, "%s: %s\n", i18n_glossary_notfound, key);
 
 		return;
 	}
@@ -623,7 +623,7 @@ game_room_describe(const char *key)
 
 	if ((room = hashmap_get(game_rooms, key)) == NULL)
 	{
-		curses_text(TINT_NORM, "%s\n", i18n_roomnotfound, key);
+		curses_text(TINT_NORM, "%s\n", i18n_room_notfound, key);
 
 		return;
 	}
@@ -660,14 +660,14 @@ game_room_describe(const char *key)
 
 	if (room->mentioned && !room->visited)
 	{
-		curses_text(TINT_NORM, "%s\n", i18n_roommentioned);
+		curses_text(TINT_NORM, "%s\n", i18n_room_mentioned);
 
 		return;
 	}
 
 	if (!room->visited)
 	{
-		curses_text(TINT_NORM, "%s\n", i18n_roomnotfound, key);
+		curses_text(TINT_NORM, "%s\n", i18n_room_notfound, key);
 
 		return;
 	}
@@ -724,8 +724,8 @@ game_rooms_list(void)
 		len = strlen(i18n_name);
 	}
 
-	curses_text(TINT_NORM, "%-*s %-*s %s\n", len + 1, i18n_name, strlen(i18n_state) + 1,
-		   	i18n_state, i18n_description);
+	curses_text(TINT_NORM, "%-*s %-*s %s\n", len + 1, i18n_name, strlen(i18n_head_state)
+			+ 1, i18n_head_state, i18n_head_description);
 
 	for (i = 0; i < strlen(i18n_name); i++)
 	{
@@ -734,14 +734,14 @@ game_rooms_list(void)
 
 	curses_text(TINT_NORM, "%-*s", len + 2 - strlen(i18n_name), " ");
 
-	for (i = 0; i < strlen(i18n_state); i++)
+	for (i = 0; i < strlen(i18n_head_state); i++)
 	{
 		curses_text(TINT_NORM, "-");
 	}
 
 	curses_text(TINT_NORM, "%-*s", 2, " ");
 
-	for (i = 0; i < strlen(i18n_description); i++)
+	for (i = 0; i < strlen(i18n_head_description); i++)
 	{
 		curses_text(TINT_NORM, "-");
 	}
@@ -763,22 +763,22 @@ game_rooms_list(void)
 
         if (room->visited)
 		{
-			curses_text(TINT_NORM, "%-*s", strlen(i18n_state) + 2, "S");
+			curses_text(TINT_NORM, "%-*s", strlen(i18n_head_state) + 2, "S");
 		}
 		else if (room->mentioned)
 		{
-			curses_text(TINT_NORM, "%-*s", strlen(i18n_state) + 2, "M");
+			curses_text(TINT_NORM, "%-*s", strlen(i18n_head_state) + 2, "M");
 		}
 		else
 		{
-			curses_text(TINT_NORM, "%-*s", strlen(i18n_state) + 2, "-");
+			curses_text(TINT_NORM, "%-*s", strlen(i18n_head_state) + 2, "-");
 		}
 
 		curses_text(TINT_NORM, "%s\n", room->descr);
 	}
 
 	list_destroy(data, NULL);
-	log_info_f("%s: %i", i18n_roomlisted, i);
+	log_info_f("%s: %i", i18n_room_roomslisted, i);
 }
 
 // --------
@@ -843,7 +843,7 @@ game_scene_destroy_callback(void *data)
 }
 
 /*
- * Callback function to qsort for the rooms.
+ * Callback function to qsort for the scenes.
  */
 int32_t
 game_scene_sort_callback(const void *msg1, const void *msg2)
@@ -872,21 +872,21 @@ game_scene_sort_callback(const void *msg1, const void *msg2)
 static void
 game_scene_endscreen(void)
 {
-	log_info(i18n_end);
+	log_info(i18n_game_end);
 
-	curses_text(TINT_NORM, "%s ", i18n_endcongrat);
+	curses_text(TINT_NORM, "%s ", i18n_end_congratulations);
 	curses_text(TINT_HIGH, "%s", game_header->game);
 	curses_text(TINT_NORM, ".\n\n");
 
-	curses_text(TINT_NORM, "%s:\n", i18n_endstats);
+	curses_text(TINT_NORM, "%s:\n", i18n_end_stats);
 	curses_text(TINT_NORM, " - %i %s %i %s\n", game_stats->glossary_mentioned,
-			i18n_from, game_stats->glossary_total, i18n_endentriesseen);
+			i18n_from, game_stats->glossary_total, i18n_end_glossaryentriesseen);
 	curses_text(TINT_NORM, " - %i %s %i %s\n", game_stats->rooms_visited,
-			i18n_from, game_stats->rooms_total, i18n_endroomsvisited);
+			i18n_from, game_stats->rooms_total, i18n_end_roomsvisited);
 	curses_text(TINT_NORM, " - %i %s %i %s\n\n", game_stats->scenes_visited,
-			i18n_from, game_stats->scenes_total, i18n_endscenesplayed);
+			i18n_from, game_stats->scenes_total, i18n_end_scenesplayed);
 
-	curses_status(i18n_endstatusbar);
+	curses_status(i18n_end_statusbar);
 
 	// Set prompt
 	if (game_header->prompt)
@@ -913,24 +913,24 @@ game_scene_endscreen(void)
 static void
 game_scene_startscreen(void)
 {
-	log_info(i18n_start);
+	log_info(i18n_game_start);
 
-	curses_text(TINT_NORM, "%s ", i18n_startwelcome);
+	curses_text(TINT_NORM, "%s ", i18n_start_welcome);
 	curses_text(TINT_HIGH, "%s\n", game_header->game);
-	curses_text(TINT_NORM, "%s %s\n\n", i18n_startauthor, game_header->author);
+	curses_text(TINT_NORM, "%s %s\n\n", i18n_start_author, game_header->author);
 
-	curses_text(TINT_NORM, "%s:\n", i18n_startstats);
-	curses_text(TINT_NORM, " - %i %s\n", game_stats->glossary_total, i18n_glossaryentries);
-	curses_text(TINT_NORM, " - %i %s\n", game_stats->rooms_total, i18n_startrooms);
-	curses_text(TINT_NORM, " - %i %s\n\n", game_stats->scenes_total, i18n_startscenes);
+	curses_text(TINT_NORM, "%s:\n", i18n_start_stats);
+	curses_text(TINT_NORM, " - %i %s\n", game_stats->glossary_total, i18n_glossary_entrieslisted);
+	curses_text(TINT_NORM, " - %i %s\n", game_stats->rooms_total, i18n_start_rooms);
+	curses_text(TINT_NORM, " - %i %s\n\n", game_stats->scenes_total, i18n_start_scenes);
 
-	curses_text(TINT_NORM, "%s ", i18n_starthelp1);
+	curses_text(TINT_NORM, "%s ", i18n_start_help1);
 	curses_text(TINT_HIGH, "%s ", i18n_cmdhelp);
-	curses_text(TINT_NORM, "%s ", i18n_starthelp2);
+	curses_text(TINT_NORM, "%s ", i18n_start_help2);
 	curses_text(TINT_HIGH, "%s ", i18n_cmdnext);
-	curses_text(TINT_NORM, "%s.\n\n", i18n_starthelp3);
+	curses_text(TINT_NORM, "%s.\n\n", i18n_start_help3);
 
-	curses_status("%s %s", i18n_startstatusbar, game_header->game);
+	curses_status("%s %s", i18n_start_welcome, game_header->game);
 
 	// Set prompt
 	if (game_header->prompt)
@@ -1003,7 +1003,7 @@ game_scene_list(void)
 	}
 
 	curses_text(TINT_NORM, "%-*s %-*s %s\n", len_scene + 1, i18n_name, len_room + 1,
-			i18n_room, i18n_description);
+			i18n_room, i18n_head_description);
 
 	for (i = 0; i < strlen(i18n_name); i++)
 	{
@@ -1019,7 +1019,7 @@ game_scene_list(void)
 
 	curses_text(TINT_NORM, "%-*s", len_room + 2 - strlen(i18n_room), " ");
 
-	for (i = 0; i < strlen(i18n_description); i++)
+	for (i = 0; i < strlen(i18n_head_description); i++)
 	{
 		curses_text(TINT_NORM, "-");
 	}
@@ -1043,7 +1043,7 @@ game_scene_list(void)
 	}
 
 	list_destroy(data, NULL);
-	log_info_f("%s: %i", i18n_sceneslisted, i);
+	log_info_f("%s: %i", i18n_scene_listed, i);
 }
 
 boolean
@@ -1054,18 +1054,18 @@ game_scene_next(uint8_t choice)
 
 	if (choice)
 	{
-		log_info_f("%s: %i", i18n_scenenextchoice, choice);
+		log_info_f("%s. %s: %i", i18n_scene_next, i18n_scene_playerschoice, choice);
 	}
 	else
 	{
-		log_info(i18n_scenenext);
+		log_info(i18n_scene_next);
 	}
 
 	if (!current_scene)
 	{
 		if ((current_scene = hashmap_get(game_scenes, game_header->first_scene)) == NULL)
 		{
-			log_error_f("%s: %i\n", i18n_scenefirstnot,  game_header->first_scene);
+			log_error_f("%s: %i\n", i18n_scene_firstnotfound,  game_header->first_scene);
 			quit_error("First scene doesn't exists\n");
 		}
 	}
@@ -1075,13 +1075,13 @@ game_scene_next(uint8_t choice)
 		{
 			if (current_scene->next->elements == 1)
 			{
-				curses_text(TINT_NORM, i18n_scenenochoice);
+				curses_text(TINT_NORM, i18n_scene_nochoice);
 
 				return FALSE;
 			}
 			if (choice > current_scene->next->elements)
 			{
-				curses_text(TINT_NORM, i18n_sceneinvchoice);
+				curses_text(TINT_NORM, i18n_scene_invalidchoice);
 
 				return FALSE;
 			}
@@ -1098,7 +1098,7 @@ game_scene_next(uint8_t choice)
 
 			if ((scene = hashmap_get(game_scenes, key)) == NULL)
 			{
-				log_error_f("%s: %s\n", i18n_scenedoesnot, game_header->first_scene);
+				log_error_f("%s: %s\n", i18n_scene_notfound, game_header->first_scene);
 				quit_error("A Scene doesn't exists\n");
 			}
 			else
@@ -1110,7 +1110,7 @@ game_scene_next(uint8_t choice)
 		{
 			if (current_scene->next->elements > 1)
 			{
-				curses_text(TINT_NORM, "%s\n", i18n_scenechoice);
+				curses_text(TINT_NORM, "%s\n", i18n_scene_choice);
 
 				return FALSE;
 			}
@@ -1127,7 +1127,7 @@ game_scene_next(uint8_t choice)
 
 			if ((scene = hashmap_get(game_scenes, key)) == NULL)
 			{
-				log_error_f("%s: %s\n", i18n_scenedoesnot, game_header->first_scene);
+				log_error_f("%s: %s\n", i18n_scene_notfound, game_header->first_scene);
 				quit_error("A Scene doesn't exists\n");
 			}
 			else
@@ -1150,7 +1150,7 @@ game_scene_play(const char *key)
 	{
 		if ((scene = hashmap_get(game_scenes, key)) == NULL)
 		{
-			curses_text(TINT_NORM, "%s: %s\n", i18n_scenedoesnot, key);
+			curses_text(TINT_NORM, "%s: %s\n", i18n_scene_notfound, key);
 
 			return;
 		}
@@ -1158,7 +1158,7 @@ game_scene_play(const char *key)
 #ifdef NDEBUG
 		if (!scene->visited)
 		{
-			curses_text(TINT_NORM, "%s: %s\n", i18n_scenedoesnot, key);
+			curses_text(TINT_NORM, "%s: %s\n", i18n_scene_notfound, key);
 
 			return;
 		}
@@ -1183,7 +1183,7 @@ game_scene_play(const char *key)
 		return;
 	}
 
-	log_info_f("%s %s", i18n_sceneplay, current_scene->name);
+	log_info_f("%s %s", i18n_scene_play, current_scene->name);
 
 	// Mark scene as visited
 	if (!scene->visited)
@@ -1195,7 +1195,7 @@ game_scene_play(const char *key)
 	// Mark room as visited
 	if ((room = hashmap_get(game_rooms, scene->room)) == NULL)
 	{
-		log_error_f("%s: %s", i18n_roomnotfound, scene->room);
+		log_error_f("%s: %s", i18n_room_notfound, scene->room);
 		quit_error("Room doesn't exist");
 	}
 
@@ -1243,7 +1243,7 @@ game_init(const char *file)
 {
 	assert(file);
 
-    log_info(i18n_gameinit);
+    log_info(i18n_game_init);
 
 	if (!game_header)
 	{
@@ -1282,7 +1282,7 @@ game_init(const char *file)
 void
 game_quit(void)
 {
-	log_info(i18n_gamequit);
+	log_info(i18n_game_quit);
 
 	if (game_header)
 	{

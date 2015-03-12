@@ -243,8 +243,8 @@ curses_resize(void)
 
 	doupdate();
 
-	log_info(i18n_termresize);
-	log_info_f("%s: %i*%i", i18n_newtermsize, LINES, COLS);
+	log_info(i18n_curses_termresize);
+	log_info_f("%s: %i*%i", i18n_curses_newtermsize, LINES, COLS);
 }
 
 /*
@@ -304,7 +304,7 @@ curses_scroll(int32_t offset)
 void
 curses_init(void)
 {
-	log_info(i18n_cursesinit);
+	log_info(i18n_curses_init);
 
 	repl_buf = list_create();
 
@@ -323,7 +323,7 @@ curses_init(void)
 
 	if (!can_change_color())
 	{
-		log_warn(i18n_8colorsonly);
+		log_warn(i18n_curses_8colorsonly);
 
 		init_pair(PAIR_GLOSSARY, COLOR_RED, COLOR_BLACK);
 		init_pair(PAIR_HIGHLIGHT, COLOR_GREEN, COLOR_BLACK);
@@ -350,7 +350,7 @@ curses_init(void)
 		init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 	}
 
-	log_info_f("%s: %i*%i", i18n_termsize, LINES, COLS);
+	log_info_f("%s: %i*%i", i18n_curses_termsize, LINES, COLS);
 
     // Main window
 	text = newpad(SCROLLBACK, COLS);
@@ -377,7 +377,7 @@ curses_init(void)
 void
 curses_quit(void)
 {
-	log_info(i18n_cursesquit);
+	log_info(i18n_curses_quit);
 
 	delwin(input);
 	delwin(status);
@@ -844,7 +844,7 @@ curses_input(void)
 		}
 	}
 
-	log_info_f("%s: %s", i18n_userinput, buffer);
+	log_info_f("%s: %s", i18n_curses_userinput, buffer);
 	input_process(buffer);
 }
 

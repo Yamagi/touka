@@ -11,16 +11,111 @@
 
 // ---------
 
-// Only 8 colors supported
-extern const char *i18n_8colorsonly;
-
-// Aliases
+// Objects
 extern const char *i18n_aliases;
-
-// Choices
 extern const char *i18n_choices;
+extern const char *i18n_words;
 
-// Glossary command
+extern const char *i18n_entry;
+extern const char *i18n_room;
+extern const char *i18n_scene;
+
+// ---------
+
+// Table headers
+extern const char *i18n_head_description;
+extern const char *i18n_head_saves;
+extern const char *i18n_head_state;
+
+// ---------
+
+// Curses TUI
+extern const char *i18n_curses_8colorsonly;
+extern const char *i18n_curses_init;
+extern const char *i18n_curses_newtermsize;
+extern const char *i18n_curses_quit;
+extern const char *i18n_curses_termresize;
+extern const char *i18n_curses_termsize;
+extern const char *i18n_curses_userinput;
+
+// ---------
+
+// Link matching
+extern const char *i18n_link_didntmatch;
+extern const char *i18n_link_linebreak;
+extern const char *i18n_link_nestedlink;
+extern const char *i18n_link_notopened;
+extern const char *i18n_link_openatend;
+
+// ---------
+
+// Glossary
+extern const char *i18n_glossary_entrieslisted;
+extern const char *i18n_glossary_notfound;
+
+// ---------
+
+// Room
+extern const char *i18n_room_mentioned;
+extern const char *i18n_room_notfound;
+extern const char *i18n_room_roomslisted;
+
+// ---------
+
+// Scene
+extern const char *i18n_scene_choice;
+extern const char *i18n_scene_firstnotfound;
+extern const char *i18n_scene_invalidchoice;
+extern const char *i18n_scene_listed;
+extern const char *i18n_scene_next;
+extern const char *i18n_scene_nochoice;
+extern const char *i18n_scene_notfound;
+extern const char *i18n_scene_play;
+extern const char *i18n_scene_playerschoice;
+
+// ---------
+
+// Startscreen
+extern const char *i18n_start_author;
+extern const char *i18n_start_stats;
+extern const char *i18n_start_welcome;
+
+extern const char *i18n_start_glossary;
+extern const char *i18n_start_rooms;
+extern const char *i18n_start_scenes;
+
+extern const char *i18n_start_help1;
+extern const char *i18n_start_help2;
+extern const char *i18n_start_help3;
+
+// ---------
+
+// Endscreen
+extern const char *i18n_end_congratulations;
+extern const char *i18n_end_glossaryentriesseen;
+extern const char *i18n_end_roomsvisited;
+extern const char *i18n_end_scenesplayed;
+extern const char *i18n_end_stats;
+extern const char *i18n_end_statusbar;
+
+// ---------
+
+// Input
+extern const char *i18n_input_command;
+extern const char *i18n_input_cmdnotfound;
+extern const char *i18n_input_cmdslisted;
+extern const char *i18n_input_init;
+extern const char *i18n_input_quit;
+
+// ---------
+
+// Version
+extern const char *i18n_version_buildon;
+extern const char *i18n_version_thisis;
+
+// ---------
+
+// 'glossary' Command
 extern const char *i18n_cmdglossary;
 extern const char *i18n_cmdglossaryhelp;
 extern const char *i18n_cmdglossaryshort;
@@ -30,12 +125,12 @@ extern const char *i18n_cmdhelp;
 extern const char *i18n_cmdhelphelp;
 extern const char *i18n_cmdhelpshort;
 
-// Info command
+// 'info' Command
 extern const char *i18n_cmdinfo;
 extern const char *i18n_cmdinfohelp;
 extern const char *i18n_cmdinfoshort;
 
-// Load command
+// 'load' Command
 extern const char *i18n_cmdload;
 extern const char *i18n_cmdloadhelp;
 extern const char *i18n_cmdloadshort;
@@ -45,245 +140,64 @@ extern const char *i18n_cmdnext;
 extern const char *i18n_cmdnexthelp;
 extern const char *i18n_cmdnextshort;
 
-// quit Comand
+// 'quit' Command
 extern const char *i18n_cmdquit;
 extern const char *i18n_cmdquithelp;
 extern const char *i18n_cmdquitshort;
 
-// romm Command
+// 'room' Command
 extern const char *i18n_cmdroom;
 extern const char *i18n_cmdroomhelp;
 extern const char *i18n_cmdroomshort;
 
-// save Command
+// 'save' Command
 extern const char *i18n_cmdsave;
 extern const char *i18n_cmdsavehelp;
 extern const char *i18n_cmdsaveshort;
 
-// scene Command
+// 'scene' Command
 extern const char *i18n_cmdscene;
 extern const char *i18n_cmdscenehelp;
 extern const char *i18n_cmdsceneshort;
 
-// Version command
+// 'version' Command
 extern const char *i18n_cmdversion;
 extern const char *i18n_cmdversionhelp;
 extern const char *i18n_cmdversionshort;
 
-// Command
-extern const char *i18n_command;
+// ---------
 
-// Binary build on
-extern const char *i18n_commandbuildon;
+// Game
+extern const char *i18n_game_end;
+extern const char *i18n_game_init;
+extern const char *i18n_game_quit;
+extern const char *i18n_game_start;
 
-// Input initialization
-extern const char *i18n_commandinit;
+// ---------
 
-// Listed commands
-extern const char *i18n_commandlisted;
+// Parser
+extern const char *i18n_parser_error;
+extern const char *i18n_parser_gamespecs;
+extern const char *i18n_parser_glossaryentry;
+extern const char *i18n_parser_glossarytwice;
+extern const char *i18n_parser_linesparsed;
+extern const char *i18n_parser_parsingfile;
+extern const char *i18n_parser_roomtwice;
+extern const char *i18n_parser_scenetwice;
 
-// Command not found
-extern const char *i18n_commandnotfound;
+// ---------
 
-// Input shutdown
-extern const char *i18n_commandquit;
+// Savegames
+extern const char *i18n_save_filedoesnexists;
+extern const char *i18n_save_fromanothergame;
+extern const char *i18n_save_init;
+extern const char *i18n_save_listedsaves;
 
-// This is
-extern const char *i18n_commandthisis;
+// ---------
 
-// Curses initialized
-extern const char *i18n_cursesinit;
-
-// Curses shutdown
-extern const char *i18n_cursesquit;
-
-// Description
-extern const char *i18n_description;
-
-// Game has ended
-extern const char *i18n_end;
-
-// Congratulations on endscreen
-extern const char *i18n_endcongrat;
-
-// Endscreen glossary entries
-extern const char *i18n_endentriesseen;
-
-// Endscreen rooms visited
-extern const char *i18n_endroomsvisited;
-
-// Endscreen scenes played
-extern const char *i18n_endscenesplayed;
-
-// Stats on endsceen
-extern const char *i18n_endstats;
-
-// Endscreen statusbar
-extern const char *i18n_endstatusbar;
-
-// Entry
-extern const char *i18n_entry;
-
-// From
+// Misc
 extern const char *i18n_from;
-
-// Game initialized
-extern const char *i18n_gameinit;
-
-// Game shutdown
-extern const char *i18n_gamequit;
-
-// Listes glossary entries
-extern const char *i18n_glossaryentries;
-
-// No glossary entry found
-extern const char *i18n_glossarynoentry;
-
-// Line break in link
-extern const char *i18n_linkbreak;
-
-// Link didn't match
-extern const char *i18n_linkmatch;
-
-// Nested link
-extern const char *i18n_linknested;
-
-// Link still open
-extern const char *i18n_linkstillopen;
-
-// Unopened link closed
-extern const char *i18n_linkunopened;
-
-// New terminal size
-extern const char *i18n_newtermsize;
-
-// Parser error
-extern const char *i18n_parsererror;
-
-// Parsing file
-extern const char *i18n_parserfile;
-
-// Game specifications
-extern const char *i18n_parserspecs;
-
-// Glossary entry is already there
-extern const char *i18n_parserglosalready;
-
-// New glossary entry
-extern const char *i18n_parserglosentry;
-
-// Lines parsed
-extern const char *i18n_parserlines;
-
-// Parser room is already there
-extern const char *i18n_parserroomalready;
-
-// Scenes is already there
-extern const char *i18n_parserscenealready;
-
-// Room
 extern const char *i18n_name;
-
-// Room
-extern const char *i18n_room;
-
-// Rooms listed
-extern const char *i18n_roomlisted;
-
-// Room was mentioned but not visited
-extern const char *i18n_roommentioned;
-
-// Room not found
-extern const char *i18n_roomnotfound;
-
-// Savegame from another game
-extern const char *i18n_saveanothergame;
-
-// Savegame doesn't exists
-extern const char *i18n_savedoesnexists;
-
-// Savegame init
-extern const char *i18n_saveinit;
-
-// Saves
-extern const char *i18n_saves;
-
-// Savegames listed
-extern const char *i18n_saveslisted;
-
-// Scene
-extern const char *i18n_scene;
-
-// Scene choice
-extern const char *i18n_scenechoice;
-
-// Scene doesn't exists
-extern const char *i18n_scenedoesnot;
-
-// First scene doesn't exists
-extern const char *i18n_scenefirstnot;
-
-// Invalid choice
-extern const char *i18n_sceneinvchoice;
-
-// Scene advancing to next with choice
-extern const char *i18n_scenenext;
-
-// Scene advancing to next with choice
-extern const char *i18n_scenenextchoice;
-
-// No choice possible
-extern const char *i18n_scenenochoice;
-
-// Scenes listed
-extern const char *i18n_sceneslisted;
-
-// Scene played
-extern const char *i18n_sceneplay;
-
-// Game has started
-extern const char *i18n_start;
-
-// Startscreen author
-extern const char *i18n_startauthor;
-
-// Startscreen glossary entries
-extern const char *i18n_startglossary;
-
-// Startscreen helptext
-extern const char *i18n_starthelp1;
-extern const char *i18n_starthelp2;
-extern const char *i18n_starthelp3;
-
-// Startscreen rooms
-extern const char *i18n_startrooms;
-
-// Startscreen scenes
-extern const char *i18n_startscenes;
-
-// Startscreen stats
-extern const char *i18n_startstats;
-
-// Staartscreen stausbar
-extern const char *i18n_startstatusbar;
-
-// Startscreen welcome
-extern const char *i18n_startwelcome;
-
-// State
-extern const char *i18n_state;
-
-// Terminal resize
-extern const char *i18n_termresize;
-
-// Terminal size
-extern const char *i18n_termsize;
-
-// User input
-extern const char *i18n_userinput;
-
-// Words
-extern const char *i18n_words;
 
 // --------
 

@@ -113,21 +113,22 @@ cmd_help(char *msg)
 		}
 	}
 
-	if (len < strlen(i18n_command))
+	if (len < strlen(i18n_input_command))
 	{
-		len = strlen(i18n_command);
+		len = strlen(i18n_input_command);
 	}
 
-	curses_text(TINT_NORM, "%-*s %s\n", len + 1, i18n_command, i18n_description);
+	curses_text(TINT_NORM, "%-*s %s\n", len + 1, i18n_input_command,
+			i18n_head_description);
 
-	for (i = 0; i < strlen(i18n_command); i++)
+	for (i = 0; i < strlen(i18n_input_command); i++)
 	{
 		curses_text(TINT_NORM, "-");
 	}
 
-	curses_text(TINT_NORM, "%-*s", len + 2 - strlen(i18n_command), " ");
+	curses_text(TINT_NORM, "%-*s", len + 2 - strlen(i18n_input_command), " ");
 
-	for (i = 0; i < strlen(i18n_description); i++)
+	for (i = 0; i < strlen(i18n_head_description); i++)
 	{
 		curses_text(TINT_NORM, "-");
 	}
@@ -146,7 +147,7 @@ cmd_help(char *msg)
 		curses_text(TINT_NORM, "%-*s %s\n", len + 1, cur->name, cur->help);
 	}
 
-	log_info_f("%s: %i", i18n_commandlisted, i);
+	log_info_f("%s: %i", i18n_input_cmdslisted, i);
 }
 
 /*
@@ -203,7 +204,7 @@ cmd_next(char *msg)
 	{
 		if (strlen(msg) != 1)
 		{
-			curses_text(TINT_NORM, i18n_sceneinvchoice);
+			curses_text(TINT_NORM, i18n_scene_invalidchoice);
 
 			return;
 		}
@@ -215,7 +216,7 @@ cmd_next(char *msg)
 
 				if (!choice)
 				{
-					curses_text(TINT_NORM, i18n_sceneinvchoice);
+					curses_text(TINT_NORM, i18n_scene_invalidchoice);
 
 					return;
 				}
@@ -295,8 +296,8 @@ cmd_scene(char *msg)
 static void
 cmd_version(char *msg)
 {
-	curses_text(TINT_NORM, "%s %s %s, (c) %s %s\n",i18n_commandthisis, APPNAME, VERSION, YEAR, AUTHOR);
-	curses_text(TINT_NORM, "%s %s\n", i18n_commandbuildon, __DATE__);
+	curses_text(TINT_NORM, "%s %s %s, (c) %s %s\n",i18n_version_thisis, APPNAME, VERSION, YEAR, AUTHOR);
+	curses_text(TINT_NORM, "%s %s\n", i18n_version_buildon, __DATE__);
 }
 
 // ---------
@@ -607,7 +608,7 @@ input_complete_reset(void)
 void
 input_init(const char *homedir)
 {
-	log_info(i18n_commandinit);
+	log_info(i18n_input_init);
 
 	// Register commands
 	input_register(i18n_cmdglossary, i18n_cmdglossaryhelp, cmd_glossary, FALSE);
@@ -648,7 +649,7 @@ input_init(const char *homedir)
 void
 input_quit(void)
 {
-	log_info(i18n_commandquit);
+	log_info(i18n_input_quit);
 
 	if (history)
 	{
@@ -738,7 +739,7 @@ input_process(char *cmd)
 
 	if (!match)
 	{
-		curses_text(TINT_NORM, "%s: %s\n", i18n_commandnotfound, token);
+		curses_text(TINT_NORM, "%s: %s\n", i18n_input_cmdnotfound, token);
 	}
 
 	// Empty line after each cmd-output
