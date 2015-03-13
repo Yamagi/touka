@@ -201,8 +201,34 @@ const char *i18n_name = "Name";
 
 // ---------
 
+// Header
 const char *i18n_info_author = "Author";
 const char *i18n_info_date = "Date";
 const char *i18n_info_game = "Game";
 const char *i18n_info_uid = "UID";
+
+// ---------
+
+// Errorcodes
+const char *i18n_error_brokensave = "Savegame is broken";
+const char *i18n_error_couldntclosefile = "Couldn't close file";
+const char *i18n_error_couldntcreatedir = "Couldn't create directory";
+const char *i18n_error_couldntloadhistory = "Couldn't load history";
+const char *i18n_error_couldloadsave = "Couldn't load savegame";
+const char *i18n_error_couldntopendir = "Couldn't open directory";
+const char *i18n_error_couldntopenfile = "Couldn't open file";
+const char *i18n_error_couldntrotatelogs = "Couldn't rotate logs";
+const char *i18n_error_couldntsavehistory = "Couldn't save history";
+const char *i18n_error_couldntwritelogmsg = "Couldn't write log message";
+const char *i18n_error_filenotexist = "File doesn't exist";
+const char *i18n_error_firstscenenotfound = "First scene not found";
+const char *i18n_error_invgameheader = "Invaild game header";
+const char *i18n_error_localtime = "Couldn't get local time";
+const char *i18n_error_notadir = "Not a directory";
+const char *i18n_error_notafile = "Not a regular file";
+const char *i18n_error_outofmem = "Couldn't allocate memory";
+const char *i18n_error_parsererr = "Parser error";
+const char *i18n_error_roomnotfound = "Room not found";
+const char *i18n_error_scenenotfound = "Scene not found";
+const char *i18n_error_unkownlogtype = "Unknown log type";
 

@@ -871,7 +871,7 @@ curses_status(const char *fmt, ...)
 
 	if ((msg = malloc(len)) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
     va_start(args, fmt);
@@ -910,7 +910,7 @@ curses_text(uint32_t color, const char *fmt, ...)
 
 	if ((msg = malloc(len)) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	// Format the message
@@ -944,7 +944,7 @@ curses_text(uint32_t color, const char *fmt, ...)
 	// Save to replay buffer
 	if ((rep = malloc(sizeof(repl_msg_s))) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	rep->msg = msg;

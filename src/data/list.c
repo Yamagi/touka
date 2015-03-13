@@ -28,7 +28,7 @@ list
 
 	if ((new = calloc(1, sizeof(list))) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	return new;
@@ -116,7 +116,7 @@ list_push(list *lheader, void *data)
 
 	if ((new = calloc(1, sizeof(listnode))) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	new->data = data;
@@ -182,7 +182,7 @@ list_sort(list *lheader, int32_t (*callback)(const void *, const void*))
 
 	if ((larray = malloc(lheader->count * sizeof(listnode *))) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	cur = lheader->first;
@@ -234,7 +234,7 @@ list_unshift(list *lheader, void *data)
 
 	if ((new = calloc(1, sizeof(listnode))) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	new->data = data;

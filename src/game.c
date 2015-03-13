@@ -200,7 +200,7 @@ game_print_description(list *words)
 
 			if ((link = calloc(1, len)) == 0)
 			{
-				quit_error("Couldn't allocate memory");
+				quit_error(POUTOFMEM);
 			}
 
 			strncat(link, cur, len);
@@ -238,7 +238,7 @@ game_print_description(list *words)
 
 				if ((link = realloc(link, len)) == NULL)
 				{
-					quit_error("Couldn't allocate memory");
+					quit_error(POUTOFMEM);
 				}
 
 				memset(link + len, 0, len - oldlen);
@@ -302,7 +302,7 @@ game_print_description(list *words)
 
 			if ((link = realloc(link, len)) == NULL)
 			{
-				quit_error("Couldn't allocate memory");
+				quit_error(POUTOFMEM);
 			}
 
 			memset(link + len, 0, len - oldlen);
@@ -898,7 +898,7 @@ game_scene_endscreen(void)
 
         if ((curses_prompt = malloc(strlen(game_header->prompt) + 3)) == NULL)
 		{
-			quit_error("Couldn't allocate memory");
+			quit_error(POUTOFMEM);
 		}
 
 		sprintf(curses_prompt, "%s: ", game_header->prompt);
@@ -942,7 +942,7 @@ game_scene_startscreen(void)
 
         if ((curses_prompt = malloc(strlen(game_header->prompt) + 3)) == NULL)
 		{
-			quit_error("Couldn't allocate memory");
+			quit_error(POUTOFMEM);
 		}
 
 		sprintf(curses_prompt, "%s: ", game_header->prompt);
@@ -1066,7 +1066,7 @@ game_scene_next(uint8_t choice)
 		if ((current_scene = hashmap_get(game_scenes, game_header->first_scene)) == NULL)
 		{
 			log_error_f("%s: %i\n", i18n_scene_firstnotfound,  game_header->first_scene);
-			quit_error("First scene doesn't exists\n");
+			quit_error(PFIRSTSCENENOTFOUND);
 		}
 	}
 	else
@@ -1099,7 +1099,7 @@ game_scene_next(uint8_t choice)
 			if ((scene = hashmap_get(game_scenes, key)) == NULL)
 			{
 				log_error_f("%s: %s\n", i18n_scene_notfound, game_header->first_scene);
-				quit_error("A Scene doesn't exists\n");
+				quit_error(PSCENENOTFOUND);
 			}
 			else
 			{
@@ -1128,7 +1128,7 @@ game_scene_next(uint8_t choice)
 			if ((scene = hashmap_get(game_scenes, key)) == NULL)
 			{
 				log_error_f("%s: %s\n", i18n_scene_notfound, game_header->first_scene);
-				quit_error("A Scene doesn't exists\n");
+				quit_error(PSCENENOTFOUND);
 			}
 			else
 			{
@@ -1196,7 +1196,7 @@ game_scene_play(const char *key)
 	if ((room = hashmap_get(game_rooms, scene->room)) == NULL)
 	{
 		log_error_f("%s: %s", i18n_room_notfound, scene->room);
-		quit_error("Room doesn't exist");
+		quit_error(PROOMNOTFOUND);
 	}
 
 	if (!room->visited)
@@ -1220,7 +1220,7 @@ game_scene_play(const char *key)
 
         if ((curses_prompt = malloc(strlen(scene->prompt) + 3)) == NULL)
 		{
-			quit_error("Couldn't allocate memory");
+			quit_error(POUTOFMEM);
 		}
 
 		sprintf(curses_prompt, "%s: ", scene->prompt);
@@ -1249,7 +1249,7 @@ game_init(const char *file)
 	{
 		if ((game_header = calloc(1, sizeof(game_header_s))) == NULL)
 		{
-			quit_error("Couldn't allocate memory");
+			quit_error(POUTOFMEM);
 		}
 	}
 
@@ -1257,7 +1257,7 @@ game_init(const char *file)
 	{
 		if ((game_stats = calloc(1, sizeof(game_stats_s))) == NULL)
 		{
-			quit_error("Couldn't allocate memory");
+			quit_error(POUTOFMEM);
 		}
 	}
 

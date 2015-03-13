@@ -81,7 +81,7 @@ static char
 
 		if ((string = realloc(string, len)) == NULL)
 		{
-			quit_error("Couldn't allocate memory");
+			quit_error(POUTOFMEM);
 		}
 
 		memset(string + oldlen, 0, len - oldlen);
@@ -105,7 +105,7 @@ parser_error(void)
 {
 	log_error_f("Parser error in line %i\n", count);
 
-	quit_error("Parser error");
+	quit_error(PPARSERERR);
 }
 
 /*
@@ -191,23 +191,28 @@ parser_check_header(void)
 {
 	if (!game_header->game)
 	{
-		quit_error("No game name specified");
+		log_error("No game name specified");
+		quit_error(PINVGAMEHEADER);
 	}
 	else if (!game_header->author)
 	{
-		quit_error("No author specified");
+		log_error("No author specified");
+		quit_error(PINVGAMEHEADER);
 	}
 	else if (!game_header->date)
 	{
-		quit_error("No copyright date speficied");
+		log_error("No copyright date speficied");
+		quit_error(PINVGAMEHEADER);
 	}
 	else if (!game_header->uid)
 	{
-		quit_error("No UID specified");
+		log_error("No UID specified");
+		quit_error(PINVGAMEHEADER);
 	}
 	else if (!game_header->first_scene)
 	{
-		quit_error("No starting scene specified");
+		log_error("No starting scene specified");
+		quit_error(PINVGAMEHEADER);
 	}
 
 	log_info_f("%s:", i18n_parser_gamespecs);
@@ -427,7 +432,7 @@ parser_glossary(list *tokens)
 	{
 		if ((entry = calloc(1, sizeof(game_glossary_s))) == NULL)
 		{
-			quit_error("Couldn't allocate memory");
+			quit_error(POUTOFMEM);
 		}
 	}
 
@@ -643,7 +648,7 @@ parser_room(list *tokens)
 	{
 		if ((room = calloc(1, sizeof(game_room_s))) == NULL)
 		{
-			quit_error("Couldn't allocate memory");
+			quit_error(POUTOFMEM);
 		}
 	}
 
@@ -876,7 +881,7 @@ parser_scene(list *tokens)
 	{
 		if ((scene = calloc(1, sizeof(game_scene_s))) == NULL)
 		{
-			quit_error("Couldn't allocate memory");
+			quit_error(POUTOFMEM);
 		}
 	}
 
@@ -1031,17 +1036,17 @@ parser_game(const char *file)
 
 	if ((stat(file, &sb)) != 0)
 	{
-		quit_error("Game file doesn't exists\n");
+		quit_error(PFILENOTEXIST);
 	}
 
 	if (!S_ISREG(sb.st_mode))
 	{
-		quit_error("Game file ist not a regular file\n");
+		quit_error(PNOTAFILE);
 	}
 
 	if ((game = fopen(file, "r")) == NULL)
 	{
-		quit_error("Couldn't open game file");
+		quit_error(PCOULDNTOPENFILE);
 	}
 
 	log_info_f("%s: %s", i18n_parser_parsingfile, file);

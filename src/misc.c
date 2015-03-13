@@ -46,7 +46,7 @@ misc_rmkdir(const char *dir)
 			{
 				if (errno != EEXIST)
 				{
-					quit_error("Couldn't create directory");
+					quit_error(PCOULDNTCREATEDIR);
 				}
 			}
 
@@ -58,7 +58,7 @@ misc_rmkdir(const char *dir)
 	{
 		if (errno != EEXIST)
 		{
-			quit_error("Couldn't create directory");
+			quit_error(PCOULDNTCREATEDIR);
 		}
 	}
 }

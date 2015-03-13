@@ -52,7 +52,7 @@ darray_resize(darray *array)
 
 	if ((array->data = realloc(array->data, new)) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	array->end = new;
@@ -73,7 +73,7 @@ darray
 
 	if ((new = malloc(sizeof(darray))) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	new->elements = 0;
@@ -81,7 +81,7 @@ darray
 
 	if ((new->data = malloc(sizeof(void *) * INT_ELEMENTS)) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	return new;

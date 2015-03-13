@@ -203,10 +203,36 @@ extern const char *i18n_name;
 
 // --------
 
+// Header
 extern const char *i18n_info_author;
 extern const char *i18n_info_date;
 extern const char *i18n_info_game;
 extern const char *i18n_info_uid;
+
+// --------
+
+// Errorcodes
+extern const char *i18n_error_brokensave;
+extern const char *i18n_error_couldntclosefile;
+extern const char *i18n_error_couldntcreatedir;
+extern const char *i18n_error_couldntloadhistory;
+extern const char *i18n_error_couldloadsave;
+extern const char *i18n_error_couldntopendir;
+extern const char *i18n_error_couldntopenfile;
+extern const char *i18n_error_couldntrotatelogs;
+extern const char *i18n_error_couldntsavehistory;
+extern const char *i18n_error_couldntwritelogmsg;
+extern const char *i18n_error_filenotexist;
+extern const char *i18n_error_firstscenenotfound;
+extern const char *i18n_error_invgameheader;
+extern const char *i18n_error_localtime;
+extern const char *i18n_error_notadir;
+extern const char *i18n_error_notafile;
+extern const char *i18n_error_outofmem;
+extern const char *i18n_error_parsererr;
+extern const char *i18n_error_roomnotfound;
+extern const char *i18n_error_scenenotfound;
+extern const char *i18n_error_unkownlogtype;
 
 // --------
 

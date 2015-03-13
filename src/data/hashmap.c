@@ -74,7 +74,7 @@ hashmap_add(hashmap *map, const char *key, void *data, boolean is_alias)
 
 	if ((node = malloc(sizeof(hashnode))) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	node->key = key;
@@ -102,12 +102,12 @@ hashmap
 
 	if ((new = malloc(sizeof(hashmap))) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	if ((new->data = calloc(buckets, sizeof(darray *))) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	new->buckets = buckets;

@@ -5,6 +5,7 @@
  * Application shutdown.
  */
 
+#include <assert.h>
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -18,6 +19,116 @@
 #include "save.h"
 #include "quit.h"
 
+#include "i18n/i18n.h"
+
+// --------
+
+/*********************************************************************
+ *                                                                   *
+ *                          Support Functions                        *
+ *                                                                   *
+ *********************************************************************/
+
+/*
+ * Converts an error code into a string.
+ *
+ * error: Error code to convert
+ */
+const char*
+quit_errcodetostr(errcode error)
+{
+	switch (error)
+	{
+		case PBROKENSAVE:
+			return i18n_error_brokensave;
+			break;
+
+		case PCOULDNTCLOSEFILE:
+			return i18n_error_couldntclosefile;
+			break;
+
+		case PCOULDNTCREATEDIR:
+			return i18n_error_couldntcreatedir;
+			break;
+
+		case PCOULDNTLOADHISTORY:
+			return i18n_error_couldntloadhistory;
+			break;
+
+		case PCOULDNTLOADSAVE:
+			return i18n_error_couldloadsave;
+			break;
+
+		case PCOULDNTOPENDIR:
+			return i18n_error_couldntopendir;
+			break;
+
+		case PCOULDNTOPENFILE:
+			return i18n_error_couldntopenfile;
+			break;
+
+		case PCOULDNTROTATELOGS:
+			return i18n_error_couldntrotatelogs;
+			break;
+
+		case PCOULDNTSAVEHISTORY:
+			return i18n_error_couldntsavehistory;
+			break;
+
+		case PCOULDNTWRITELOGMSG:
+			return i18n_error_couldntwritelogmsg;
+			break;
+
+		case PFILENOTEXIST:
+			return i18n_error_filenotexist;
+			break;
+
+		case PFIRSTSCENENOTFOUND:
+			return i18n_error_firstscenenotfound;
+			break;
+
+		case PINVGAMEHEADER:
+			return i18n_error_invgameheader;
+			break;
+
+		case PLOCALTIME:
+			return i18n_error_localtime;
+			break;
+
+		case PNOTADIR:
+			return i18n_error_notadir;
+			break;
+
+		case PNOTAFILE:
+			return i18n_error_notafile;
+			break;
+
+		case POUTOFMEM:
+			return i18n_error_outofmem;
+			break;
+
+		case PPARSERERR:
+			return i18n_error_parsererr;
+			break;
+
+		case PROOMNOTFOUND:
+			return i18n_error_roomnotfound;
+			break;
+
+		case PSCENENOTFOUND:
+			return i18n_error_scenenotfound;
+			break;
+
+		case PUNKNOWNLOGTYPE:
+			return i18n_error_unkownlogtype;
+			break;
+
+		default:
+			return NULL;
+			break;
+	}
+}
+
 // --------
 
 /*********************************************************************
@@ -27,23 +138,35 @@
  *********************************************************************/
 
 void
-quit_error(const char *msg)
+quit_error(errcode error)
 {
-	int32_t err = errno;
+	boolean ret;
+	const char *status;
+	int32_t err;
+	static boolean recursive;
 
-	// Shutdown TUI
-	curses_quit();
+	err = errno;
+	recursive = TRUE;
 
-	// Save game
-	save_write("shutdown");
-
-	if (err)
+	if (recursive)
 	{
-		fprintf(stderr, "PANIC: %s (%s)\n", msg, strerror(err));
+		_exit(1);
 	}
 	else
 	{
-		fprintf(stderr, "PANIC: %s\n", msg);
+		ret = TRUE;
+	}
+
+	status = quit_errcodetostr(error);
+	curses_quit();
+
+	if (err)
+	{
+		fprintf(stderr, "PANIC: %s (%s)\n", status, strerror(err));
+	}
+	else
+	{
+		fprintf(stderr, "PANIC: %s\n", status);
 	}
 
 	_exit(1);
@@ -52,7 +175,7 @@ quit_error(const char *msg)
 void
 quit_success(void)
 {
-	static int32_t recursive;
+	static boolean recursive;
 
 	if (recursive)
 	{
@@ -61,22 +184,13 @@ quit_success(void)
 	}
 	else
 	{
-		recursive++;
+		recursive = TRUE;
 	}
 
-	// Save game
 	save_write("shutdown");
-
-	// Shutdown game
 	game_quit();
-
-	// Shutdown TUI
 	curses_quit();
-
-	// Shutdown input subsystem
 	input_quit();
-
-	// Close log handlers
 	log_close();
 
 	_exit(0);

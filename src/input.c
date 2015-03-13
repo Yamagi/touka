@@ -389,7 +389,7 @@ input_register(const char *name, const char *help, void (*callback)(char *msg), 
 
 	if ((new = malloc(sizeof(input_cmd))) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	new->name = name;
@@ -427,8 +427,8 @@ input_history_load(const char *homedir)
 	{
 		if (!S_ISDIR(sb.st_mode))
 		{
-			quit_error("History dir is not a directory\n");
-			exit(1);
+			log_error_f("Not a directory: %s", histdir);
+			quit_error(PNOTADIR);
 		}
 	}
 	else
@@ -440,8 +440,8 @@ input_history_load(const char *homedir)
 	{
 		if (!S_ISREG(sb.st_mode))
 		{
-			quit_error("History file is not a regular file\n");
-			exit(1);
+			log_error_f("Not a regular file: %s", histfile);
+			quit_error(PNOTAFILE);
 		}
 	}
 	else
@@ -451,7 +451,8 @@ input_history_load(const char *homedir)
 
 	if ((fd = fopen(histfile, "r")) == NULL)
 	{
-		quit_error("Couldn't load history");
+		log_error_f("Couldn't load history: %s", histfile);
+		quit_error(PCOULDNTLOADHISTORY);
 	}
 
 	line = NULL;
@@ -486,8 +487,8 @@ input_history_save(void)
 	{
 		if (!S_ISDIR(sb.st_mode))
 		{
-			quit_error("History dir is not a directory\n");
-			exit(1);
+			log_error_f("Not a directory: %s", histdir);
+			quit_error(PNOTADIR);
 		}
 	}
 	else
@@ -497,7 +498,8 @@ input_history_save(void)
 
 	if ((fd = fopen(histfile, "w")) == NULL)
 	{
-		quit_error("Couldn't save history");
+		log_error_f("Couldn't save history: %s", histfile);
+		quit_error(PCOULDNTSAVEHISTORY);
 	}
 
 	cur = history->first;

@@ -133,8 +133,8 @@ save_init(const char *homedir)
 	{
 		if (!S_ISDIR(sb.st_mode))
 		{
-			quit_error("Savedir is not a directory\n");
-			exit(1);
+			log_error_f("Not a directory: %s", savedir);
+			quit_error(PNOTADIR);
 		}
 	}
 	else
@@ -155,7 +155,8 @@ save_list(void)
 
 	if ((dir = opendir(savedir)) == NULL)
 	{
-		quit_error("Couldn't open directory");
+		log_error_f("Couldn't open directory: %s", savedir);
+		quit_error(PCOULDNTOPENDIR);
 	}
 
 	count = 0;
@@ -266,7 +267,7 @@ save_read(char *name)
 
 	if ((save = fopen(savefile, "r")) == NULL)
 	{
-		quit_error("Couldn't load savegame");
+		quit_error(PCOULDNTLOADSAVE);
 	}
 
 	// Reset state
@@ -322,7 +323,7 @@ save_read(char *name)
 		{
 			if ((glossary = hashmap_get(game_glossary, cur)) == NULL)
 			{
-				quit_error("Savegame is broken\n");
+				quit_error(PBROKENSAVE);
 			}
 
 			glossary->mentioned = TRUE;
@@ -347,7 +348,7 @@ save_read(char *name)
 			{
 				if ((scene = hashmap_get(game_scenes, cur)) == NULL)
 				{
-					quit_error("Savegame is broken\n");
+					quit_error(PBROKENSAVE);
 				}
 
 				current_scene = scene;
@@ -364,7 +365,7 @@ save_read(char *name)
 		{
 			if ((room = hashmap_get(game_rooms, cur)) == NULL)
 			{
-				quit_error("Savegame is broken\n");
+				quit_error(PBROKENSAVE);
 			}
 
 			room->mentioned = TRUE;
@@ -375,7 +376,7 @@ save_read(char *name)
 		{
 			if ((room = hashmap_get(game_rooms, cur)) == NULL)
 			{
-				quit_error("Savegame is broken\n");
+				quit_error(PBROKENSAVE);
 			}
 
 			room->visited = TRUE;
@@ -386,7 +387,7 @@ save_read(char *name)
 		{
 			if ((scene = hashmap_get(game_scenes, cur)) == NULL)
 			{
-				quit_error("Savegame is broken\n");
+				quit_error(PBROKENSAVE);
 			}
 
 			scene->visited = TRUE;
@@ -435,7 +436,7 @@ save_write(char *name)
 	// Open file
 	if ((save = fopen(savefile, "w")) == NULL)
 	{
-		quit_error("Couldn't open file");
+		quit_error(PCOULDNTOPENFILE);
 	}
 
 	// Write metadata

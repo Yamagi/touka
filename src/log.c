@@ -105,7 +105,7 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 
     if ((logmsg = malloc(msglen)) == NULL)
 	{
-		quit_error("Couldn't allocate memory");
+		quit_error(POUTOFMEM);
 	}
 
 	// Format the message
@@ -118,7 +118,7 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 
 	if ((t = localtime(&tmp)) == NULL)
 	{
-		quit_error("Couldn't get local time");
+		quit_error(PLOCALTIME);
 	}
 
 	strftime(msgtime, sizeof(msgtime), "%m-%d-%Y %H:%M:%S", t);
@@ -126,7 +126,7 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 	// Status
 	if (!log_typetostr(type, status, sizeof(status)) != 0)
 	{
-		quit_error("Unknown logtype\n");
+		quit_error(PUNKNOWNLOGTYPE);
 	}
 
 	// Prepend informational stuff
@@ -139,7 +139,7 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 	// Write it
 	if ((fwrite(logmsg, strlen(logmsg), 1, logfile)) != 1)
 	{
-		quit_error("Couldn't log message");
+		quit_error(PCOULDNTWRITELOGMSG);
 	}
 
 	fflush(logfile);
@@ -171,7 +171,7 @@ log_init(const char *path, const char *name, int16_t seg)
 	{
 		if (!S_ISDIR(sb.st_mode))
 		{
-			quit_error("Not not a directory\n");
+			quit_error(PNOTADIR);
 		}
 	}
 	else
@@ -200,7 +200,7 @@ log_init(const char *path, const char *name, int16_t seg)
 
 		if ((rename(oldfile, newfile)) != 0)
 		{
-			quit_error("Couldn't rotate log files");
+			quit_error(PCOULDNTROTATELOGS);
 		}
 	}
 
@@ -212,13 +212,13 @@ log_init(const char *path, const char *name, int16_t seg)
 	{
 		if ((rename(oldfile, newfile)) != 0)
 		{
-			quit_error("Couldn't rotate log files");
+			quit_error(PCOULDNTROTATELOGS);
 		}
 	}
 
 	if ((logfile = fopen(oldfile, "w")) == NULL)
 	{
-		quit_error("Couldn't create log file");
+		quit_error(PCOULDNTOPENFILE);
 	}
 }
 
@@ -231,7 +231,7 @@ log_close(void)
 
 		if ((fclose(logfile)) != 0)
 		{
-			quit_error("Couldn't close log file");
+			quit_error(PCOULDNTCLOSEFILE);
 		}
 
 		logfile = NULL;

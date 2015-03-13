@@ -10,10 +10,40 @@
 
 // ---------
 
+// Error codes.
+typedef enum
+{
+	PBROKENSAVE,
+	PCOULDNTCLOSEFILE,
+	PCOULDNTCREATEDIR,
+	PCOULDNTLOADHISTORY,
+	PCOULDNTLOADSAVE,
+	PCOULDNTOPENDIR,
+	PCOULDNTOPENFILE,
+	PCOULDNTROTATELOGS,
+	PCOULDNTSAVEHISTORY,
+	PCOULDNTWRITELOGMSG,
+	PFILENOTEXIST,
+	PFIRSTSCENENOTFOUND,
+	PINVGAMEHEADER,
+	PLOCALTIME,
+	PNOTADIR,
+	PNOTAFILE,
+	POUTOFMEM,
+	PPARSERERR,
+	PROOMNOTFOUND,
+	PSCENENOTFOUND,
+	PUNKNOWNLOGTYPE,
+} errcode;
+
+// ---------
+
 /*
  * Shuts the application down and returns 1.
+ *
+ * error: Error code
  */
-void quit_error(const char *msg);
+void quit_error(errcode error);
 
 /*
  * Shuts the application down and returns 0.
