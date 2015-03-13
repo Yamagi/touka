@@ -7,6 +7,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -133,7 +134,63 @@ quit_errcodetostr(errcode error)
 
 /*********************************************************************
  *                                                                   *
- *                          Public Interface                         *
+ *                           Signal Handlers                         *
+ *                                                                   *
+ *********************************************************************/
+
+/*
+ * The game crashed.
+ *
+ * sig: The signal
+ */
+void
+quit_signal_error(int32_t sig)
+{
+	save_write("panic");
+	curses_quit();
+
+	fprintf(stderr, "PANIC: Crash\n");
+
+	signal(SIGSEGV, SIG_DFL);
+	signal(SIGILL, SIG_DFL);
+	signal(SIGFPE, SIG_DFL);
+	signal(SIGABRT, SIG_DFL);
+
+    raise(sig);
+}
+
+/*
+ * The game received a deadly signal.
+ *
+ * sig: The signal
+ */
+void
+quit_signal_success(int32_t sig)
+{
+	log_info_f("Received signal %i", sig);
+
+	quit_success();
+}
+
+void
+quit_signal_register(void)
+{
+	/* Crash */
+	signal(SIGSEGV, quit_signal_error);
+	signal(SIGILL, quit_signal_error);
+	signal(SIGFPE, quit_signal_error);
+	signal(SIGABRT, quit_signal_error);
+
+	/* User abort */
+	signal(SIGINT, quit_signal_success);
+	signal(SIGTERM, quit_signal_success);
+}
+
+// --------
+
+/*********************************************************************
+ *                                                                   *
+ *                         Shutdown Functions                        *
  *                                                                   *
  *********************************************************************/
 
@@ -158,6 +215,7 @@ quit_error(errcode error)
 	}
 
 	status = quit_errcodetostr(error);
+	save_write("panic");
 	curses_quit();
 
 	if (err)

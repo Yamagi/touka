@@ -39,6 +39,13 @@ typedef enum
 // ---------
 
 /*
+ * Registers the signal handlers.
+ */
+void quit_signal_register(void);
+
+// ---------
+
+/*
  * Shuts the application down and returns 1.
  *
  * error: Error code

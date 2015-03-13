@@ -6,7 +6,6 @@
  */
 
 #include <limits.h>
-#include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,20 +21,6 @@
 #include "save.h"
 
 #include "i18n/i18n.h"
-
-// --------
-
-/*********************************************************************
- *                                                                   *
- *                         Signal Handlers                           *
- *                                                                   *
- *********************************************************************/
-
-void
-signalhandler_success(int sig)
-{
-	quit_success();
-}
 
 // --------
 
@@ -57,8 +42,7 @@ main(int argc, char *argv[])
 	atexit(quit_success);
 
 	// Signal handler
-	signal(SIGINT, signalhandler_success);
-	signal(SIGTERM, signalhandler_success);
+	quit_signal_register();
 
 	// Create home directory
 	snprintf(homedir, sizeof(homedir), "%s/%s", getenv("HOME"), HOMEDIR);
