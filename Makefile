@@ -21,7 +21,7 @@ endif
 # ----
 
 # The linker flags
-LDFLAGS = -lncurses
+LDFLAGS = -lncursesw
 
 # ----
 

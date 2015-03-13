@@ -7,6 +7,8 @@
  * level input is also part of the file.
  */
 
+#include <assert.h>
+#include <locale.h>
 #include <ncurses.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -113,6 +115,36 @@ curses_replay_callback(repl_msg_s *repl)
  *********************************************************************/
 
 /*
+ * Special version of strlen() which works
+ * with UTF-8 multibyte strings.
+ *
+ * s: String which length is measured
+ */
+static size_t
+curses_utf8strlen(const char *s)
+{
+	size_t i;
+	size_t j;
+
+	assert(s);
+
+	i = 0;
+	j = 0;
+
+	while (s[j])
+	{
+		if ((s[i] & 0xc0) != 0x80)
+		{
+			j++;
+		}
+
+		i++;
+	}
+
+	return j;
+}
+
+/*
  * Prints text into the main window.
  *
  * highlight: Highlight status of the text
@@ -150,12 +182,12 @@ curses_print(uint32_t color, const char *msg)
 	x = getcurx(text);
 
 	// Split line
-	if (COLS - x < strlen(msg))
+	if (COLS - x < curses_utf8strlen(msg))
 	{
 		first = strdup(msg);
 		last = NULL;
 
-		for (i = strlen(first); i >= 0; i--)
+		for (i = curses_utf8strlen(first); i >= 0; i--)
 		{
 			if (first[i] == ' ')
 			{
@@ -312,6 +344,9 @@ curses_init(void)
 	{
 		curses_prompt = strdup("# ");
 	}
+
+	// Reset the character interpretion
+	setlocale(LC_CTYPE, "");
 
 	// Initialize ncurses
 	initscr();
