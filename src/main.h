@@ -21,6 +21,9 @@
 // Program Author
 #define AUTHOR "Yamagi Burmeister"
 
+// Game file
+#define GAMEFILE ""
+
 // Max. entries in command history
 #define HISTSIZE 512
 

@@ -9,6 +9,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <sys/stat.h>
 
 #include "curses.h"
@@ -33,9 +35,12 @@
 int
 main(int argc, char *argv[])
 {
+	char *exepath;
+	char gamefile[PATH_MAX];
 	char homedir[PATH_MAX];
 	char logbuf[512];
 	char logdir[PATH_MAX];
+	char *tmp;
 	struct stat sb;
 
 	// Clean aborts
@@ -68,15 +73,43 @@ main(int argc, char *argv[])
 	log_info_f("%s %s %s, (c) %s %s", i18n_version_thisis, APPNAME, VERSION, YEAR, AUTHOR);
 	log_info_f("%s %s.", i18n_version_buildon, __DATE__);
 
-	// Check cmd arguments
-	if (argc != 2)
+	// Path to the gamefile
+	memset(gamefile, 0, sizeof(gamefile));
+
+	if (strlen(GAMEFILE))
 	{
-		fprintf(stderr, "USAGE: %s /path/to/game\n", argv[0]);
-		exit(1);
+		if (GAMEFILE[0] == '/')
+		{
+			stpncpy(gamefile, GAMEFILE, sizeof(gamefile));
+		}
+		else
+		{
+			exepath = misc_bindir();
+
+			stpncpy(gamefile, exepath, sizeof(gamefile));
+			strncat(gamefile, "/", sizeof(gamefile) - 1);
+			strncat(gamefile, GAMEFILE, sizeof(gamefile) - 1);
+
+			tmp = realpath(gamefile, NULL);
+
+			stpncpy(gamefile, tmp, sizeof(gamefile));
+		}
+	}
+	else
+	{
+		if (argc != 2)
+		{
+			fprintf(stderr, "USAGE: %s /path/to/game\n", argv[0]);
+			exit(1);
+		}
+		else
+		{
+			stpncpy(gamefile, argv[1], sizeof(gamefile));
+		}
 	}
 
 	// Load the game
-	game_init(argv[1]);
+	game_init(gamefile);
 
 	// Initialize savegames
 	save_init(homedir);

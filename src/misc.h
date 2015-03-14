@@ -11,6 +11,11 @@
 // --------
 
 /*
+ * Returns the path to the binary.
+ */
+char *misc_bindir(void);
+
+/*
  * Create a directory with all intermediate
  * directories as required.
  *
