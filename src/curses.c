@@ -6,14 +6,16 @@
  * input is tighly integrated with the TUI low
  * level input is also part of the file.
  */
+#define _XOPEN_SOURCE_EXTENDED
 
 #include <assert.h>
+#include <curses.h>
 #include <locale.h>
-#include <ncurses.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
 #include "curses.h"
 #include "main.h"
@@ -441,17 +443,21 @@ curses_quit(void)
 void
 curses_input(void)
 {
-	char buffer[INPUTBUF];
-	char *tmp;
+	cchar_t render;
+	char utf8buf[INPUTBUF * 4];
+	char *utf8tmp;
 	boolean fin;
 	int16_t i;
-	int16_t key;
+	int16_t ret;
 	int32_t chars;
 	int32_t num;
 	int32_t start;
 	uint32_t begin;
     uint32_t position;
 	uint32_t x, y;
+	wchar_t buffer[INPUTBUF];
+	wchar_t key;
+	wchar_t *widetmp;
 
 	memset(buffer, '\0', sizeof(buffer));
 	chars = 0;
@@ -463,9 +469,8 @@ curses_input(void)
 	wclrtoeol(input);
 	waddstr(input, curses_prompt);
 
-	while ((key = wgetch(input)) != ERR)
+	while ((ret = wget_wch(input, &key)) != ERR)
 	{
-
 		switch (key)
 		{
 			// Process input
@@ -484,13 +489,14 @@ curses_input(void)
 				wclrtoeol(input);
 				waddstr(input, curses_prompt);
 
-				start = strlen(buffer) - (COLS - 1 - strlen(curses_prompt));
+				start = wcslen(buffer) - (COLS - 1 - curses_utf8strlen(curses_prompt));
 				start = start < 0 ? 0 : start;
 
-				for (i = 0; i < COLS - strlen(curses_prompt)
-						&& buffer[start + i] != '\0'; i++)
+				for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
+						&& buffer[start + i] != L'\0'; i++)
 				{
-					waddch(input, buffer[start + i]);
+					setcchar(&render, &buffer[start + i], 0, 0, NULL);
+					wadd_wch(input, &render);
 				}
 
 				if (position > start)
@@ -508,7 +514,7 @@ curses_input(void)
 
 			// Delete current line
 			case KEY_ESC:
-				wmove(input, 0, strlen(curses_prompt));
+				wmove(input, 0, curses_utf8strlen(curses_prompt));
 				wclrtoeol(input);
 
 				memset(buffer, 0, sizeof(buffer));
@@ -525,24 +531,25 @@ curses_input(void)
 			// History up
 			case KEY_UP:
 				input_complete_reset();
-				tmp = input_history_next();
+				utf8tmp = input_history_next();
 
-				if (tmp)
+				if (utf8tmp)
 				{
-					memset(buffer, 0, sizeof(buffer));
-					strncpy(buffer, tmp, sizeof(buffer));
+					memset(buffer, 0x00, sizeof(buffer));
+					mbstowcs(buffer, utf8tmp, sizeof(buffer));
 
-					start = strlen(buffer) - (COLS - 1 - strlen(curses_prompt));
+					start = wcslen(buffer) - (COLS - 1 - curses_utf8strlen(curses_prompt));
 					start = start < 0 ? 0 : start;
-					chars = strlen(buffer);
+					chars = wcslen(buffer);
 
 					wmove(input, 0, strlen(curses_prompt));
 					wclrtoeol(input);
 
-					for (i = 0; i < COLS - strlen(curses_prompt)
-							&& buffer[start + i] != '\0'; i++)
+					for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
+							&& buffer[start + i] != L'\0'; i++)
 					{
-						waddch(input, buffer[start + i]);
+						setcchar(&render, &buffer[start + i], 0, 0, NULL);
+						wadd_wch(input, &render);
 					}
 
 					position = chars;
@@ -554,24 +561,25 @@ curses_input(void)
 			// History down
 			case KEY_DOWN:
 				input_complete_reset();
-				tmp = input_history_prev();
+				utf8tmp = input_history_prev();
 
-				if (tmp)
+				if (utf8tmp)
 				{
-					memset(buffer, 0, sizeof(buffer));
-					strncpy(buffer, tmp, sizeof(buffer));
+					memset(buffer, 0x00, sizeof(buffer));
+					mbstowcs(buffer, utf8tmp, sizeof(buffer));
 
-					start = strlen(buffer) - (COLS - 1 - strlen(curses_prompt));
+					start = wcslen(buffer) - (COLS - 1 - curses_utf8strlen(curses_prompt));
 					start = start < 0 ? 0 : start;
-					chars = strlen(buffer);
+					chars = wcslen(buffer);
 
 					wmove(input, 0, strlen(curses_prompt));
 					wclrtoeol(input);
 
-					for (i = 0; i < COLS - strlen(curses_prompt)
-							&& buffer[start + i] != '\0'; i++)
+					for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
+							&& buffer[start + i] != L'\0'; i++)
 					{
-						waddch(input, buffer[start + i]);
+						setcchar(&render, &buffer[start + i], 0, 0, NULL);
+						wadd_wch(input, &render);
 					}
 
 					position = chars;
@@ -583,24 +591,26 @@ curses_input(void)
 			// Tab completion
 			case KEY_TAB:
 				input_history_reset();
-				tmp = input_complete(buffer);
+				wcstombs(utf8buf, buffer, sizeof(utf8buf));
+				utf8tmp = input_complete(utf8buf);
 
-				if (tmp)
+				if (utf8tmp)
 				{
-					memset(buffer, 0, sizeof(buffer));
-					strncpy(buffer, tmp, sizeof(buffer));
+					memset(buffer, 0x00, sizeof(buffer));
+					mbstowcs(buffer, utf8tmp, sizeof(buffer));
 
-					start = strlen(buffer) - (COLS - 1 - strlen(curses_prompt));
+					start = wcslen(buffer) - (COLS - 1 - curses_utf8strlen(curses_prompt));
 					start = start < 0 ? 0 : start;
-					chars = strlen(buffer);
+					chars = wcslen(buffer);
 
-					wmove(input, 0, strlen(curses_prompt));
+					wmove(input, 0, curses_utf8strlen(curses_prompt));
 					wclrtoeol(input);
 
-					for (i = 0; i < COLS - strlen(curses_prompt)
-							&& buffer[start + i] != '\0'; i++)
+					for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
+							&& buffer[start + i] != L'\0'; i++)
 					{
-						waddch(input, buffer[start + i]);
+						setcchar(&render, &buffer[start + i], 0, 0, NULL);
+						wadd_wch(input, &render);
 					}
 
 					position = chars;
@@ -635,12 +645,13 @@ curses_input(void)
 					wmove(input, 0, strlen(curses_prompt));
 					wclrtoeol(input);
 
-					for (i = 0; i < COLS - strlen(curses_prompt); i++)
+					for (i = 0; i < COLS - curses_utf8strlen(curses_prompt); i++)
 					{
-						waddch(input, buffer[start + i]);
+						setcchar(&render, &buffer[start + i], 0, 0, NULL);
+						wadd_wch(input, &render);
 					}
 
-					wmove(input, 0, strlen(curses_prompt) + HSCROLLOFF);
+					wmove(input, 0, curses_utf8strlen(curses_prompt) + HSCROLLOFF);
 				}
 
 				getyx(input, y, x);
@@ -660,13 +671,14 @@ curses_input(void)
 				position = 0;
 				start = 0;
 
-				wmove(input, 0, strlen(curses_prompt));
+				wmove(input, 0, curses_utf8strlen(curses_prompt));
 				wclrtoeol(input);
 
-				for (i = 0; i < COLS - strlen(curses_prompt)
-					   && buffer[start + i] != '\0'; i++)
+				for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
+					   && buffer[start + i] != L'\0'; i++)
 				{
-					waddch(input, buffer[start + i]);
+					setcchar(&render, &buffer[start + i], 0, 0, NULL);
+					wadd_wch(input, &render);
 				}
 
 				wmove(input, 0, strlen(curses_prompt));
@@ -687,13 +699,14 @@ curses_input(void)
 				{
 					start += HSCROLLOFF;
 
-                    wmove(input, 0, strlen(curses_prompt));
+                    wmove(input, 0, curses_utf8strlen(curses_prompt));
 					wclrtoeol(input);
 
-                    for (i = 0; i < COLS - strlen(curses_prompt)
-						   && buffer[start + i] != '\0'; i++)
+                    for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
+						   && buffer[start + i] != L'\0'; i++)
 					{
-						waddch(input, buffer[start + i]);
+						setcchar(&render, &buffer[start + i], 0, 0, NULL);
+						wadd_wch(input, &render);
 					}
 
 					// 1 for the cursor
@@ -714,15 +727,16 @@ curses_input(void)
 					break;
 				}
 
-				num = COLS - strlen(curses_prompt) - HSCROLLOFF - 1;
+				num = COLS - curses_utf8strlen(curses_prompt) - HSCROLLOFF - 1;
 				begin = chars - num < 0 ? 0 : chars - num;
 
-				wmove(input, 0, strlen(curses_prompt));
+				wmove(input, 0, curses_utf8strlen(curses_prompt));
 				wclrtoeol(input);
 
-				for (i = 0; i <= num && buffer[begin + i] != '\0'; i++)
+				for (i = 0; i <= num && buffer[begin + i] != L'\0'; i++)
 				{
-					waddch(input, buffer[begin + i]);
+					setcchar(&render, &buffer[begin + i], 0, 0, NULL);
+					wadd_wch(input, &render);
 				}
 
 				position = chars;
@@ -730,7 +744,7 @@ curses_input(void)
 				break;
 
 
-			// Delete character right of the cursor
+			// Delete character left of the cursor
 			case KEY_BACKSPACE:
 			case KEY_DEL:
 				if (position == 0)
@@ -745,7 +759,7 @@ curses_input(void)
 					position--;
 
 					wdelch(input);
-					buffer[position] = '\0';
+					buffer[position] = L'\0';
 					chars--;
 				}
 				else
@@ -755,12 +769,12 @@ curses_input(void)
 					position--;
 
 					wdelch(input);
-					tmp = buffer + position;
+					widetmp = buffer + position;
 
-					while (*tmp != '\0')
+					while (*widetmp != L'\0')
 					{
-						*tmp = *(tmp + 1);
-						tmp++;
+						*widetmp = *(widetmp + 1);
+						widetmp++;
 					}
 
 					chars--;
@@ -769,9 +783,10 @@ curses_input(void)
 				getyx(input, y, x);
 				wclrtoeol(input);
 
-				for (i = 0; i < COLS - x && buffer[position + i] != '\0'; i++)
+				for (i = 0; i < COLS - x && buffer[position + i] != L'\0'; i++)
 				{
-					waddch(input, buffer[position + i]);
+					setcchar(&render, &buffer[position + i], 0, 0, NULL);
+					wadd_wch(input, &render);
 				}
 
 				wmove(input, y, x);
@@ -789,12 +804,12 @@ curses_input(void)
 				getyx(input, y, x);
 				wdelch(input);
 
-				tmp = buffer + position;
+				widetmp = buffer + position;
 
-				while (*tmp != '\0')
+				while (*widetmp != L'\0')
 				{
-					*tmp = *(tmp + 1);
-					tmp++;
+					*widetmp = *(widetmp + 1);
+					widetmp++;
 				}
 
 				chars--;
@@ -802,9 +817,10 @@ curses_input(void)
 				getyx(input, y, x);
 				wclrtoeol(input);
 
-				for (i = 0; i < COLS - x && buffer[position + i] != '\0'; i++)
+				for (i = 0; i < COLS - x && buffer[position + i] != L'\0'; i++)
 				{
-					waddch(input, buffer[position + i]);
+					setcchar(&render, &buffer[position + i], 0, 0, NULL);
+					wadd_wch(input, &render);
 				}
 
 				wmove(input, y, x);
@@ -819,7 +835,7 @@ curses_input(void)
 					break;
 				}
 
-				if ((key >= 31) && (key <= 126))
+				if (key >= 31)
 				{
 					getyx(input, y, x);
 
@@ -827,20 +843,22 @@ curses_input(void)
 					{
 						start += HSCROLLOFF;
 
-						wmove(input, 0, strlen(curses_prompt));
+						wmove(input, 0, curses_utf8strlen(curses_prompt));
 						wclrtoeol(input);
 
 						// 1 for the cursor
-						for (i = 0; i < COLS - strlen(curses_prompt)
+						for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
 								- HSCROLLOFF - 1; i++)
 						{
-							waddch(input, buffer[start + i]);
+							setcchar(&render, &buffer[start + i], 0, 0, NULL);
+							wadd_wch(input, &render);
 						}
 					}
 
 					if (position == chars)
 					{
-						waddch(input, key);
+						setcchar(&render, &key, 0, 0, NULL);
+						wadd_wch(input, &render);
 						buffer[position] = key;
 						position++;
 						chars++;
@@ -848,7 +866,8 @@ curses_input(void)
 					else
 					{
 						getyx(input, y, x);
-						winsch(input, key);
+						setcchar(&render, &key, 0, 0, NULL);
+						wins_wch(input, &render);
 
 						/* This is a hack. Normaly the character
 						   is inserted under the cursor. Move the
@@ -879,8 +898,9 @@ curses_input(void)
 		}
 	}
 
-	log_info_f("%s: %s", i18n_curses_userinput, buffer);
-	input_process(buffer);
+	wcstombs(utf8buf, buffer, sizeof(utf8buf));
+	log_info_f("%s: %s", i18n_curses_userinput, utf8buf);
+	input_process(utf8buf);
 }
 
 // --------
