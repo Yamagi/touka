@@ -469,7 +469,7 @@ curses_input(void)
 	wclrtoeol(input);
 	waddstr(input, curses_prompt);
 
-	while ((ret = wget_wch(input, &key)) != ERR)
+	while ((ret = wget_wch(input, (wint_t *)&key)) != ERR)
 	{
 		switch (key)
 		{

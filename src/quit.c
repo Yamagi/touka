@@ -197,7 +197,6 @@ quit_signal_register(void)
 void
 quit_error(errcode error)
 {
-	boolean ret;
 	const char *status;
 	int32_t err;
 	static boolean recursive;
@@ -211,7 +210,7 @@ quit_error(errcode error)
 	}
 	else
 	{
-		ret = TRUE;
+		recursive = TRUE;
 	}
 
 	status = quit_errcodetostr(error);
