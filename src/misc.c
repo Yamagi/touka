@@ -10,6 +10,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -30,7 +31,6 @@ char
 {
 	char *path;
 	char *tmp;
-	int32_t mib[4];
 	size_t len;
 
 	len = sizeof(char) * PATH_MAX;
@@ -40,15 +40,21 @@ char
 		quit_error(POUTOFMEM);
 	}
 
+#ifdef FreeBSD
+	int32_t mib[4];
+
 	mib[0] = CTL_KERN;
 	mib[1] = KERN_PROC;
 	mib[2] = KERN_PROC_PATHNAME;
 	mib[3] = -1;
 
 	sysctl(mib, 4, path, &len, NULL, 0);
+#elif __linux__
+	readlink("/proc/self/exe", path, len);
+#endif
 
 	tmp = dirname(path);
-	realpath(tmp, path);
+	stpncpy(path, tmp, len);
 
 	return path;
 }
