@@ -150,6 +150,7 @@ quit_signal_error(int32_t sig)
 	curses_quit();
 
 	fprintf(stderr, "PANIC: Crash\n");
+	fflush(stderr);
 
 	signal(SIGSEGV, SIG_DFL);
 	signal(SIGILL, SIG_DFL);
@@ -202,7 +203,7 @@ quit_error(errcode error)
 	static boolean recursive;
 
 	err = errno;
-	recursive = TRUE;
+	recursive = FALSE;
 
 	if (recursive)
 	{
@@ -225,6 +226,8 @@ quit_error(errcode error)
 	{
 		fprintf(stderr, "PANIC: %s\n", status);
 	}
+
+	fflush(stderr);
 
 	_exit(1);
 }
