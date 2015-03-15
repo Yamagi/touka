@@ -1,0 +1,114 @@
+                     *****************************
+                     * Touka Visual Novel Engine *
+                     *****************************
+
+Touka is a ncurses based engine for visual novels. Conceptually loosely
+modeled after the famous Nitroplus engine, it allows the author to write
+complex works of nearly unlimited size. The reader may choose between
+distinct ways through the novel and get get additional information from
+room description and a glossary. Links to such items are automatically
+highlighted.
+
+The engine features all common convenience options like an input history
+or command completion. A free savegame function is provided. Currently
+Touka is able to run on FreeBSD and Linux, but porting it to other Unix
+platforms should be easy. With under 5.000 lines the code is small and
+tight, the compiled binary is just about 50K small. The code is written
+in pure C99 and compiles with -pedantic. The only dependencies are libc
+and ncurses. Other, compatible curses implementations may work too.
+
+------------------------------------------------------------------------
+
+                                 For Users
+                                 =========
+
+Touka tries to be as easy and self explanatory as it could. But since it
+is a terminal application at least a little bit of insight is required
+to use it. Touka isn't bound to a specific terminal emulator. The only
+constraint is, that the terminal emulator must support UTF-8 characters.
+Support for 256 colors is optional but very nice to have. The terminal
+can be resized at every time. While no minimal size is enforced, there's
+a practical limit. The user will know when it's reached.
+
+The screen is divided into three parts. The most upper and biggest part
+is the text window where the novel takes place. The text window has a
+big scrollback buffer which can be scrolled with the page keys. When the
+novel is played some objects are highlighted in different colors:
+
+                +-----------+------------+--------------+
+                |   Object  |  8 Colors  |  256 Colors  |
+                +-----------+------------+--------------+
+                | Text      | White      | White        |
+                | Glossary  | Red        | Red          |
+                | Highlight | Green      | Yellow       |
+                | Prompt    | Green      | Green        |
+                | Room      | Blue       | Blue         |
+                +-----------+------------+--------------+
+
+Beyond the text window is the status bar, which displays informations
+about the current game state. At the lower end of the screen the input
+window can be found. It usually displays a prompt with a cursor, waiting
+for command to be typed in. Possible commands are:
+
++----------+-----------------------------------------------------------+
+|  Command |                        Description                        |
++----------+-----------------------------------------------------------+
+| glossary | Lists all glossary entries or prints the specified one.   |
+| help     | Prints a list of available commands and a help string.    |
+| info     | Prints the games metadata block.                          |
+| load     | Prints a list if saved games and loads the specified one. |
+| next     | Advances to the next scene. A choice may be specified.    |
+| quit     | Save the game to 'shutdown' and exists the application.   |
+| room     | Displays a list of rooms or describes the specified one.  |
+| save     | Save the game to the specified file.                      |
+| scene    | Prints a list of all scenes or replays the specified one. |
+| version  | Prints the engine version.                                |
++----------+-----------------------------------------------------------+
+
+There are an unlimited number of savegames available. At clean shutdown
+the game is saved to the special savegame 'shutdown'. At crash it's at
+least tried to save the game to 'panic' but the result may be broken.
+
+How a game is started depends on the game vendor. When the gamefile is
+hardcoded, the game is started by just invoking the engines binary. If
+the game is user specified the gamefile is the first and only argument.
+For example: ./touka /path/to/example.game
+
+In both cases the welcome screen is displayed. The game ca be started by
+typing 'next' to advance to the first scene. A savegame can be loaded by
+typing 'load savegame'. When the game is finished the endscreen with the
+statistics is displays. At all time, even after the game was finished,
+scenes can be replayed. The same way already visited rooms and mentioned
+glossary entries can be described.
+
+------------------------------------------------------------------------
+
+                            For Developers
+                            ==============
+
+Developing games with Touka is easy. For game development have a look at
+the example.game, which describes how to write games. This guide focuses
+on the engine itself.
+
+As a very first step the src/main.h file should be edited. At least the
+engine name should match the game name. It may be appropriate to code
+the path to the gamefile into the engine, so that users must not submit
+it as a command line option. The same goes for the home directory, which
+should be distinct from other engine instances. The predefined internal
+limits should be well enough for most games, but there may be corner
+cases where they need to be increased.
+
+Second you'll need to compile the engine. It should be straight forward,
+all you need is a C99 compliant compiler, a libc and a copy of ncurses.
+When you've got a non-standard platform you may need to add some include
+paths or compiler options to the Makefile. After that just type 'make'
+or 'gmake' to build the software.
+
+When 'make' is invoked without any options an debug build is done. Such
+a build includes a lot of assert() calls to verify the consistency of
+the internal state. Also limits of visibility are not applied. The
+player is always able to see any glossary entries, rooms and scenes,
+regardless if they've been mentioned or not. To do a normal build the
+make variable NDEBUG must be set: make NDEBUG=yes
+
+------------------------------------------------------------------------
