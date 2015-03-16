@@ -1,0 +1,220 @@
+# This is an example novel for the Touka Visual Novel Engine. While
+# really short, it contains all possible objects. And its fully
+# commented, giving you a feel what's possible and how things can 
+# be implemented. First you should know a few things:
+#
+# - # is the comment sign. Everything after it until the next line
+#   break is ignored.
+#
+# - The parser is rather simple. While it mostly just works, there
+#   may be some corner cases. When in doubt have a look at Toukas
+#   log file. The engine will tell you when things are wrong.
+#
+# - This file must be written in UTF-8. Other charsets will make
+#   problems. Also Touka doesn't have support for characters wider
+#   than exactly one column. If you use such character (for example
+#   chinese symbols) rendering will break!
+#
+# Every Touka novel consists of several object:
+# 
+# - The header is a special object. It's the first one defined and
+#   there's only one of it.
+#
+# - Scenes compose the novel.
+#
+# - Rooms and glossary entries give additional informations to the
+#   reader.
+
+# ---------------------------------------------------------------------
+
+# Every Touka novel starts with an header object, containing some
+# metadata. All field must be there and must be filled with valid
+# contents, otherwise the novel will not load. Regardless what object
+# you're working on, metadata is always preceded by an %. Take for
+# example the first header value, the name of our novel:
+
+%GAME: Touka Example Game
+
+# %GAME: is the tag which identifies the attribute and "Touka Example
+# Game" is it's contents. The novel name is used in some generic
+# screens, for example the start screen. Start a novel and have a look.
+
+# Next is the author. The person who's written this novel:
+
+%AUTHOR: Yamagi Burmeister
+
+# Like any good novel Touka novels have a publishing date. The string
+# is actually free, you can write in it whatever you want.
+
+%DATE: 03/15/2015
+
+# Now the UID. The UID is used by engine to identify this novel. So it
+# must be globally unique, there shouldn't be any other novel with this
+# UID or things may break. When you do some incompatible changes, for
+# example remove scenes, change the UID. Again: Things, especially
+# savegames, may break if you don't!
+
+%UID: TEG1
+
+# The start scene is the first scene played after the welcome screen.
+# I'll tell you more about scenes below. For now just read on.
+
+%START: athome
+
+# The prompt is an optional attribute, specifying the prompt used at the
+# welcome screen and in all scenes until another prompt is specified. If
+# you don't specify a prompt, an default string is used.
+
+%PROMPT: Touka Example Game
+
+# Any object is ended by an line with four dashes:
+
+----
+
+# Scenes are the highest level object in a Touka novel. In fact the
+# novel is composed from an series of scenes, starting with the first
+# scene and ending with the special scene END. Each scene takes place in
+# a room. Let's start with a very simple scene:
+
+# Every object besides the header is composed of two parts:
+# - The metadata
+# - A long description
+# The metadata is given before the long description.
+
+# The first mandatory field of each object is it's name. The name is
+# an unique identifier, which is used to refer to this object. Either
+# by the author in the novel file and by the reader when he types his
+# commands. For example the 'scene' command lists this scene by it's
+# name and 'scene athome' will replay this scene. Name tags must be
+# written in one word, there may not be any whitespaces.
+
+%SCENE: athome
+
+# Each object has a short description, given in listings. It should be
+# really short, about 40 to 60 characters.
+
+%DESCR: At home, sometimes early in the morning
+
+# As said, every scene takes place in a room. The room gives the author
+# the possibility to focus on the story. If the reader wants an more
+# complex description of it, he instruct the engine to print one.
+
+%ROOM: Kitchen
+
+# And of course the engine needs to know what scene to play next. If
+# only one scene is given, it's played as soon as 'next' is typed. If
+# more than one scene is given the reader needs to choose one. The
+# author must mention that in the description. The special scene 'END'
+# ends the novel.
+
+%NEXT: Street
+
+# Now the long description which is printed when the scene is played.
+# Normal line breaks are ignored. Empty lines end an paragraph and start
+# a new one. 
+
+Lisa and John are sitting at home at their kitchen table, eating a warm
+breakfast. Since it's already late they're in a hurry, school will start
+in just about 30 minutes.
+
+"Common! You're getting late!", yells their mother.
+
+And in just that moment the bell rings, their friend Jack will go with
+them.
+
+----
+
+# Rooms and glossary entries are object which give some more information
+# to the reader. Let's define the kitchen where Lisa and John ate their
+# breakfast.
+
+# Like every object rooms start with a name tag:
+
+%ROOM: Kitchen
+
+# And they have a short description, of course:
+
+%DESCR: The kitchen of Lisa and Johns home
+
+# An alias is an alternative name for the object. Every object can have
+# an unlimited number of aliases, making linking to objects easier.
+
+%ALIAS: dining room
+
+# And of course there's a long description:
+
+A kitchen is a room for cooking. In most cases it's used as dining room,
+too. The main parts of a kitchen are a |stove| and a table.
+
+# See the | around stove? They indicate that stove is a link to another
+# object. What object is determined automatically. Therefor it's really
+# important that all object names and their aliases are unique!
+
+----
+
+# Now the glossary entry revert to above. Glossary entries are more or
+# less the same as rooms, just identified by another command. Therefor
+# their metadata is the same:
+
+
+%GLOSSARY: stove
+%ALIAS: cooker
+%DESCR: A device to cook meals
+
+A cooker is a device to cook meals on. It's often found in kitchens. In
+Lisa and Johns house the kitchen is also used a dining room which makes
+the stove look somewhat miss placed...
+
+----
+
+# A somewhat more complex scene:
+
+%SCENE: Street
+%ROOM: Mainstreet
+%DESCR: The main street
+%ALIAS: One the main street
+
+# Let's define a new prompt from here on:
+
+%PROMPT: Outside
+
+# And two choices:
+
+%NEXT: Schoolyard
+%NEXT: END
+
+As soon as they left their home Jacks tells Lisa and John to stop.
+
+"Why go to the boring school? Let's go the swimming pool instead!",
+he yells.
+
+What shall Lisa and John do? Go to the boring school (1) or the 
+swimming pool (2)?
+
+# The numbers indicate which choice the option refers to. The first
+# choice (specified by the first %NEXT: statement) is always 1, the
+# second 2 and so on.
+
+----
+
+# Again each scene must have a room:
+
+%ROOM: Mainstreet
+%DESCR: The mainstreet of Lisa and Johns hometown
+
+The mainstreet is a long street, with shops at both sides. Early in the
+morning it's more or less empty.
+
+----
+
+# The last scene:
+
+%SCENE: Schoolyard
+%ROOM: Mainstreet
+%DESCR: At the school gates
+%NEXT: END
+
+As soon as the arrive at the school they see, that the gates are closed!
+All teachers are ill! That means: A day off!
+
+----
