@@ -835,7 +835,7 @@ curses_input(void)
 					break;
 				}
 
-				if (key >= 31)
+				if (key >= 31 && wcwidth(key) == 1)
 				{
 					getyx(input, y, x);
 
