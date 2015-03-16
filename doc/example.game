@@ -18,12 +18,12 @@
 # Every Touka novel consists of several object:
 # 
 # - The header is a special object. It's the first one defined and
-#   there's only one of it.
+#   there's exactly one of it.
 #
 # - Scenes compose the novel.
 #
 # - Rooms and glossary entries give additional informations to the
-#   reader.
+#   reader. Every scene takes place in a room.
 
 # ---------------------------------------------------------------------
 
@@ -48,9 +48,9 @@
 
 %DATE: 03/15/2015
 
-# Now the UID. The UID is used by engine to identify this novel. So it
+# Now the UID. The UID is used by engine to identify this novel. It
 # must be globally unique, there shouldn't be any other novel with this
-# UID or things may break. When you do some incompatible changes, for
+# UID or things may break. When you make some incompatible changes, for
 # example remove scenes, change the UID. Again: Things, especially
 # savegames, may break if you don't!
 
@@ -59,7 +59,7 @@
 # The start scene is the first scene played after the welcome screen.
 # I'll tell you more about scenes below. For now just read on.
 
-%START: athome
+%START: At Home
 
 # The prompt is an optional attribute, specifying the prompt used at the
 # welcome screen and in all scenes until another prompt is specified. If
@@ -85,15 +85,15 @@
 # an unique identifier, which is used to refer to this object. Either
 # by the author in the novel file and by the reader when he types his
 # commands. For example the 'scene' command lists this scene by it's
-# name and 'scene athome' will replay this scene. Name tags must be
-# written in one word, there may not be any whitespaces.
+# name and 'scene at home' will replay this scene. Additionally the name
+# attribute identifies the type of the object.
 
-%SCENE: athome
+%SCENE: At Home
 
 # Each object has a short description, given in listings. It should be
 # really short, about 40 to 60 characters.
 
-%DESCR: At home, sometimes early in the morning
+%DESCR: At home, sometime early in the morning
 
 # As said, every scene takes place in a room. The room gives the author
 # the possibility to focus on the story. If the reader wants an more
@@ -157,8 +157,8 @@ too. The main parts of a kitchen are a |stove| and a table.
 # their metadata is the same:
 
 
-%GLOSSARY: stove
-%ALIAS: cooker
+%GLOSSARY: Cooker
+%ALIAS: stove
 %DESCR: A device to cook meals
 
 A cooker is a device to cook meals on. It's often found in kitchens. In

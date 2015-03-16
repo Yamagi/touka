@@ -417,7 +417,7 @@ save_write(char *name)
 	assert(savedir);
 
 	/* Protect against recursions between
-	   quit_error() and svae_write() */
+	   quit_error() and save_write() */
 	if (!is_initialized)
 	{
 		return;

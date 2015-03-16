@@ -278,12 +278,12 @@ parser_header(list *tokens)
 		}
 		else if (!strcmp(cur, "%START:"))
 		{
-			if (tokens->count != 1)
+			if (tokens->count < 1)
 			{
 				parser_error();
 			}
 
-			game_header->first_scene = strdup(list_shift(tokens));
+			game_header->first_scene = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "%PROMPT:"))
 		{
@@ -462,12 +462,7 @@ parser_glossary(list *tokens)
 				parser_error();
 			}
 
-			if (tokens->count != 1)
-			{
-				parser_error();
-			}
-
-			entry->name = strdup(list_shift(tokens));
+			entry->name = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "%DESCR:"))
 		{
@@ -678,12 +673,7 @@ parser_room(list *tokens)
 				parser_error();
 			}
 
-			if (tokens->count != 1)
-			{
-				parser_error();
-			}
-
-			room->name = strdup(list_shift(tokens));
+			room->name = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "%DESCR:"))
 		{
@@ -911,12 +901,7 @@ parser_scene(list *tokens)
 				parser_error();
 			}
 
-			if (tokens->count != 1)
-			{
-				parser_error();
-			}
-
-			scene->name = strdup(list_shift(tokens));
+			scene->name = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "%DESCR:"))
 		{
@@ -957,12 +942,7 @@ parser_scene(list *tokens)
 				parser_error();
 			}
 
-			if (tokens->count != 1)
-			{
-				parser_error();
-			}
-
-			scene->room = strdup(list_shift(tokens));
+			scene->room = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "%NEXT:"))
 		{
