@@ -31,6 +31,7 @@
 // --------
 
 static char savedir[PATH_MAX];
+static boolean is_initialized;
 
 // --------
 
@@ -141,6 +142,8 @@ save_init(const char *homedir)
 	{
 		misc_rmkdir(savedir);
 	}
+
+	is_initialized = TRUE;
 }
 
 void
@@ -412,6 +415,13 @@ save_write(char *name)
 
 	assert(name);
 	assert(savedir);
+
+	/* Protect against recursions between
+	   quit_error() and svae_write() */
+	if (!is_initialized)
+	{
+		return;
+	}
 
 	// Construct name
 	if (strlen(name) > strlen(".sav"))
