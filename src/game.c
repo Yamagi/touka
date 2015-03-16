@@ -412,6 +412,7 @@ game_glossary_list(void)
 	list *data;
 	listnode *node;
 	size_t len_entry;
+	uint16_t count;
 	uint16_t i;
 
     data = hashmap_to_list(game_glossary);
@@ -446,6 +447,10 @@ game_glossary_list(void)
 			}
 		}
 	}
+	else
+	{
+		return;
+	}
 
 	if (len_entry < strlen(i18n_entry))
 	{
@@ -468,7 +473,9 @@ game_glossary_list(void)
 
 	curses_text(TINT_NORM, "\n");
 
-	for (i = 0; i <= data->count; i++)
+	count = data->count;
+
+	for (i = 0; i < count; i++)
 	{
 		entry = list_shift(data);
 
@@ -684,6 +691,7 @@ game_rooms_list(void)
 	list *data;
 	listnode *node;
 	size_t len;
+	uint16_t count;
 	uint16_t i;
 
 	data = hashmap_to_list(game_rooms);
@@ -718,6 +726,10 @@ game_rooms_list(void)
 			}
 		}
 	}
+	else
+	{
+		return;
+	}
 
 	if (len < strlen(i18n_name))
 	{
@@ -748,7 +760,9 @@ game_rooms_list(void)
 
 	curses_text(TINT_NORM, "\n");
 
-	for (i = 0; i <= data->count; i++)
+	count = data->count;
+
+	for (i = 0; i < count; i++)
 	{
 		room = list_shift(data);
 
@@ -956,6 +970,7 @@ game_scene_list(void)
 	list *data;
 	listnode *node;
 	size_t len_scene, len_room;
+	uint16_t count;
 	uint16_t i;
 
 	data = hashmap_to_list(game_scenes);
@@ -996,6 +1011,10 @@ game_scene_list(void)
 			}
 		}
 	}
+	else
+	{
+		return;
+	}
 
 	if (len_scene < strlen(i18n_name))
 	{
@@ -1026,9 +1045,12 @@ game_scene_list(void)
 
 	curses_text(TINT_NORM, "\n");
 
-	for (i = 0; i <= data->count; i++)
+	count = data->count;
+
+	for (i = 0; i < count; i++)
 	{
 		scene = list_shift(data);
+		log_info_f("Scene: %s", scene->name);
 
 #ifdef NDEBUG
 		if (!scene->visited)
