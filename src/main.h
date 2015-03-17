@@ -46,7 +46,7 @@
 #define LOGNUM 15
 
 // Version number
-#define VERSION "0.5"
+#define VERSION "0.9"
 
 // Number of lines in the scrollback buffer
 #define SCROLLBACK 512
