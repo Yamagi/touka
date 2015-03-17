@@ -27,7 +27,8 @@ enum
 	TINT_HIGH,
 	TINT_NORM,
 	TINT_PROMPT,
-	TINT_ROOM
+	TINT_ROOM,
+	TINT_SCENE
 };
 
 // The prompt

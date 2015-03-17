@@ -74,6 +74,7 @@ game_match_link(char *link)
 {
 	game_glossary_s *glossary;
 	game_room_s *room;
+	game_scene_s *scene;
 
 	uint32_t i;
 
@@ -109,6 +110,12 @@ game_match_link(char *link)
 		}
 
 		return TINT_ROOM;
+	}
+
+	// Scene
+	if ((scene = hashmap_get(game_scenes, link)) != NULL)
+	{
+		return TINT_SCENE;
 	}
 
 	log_warn_f("%s: %s", i18n_link_didntmatch, link);

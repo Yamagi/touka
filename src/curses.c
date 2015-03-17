@@ -6,6 +6,7 @@
  * input is tighly integrated with the TUI low
  * level input is also part of the file.
  */
+
 #define _XOPEN_SOURCE_EXTENDED
 
 #include <assert.h>
@@ -51,6 +52,7 @@ enum
 	COLOR_HIGHLIGHT_YELLOW,
 	COLOR_PROMPT_GREEN,
 	COLOR_ROOM_BLUE,
+	COLOR_SCENE_GREEN,
 	COLOR_STAT_GREY
 };
 
@@ -62,6 +64,7 @@ enum
 	PAIR_INPUT,
 	PAIR_PROMPT,
 	PAIR_ROOM,
+	PAIR_SCENE,
 	PAIR_STATUS,
 	PAIR_TEXT
 };
@@ -175,6 +178,10 @@ curses_print(uint32_t color, const char *msg)
 	else if (color == TINT_ROOM)
 	{
 		wattron(text, COLOR_PAIR(PAIR_ROOM));
+	}
+	else if (color == TINT_SCENE)
+	{
+		wattron(text, COLOR_PAIR(PAIR_SCENE));
 	}
 	else
 	{
@@ -367,6 +374,7 @@ curses_init(void)
 		init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
 		init_pair(PAIR_PROMPT, COLOR_GREEN, COLOR_BLACK);
 		init_pair(PAIR_ROOM, COLOR_BLUE, COLOR_BLACK);
+		init_pair(PAIR_SCENE, COLOR_GREEN, COLOR_BLACK);
 		init_pair(PAIR_STATUS, COLOR_CYAN, COLOR_BLUE);
 		init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 	}
@@ -376,6 +384,7 @@ curses_init(void)
 		init_color(COLOR_HIGHLIGHT_YELLOW, 767, 767, 144);
 		init_color(COLOR_PROMPT_GREEN, 168, 613, 277);
 		init_color(COLOR_ROOM_BLUE, 473, 753, 895);
+		init_color(COLOR_SCENE_GREEN, 266, 856, 203);
 		init_color(COLOR_STAT_GREY, 679, 669, 578);
 
 		init_pair(PAIR_GLOSSARY, COLOR_GLOSSARY_RED, COLOR_BLACK);
@@ -383,6 +392,7 @@ curses_init(void)
 		init_pair(PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
 		init_pair(PAIR_PROMPT, COLOR_PROMPT_GREEN, COLOR_BLACK);
 		init_pair(PAIR_ROOM, COLOR_ROOM_BLUE, COLOR_BLACK);
+		init_pair(PAIR_SCENE, COLOR_SCENE_GREEN, COLOR_BLACK);
 		init_pair(PAIR_STATUS, COLOR_BLACK, COLOR_STAT_GREY);
 		init_pair(PAIR_TEXT, COLOR_WHITE, COLOR_BLACK);
 	}
