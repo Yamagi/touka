@@ -292,6 +292,11 @@ parser_header(list *tokens)
 				free(curses_prompt);
 			}
 
+			if (tokens->count < 1)
+			{
+				parser_error();
+			}
+
 			game_header->prompt = parser_concat(tokens);
 
 		}
@@ -462,6 +467,11 @@ parser_glossary(list *tokens)
 				parser_error();
 			}
 
+			if (tokens->count < 1)
+			{
+				parser_error();
+			}
+
 			entry->name = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "%DESCR:"))
@@ -471,11 +481,21 @@ parser_glossary(list *tokens)
 				parser_error();
 			}
 
+			if (tokens->count < 1)
+			{
+				parser_error();
+			}
+
 			entry->descr = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "%ALIAS:"))
 		{
 			if (entry->words)
+			{
+				parser_error();
+			}
+
+			if (tokens->count < 1)
 			{
 				parser_error();
 			}
@@ -673,6 +693,11 @@ parser_room(list *tokens)
 				parser_error();
 			}
 
+			if (tokens->count < 1)
+			{
+				parser_error();
+			}
+
 			room->name = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "%DESCR:"))
@@ -682,11 +707,21 @@ parser_room(list *tokens)
 				parser_error();
 			}
 
+			if (tokens->count < 1)
+			{
+				parser_error();
+			}
+
 			room->descr = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "%ALIAS:"))
 		{
 			if (room->words)
+			{
+				parser_error();
+			}
+
+			if (tokens->count < 1)
 			{
 				parser_error();
 			}
@@ -901,11 +936,21 @@ parser_scene(list *tokens)
 				parser_error();
 			}
 
+			if (tokens->count < 1)
+			{
+				parser_error();
+			}
+
 			scene->name = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "%DESCR:"))
 		{
 			if (scene->words)
+			{
+				parser_error();
+			}
+
+			if (tokens->count < 1)
 			{
 				parser_error();
 			}
@@ -919,11 +964,21 @@ parser_scene(list *tokens)
 				parser_error();
 			}
 
-            scene->prompt = parser_concat(tokens);
+			if (tokens->count < 1)
+			{
+				parser_error();
+			}
+
+			scene->prompt = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "%ALIAS:"))
 		{
 			if (scene->words)
+			{
+				parser_error();
+			}
+
+			if (tokens->count < 1)
 			{
 				parser_error();
 			}
@@ -942,11 +997,21 @@ parser_scene(list *tokens)
 				parser_error();
 			}
 
+			if (tokens->count < 1)
+			{
+				parser_error();
+			}
+
 			scene->room = parser_concat(tokens);
 		}
 		else if (!strcmp(cur, "%NEXT:"))
 		{
 			if (scene->words)
+			{
+				parser_error();
+			}
+
+			if (tokens->count < 1)
 			{
 				parser_error();
 			}
