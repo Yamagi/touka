@@ -224,7 +224,7 @@ save_read(char *name)
 	{
 		if (!strcmp(&name[strlen(name) - strlen(".sav")], ".sav"))
 		{
-			strncpy(savename, name, sizeof(savename));
+			misc_strlcpy(savename, name, sizeof(savename));
 		}
 		else
 		{
@@ -428,7 +428,7 @@ save_write(char *name)
 	{
 		if (!strcmp(&name[strlen(name) - strlen(".sav")], ".sav"))
 		{
-			strncpy(savename, name, sizeof(savename));
+			misc_strlcpy(savename, name, sizeof(savename));
 		}
 		else
 		{

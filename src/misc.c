@@ -16,6 +16,7 @@
 #include <sys/sysctl.h>
 
 #include "log.h"
+#include "misc.h"
 #include "quit.h"
 
 // --------
@@ -54,7 +55,7 @@ char
 #endif
 
 	tmp = dirname(path);
-	stpncpy(path, tmp, len);
+	misc_strlcpy(path, tmp, len);
 
 	return path;
 }
@@ -66,7 +67,7 @@ misc_rmkdir(const char *dir)
 	char tmp[PATH_MAX];
 	size_t len;
 
-	stpncpy(tmp, dir, sizeof(tmp));
+	misc_strlcpy(tmp, dir, sizeof(tmp));
 	len = strlen(tmp);
 
 	if (tmp[len - 1] == '/')
@@ -99,5 +100,83 @@ misc_rmkdir(const char *dir)
 			quit_error(PCOULDNTCREATEDIR);
 		}
 	}
+}
+
+size_t
+misc_strlcat(char *dst, const char *src, size_t size)
+{
+	char *d;
+	const char *s;
+	size_t n;
+	size_t dlen;
+
+	d = dst;
+	n = size;
+	s = src;
+
+	while (n-- != 0 && *d != '\0')
+	{
+		d++;
+	}
+
+	dlen = d - dst;
+	n = size - dlen;
+
+	if (n == 0)
+	{
+		return dlen + strlen(s);
+	}
+
+	while (*s != '\0')
+	{
+		if (n != 1)
+		{
+			*d++ = *s;
+			n--;
+		}
+
+		s++;
+	}
+
+	*d = '\0';
+
+	return dlen + (s - src);
+}
+
+size_t
+misc_strlcpy(char *dst, const char *src, size_t size)
+{
+	char *d;
+	const char *s;
+	size_t n;
+
+	d = dst;
+	n = size;
+	s = src;
+
+	if (n != 0)
+	{
+		while (--n != 0)
+		{
+			if ((*d++ = *s++) == '\0')
+			{
+				break;
+			}
+		}
+	}
+
+	if (n == 0)
+	{
+		if (size != 0)
+		{
+			*d = '\0';
+		}
+
+		while (*s++)
+		{
+		}
+	}
+
+	return s - src - 1;
 }
 

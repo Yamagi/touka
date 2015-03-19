@@ -20,6 +20,7 @@
 #include "curses.h"
 #include "game.h"
 #include "log.h"
+#include "misc.h"
 #include "quit.h"
 
 #include "data/list.h"
@@ -85,11 +86,11 @@ static char
 		}
 
 		memset(string + oldlen, 0, len - oldlen);
-		strncat(string, cur, len);
+		misc_strlcat(string, cur, len);
 
 		if (tokens->count > 0)
 		{
-			strncat(string, " ", len);
+			misc_strlcat(string, " ", len);
 		}
 	}
 

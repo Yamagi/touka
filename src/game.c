@@ -17,6 +17,7 @@
 #include "game.h"
 #include "log.h"
 #include "main.h"
+#include "misc.h"
 #include "parser.h"
 #include "quit.h"
 
@@ -177,7 +178,7 @@ game_print_description(list *words)
 
 				if (!strncmp(&link[strlen(link) - 2], "|", 1))
 				{
-					stpncpy(tmp, &link[strlen(link) - 1], sizeof(tmp));
+					misc_strlcpy(tmp, &link[strlen(link) - 1], sizeof(tmp));
 					link[strlen(link) - 1] = '\0';
 				}
 
@@ -210,8 +211,8 @@ game_print_description(list *words)
 				quit_error(POUTOFMEM);
 			}
 
-			strncat(link, cur, len);
-			strncat(link, " ", len);
+			misc_strlcat(link, cur, len);
+			misc_strlcat(link, " ", len);
 
 			node = node->next;
 			continue;
@@ -249,11 +250,11 @@ game_print_description(list *words)
 				}
 
 				memset(link + len, 0, len - oldlen);
-				strncat(link, cur, len);
+				misc_strlcat(link, cur, len);
 
 				if (!strncmp(&link[strlen(link) - 2], "|", 1))
 				{
-					stpncpy(tmp, &link[strlen(link) - 1], sizeof(tmp));
+					misc_strlcpy(tmp, &link[strlen(link) - 1], sizeof(tmp));
 					link[strlen(link) - 1] = '\0';
 				}
 
@@ -313,8 +314,8 @@ game_print_description(list *words)
 			}
 
 			memset(link + len, 0, len - oldlen);
-			strncat(link, cur, len);
-			strncat(link, " ", len);
+			misc_strlcat(link, cur, len);
+			misc_strlcat(link, " ", len);
 
             node = node->next;
 			continue;

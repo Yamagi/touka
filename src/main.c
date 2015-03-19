@@ -80,19 +80,19 @@ main(int argc, char *argv[])
 	{
 		if (GAMEFILE[0] == '/')
 		{
-			stpncpy(gamefile, GAMEFILE, sizeof(gamefile));
+			misc_strlcpy(gamefile, GAMEFILE, sizeof(gamefile));
 		}
 		else
 		{
 			exepath = misc_bindir();
 
-			stpncpy(gamefile, exepath, sizeof(gamefile));
-			strncat(gamefile, "/", sizeof(gamefile) - 1);
-			strncat(gamefile, GAMEFILE, sizeof(gamefile) - 1);
+			misc_strlcpy(gamefile, exepath, sizeof(gamefile));
+			misc_strlcat(gamefile, "/", sizeof(gamefile) - 1);
+			misc_strlcat(gamefile, GAMEFILE, sizeof(gamefile) - 1);
 
 			tmp = realpath(gamefile, NULL);
 
-			stpncpy(gamefile, tmp, sizeof(gamefile));
+			misc_strlcpy(gamefile, tmp, sizeof(gamefile));
 		}
 	}
 	else
@@ -104,7 +104,7 @@ main(int argc, char *argv[])
 		}
 		else
 		{
-			stpncpy(gamefile, argv[1], sizeof(gamefile));
+			misc_strlcpy(gamefile, argv[1], sizeof(gamefile));
 		}
 	}
 

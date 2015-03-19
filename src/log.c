@@ -53,19 +53,19 @@ log_typetostr(logtype type, char *str, size_t len)
 	switch (type)
 	{
 		case LOG_INFO:
-			strncpy(str, "INFO", len);
+			misc_strlcpy(str, "INFO", len);
 			break;
 
 		case LOG_WARN:
-			strncpy(str, "WARN", len);
+			misc_strlcpy(str, "WARN", len);
 			break;
 
 		case LOG_ERROR:
-			strncpy(str, "ERROR", len);
+			misc_strlcpy(str, "ERROR", len);
 			break;
 
 		default:
-			strncpy(str, "UNKNOWN", len);
+			misc_strlcpy(str, "UNKNOWN", len);
 			ret = FALSE;
 			break;
 	}

@@ -20,6 +20,7 @@
 
 #include "curses.h"
 #include "main.h"
+#include "misc.h"
 #include "input.h"
 #include "log.h"
 #include "quit.h"
@@ -951,7 +952,7 @@ curses_status(const char *fmt, ...)
 		waddch(status, msg[i]);
 	}
 
-	stpncpy(status_line, msg, sizeof(status_line));
+	misc_strlcpy(status_line, msg, sizeof(status_line));
 
     wnoutrefresh(status);
 	doupdate();
