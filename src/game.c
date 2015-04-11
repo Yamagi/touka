@@ -505,8 +505,11 @@ void
 game_glossary_print(const char *key)
 {
 	game_glossary_s *entry;
+
+#ifndef NDEBUG
 	listnode *lnode;
 	uint16_t i;
+#endif
 
 	assert(key);
 
@@ -631,8 +634,11 @@ void
 game_room_describe(const char *key)
 {
 	game_room_s *room;
+
+#ifndef NDEBUG
 	listnode *lnode;
 	uint16_t i;
+#endif
 
 	assert(key);
 
