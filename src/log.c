@@ -88,7 +88,7 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 	char *logmsg;
 	char msgtime[32];
 	char status[32];
-	size_t msglen;
+	int msglen;
 	struct tm *t;
 	time_t tmp;
 	va_list args;
@@ -237,4 +237,3 @@ log_close(void)
 		logfile = NULL;
 	}
 }
-

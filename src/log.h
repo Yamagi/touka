@@ -89,4 +89,3 @@ void log_close(void);
 // --------
 
 #endif // LOG_H_
-

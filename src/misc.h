@@ -49,4 +49,3 @@ size_t misc_strlcpy(char *dst, const char *src, size_t size);
 // --------
 
 #endif // MISC_H_
-

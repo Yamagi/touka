@@ -7,7 +7,6 @@
 
 #include <assert.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "list.h"
 
@@ -35,7 +34,7 @@ list
 }
 
 void
-list_destroy(list *lheader, void (*callback)())
+list_destroy(list *lheader, void (*callback)(void *data))
 {
 	listnode *cur;
 
@@ -143,7 +142,7 @@ void
 	void *data;
 
 	assert(lheader);
-    assert(lheader->count);
+	assert(lheader->count);
 
 	cur = lheader->first;
 	data = cur->data;
@@ -167,7 +166,7 @@ void
 }
 
 void
-list_sort(list *lheader, int32_t (*callback)(const void *, const void*))
+list_sort(list *lheader, int32_t (*callback)(const void *, const void *))
 {
 	listnode *cur;
 	listnode **larray;
@@ -198,7 +197,7 @@ list_sort(list *lheader, int32_t (*callback)(const void *, const void*))
 
 	qsort(larray, lheader->count, sizeof(listnode *), callback);
 
-    for (i = 0; i < lheader->count; i++)
+	for (i = 0; i < lheader->count; i++)
 	{
 		if (i == 0)
 		{
@@ -246,11 +245,10 @@ list_unshift(list *lheader, void *data)
 	}
 	else
 	{
-        new->next = lheader->first;
+		new->next = lheader->first;
 		lheader->first->prev = new;
 		lheader->first = new;
 	}
 
 	lheader->count++;
 }
-

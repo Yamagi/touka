@@ -43,7 +43,7 @@ darray *darray_create(void);
  * array: Dynamic array to destroy
  * callback: Optional callback function
  */
-void darray_destroy(darray *array, void (*callback)(char *data));
+void darray_destroy(darray *array, void (*callback)(void *data));
 
 /*
  * Returns the contents of an appriatary
@@ -52,7 +52,7 @@ void darray_destroy(darray *array, void (*callback)(char *data));
  * array: Array to retrieve content from.
  * element: Number of element to retrieve.
  */
-void *darray_get(darray *array, uint32_t element);
+void *darray_get(darray *array, int32_t element);
 
 /*
  * Return the contents of the last element and
@@ -83,4 +83,3 @@ void darray_sort(darray *array, int32_t (*callback)(const void*, const void*));
 // --------
 
 #endif // DARRAY_H_
-

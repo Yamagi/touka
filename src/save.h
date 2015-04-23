@@ -48,4 +48,3 @@ void save_write(char *name);
 // --------
 
 #endif // SAVE_H_
-

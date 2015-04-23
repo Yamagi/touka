@@ -5,7 +5,6 @@
  * Application shutdown.
  */
 
-#include <assert.h>
 #include <errno.h>
 #include <signal.h>
 #include <stdint.h>
@@ -255,4 +254,3 @@ quit_success(void)
 
 	_exit(0);
 }
-

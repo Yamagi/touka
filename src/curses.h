@@ -78,4 +78,3 @@ void curses_text(uint32_t color, const char *fmt, ...);
 // --------
 
 #endif // CURSES_H_
-

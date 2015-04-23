@@ -23,7 +23,6 @@
 #include "misc.h"
 #include "quit.h"
 
-#include "data/list.h"
 #include "i18n/i18n.h"
 
 // --------
@@ -185,7 +184,7 @@ static list
  *********************************************************************/
 
 /*
- * Checks if the  game header was parsed successfull.
+ * Checks if the game header was parsed successful.
  */
 static void
 parser_check_header(void)
@@ -382,12 +381,11 @@ static void
 parser_add_glossary(game_glossary_s *entry)
 {
 	listnode *lnode;
-	game_glossary_s *test;
 	uint16_t i;
 
 	parser_check_glossary(entry);
 
-	if ((test = hashmap_get(game_glossary, entry->name)) != NULL)
+	if (hashmap_get(game_glossary, entry->name) != NULL)
 	{
 		log_warn_f("%s %s", i18n_parser_glossarytwice, entry->name);
 	}
@@ -404,14 +402,13 @@ parser_add_glossary(game_glossary_s *entry)
 
 			for (i = 0; i  < entry->aliases->count; i++)
 			{
-				if ((test = hashmap_get(game_glossary, lnode->data)) != NULL)
+				if (hashmap_get(game_glossary, lnode->data) != NULL)
 				{
 					log_warn_f("%s %s", i18n_parser_glossarytwice,  entry->name);
 				}
 			}
 
 			hashmap_add(game_glossary, lnode->data, entry, TRUE);
-			lnode = lnode->next;
 		}
 	}
 }
@@ -607,13 +604,12 @@ parser_check_room(game_room_s *room)
 static void
 parser_add_room(game_room_s *room)
 {
-	game_room_s *test;
 	listnode *lnode;
 	uint16_t i;
 
 	parser_check_room(room);
 
-    if ((test = hashmap_get(game_rooms, room->name)) != NULL)
+    if (hashmap_get(game_rooms, room->name) != NULL)
 	{
 		log_warn_f("%s %s", i18n_parser_roomtwice, room->name);
 	}
@@ -630,7 +626,7 @@ parser_add_room(game_room_s *room)
 
 			for (i = 0; i < room->aliases->count; i++)
 			{
-				if ((test = hashmap_get(game_rooms, lnode->data)) != NULL)
+				if (hashmap_get(game_rooms, lnode->data) != NULL)
 				{
 					log_warn_f("%s %s", i18n_parser_roomtwice, room->name);
 				}
@@ -850,13 +846,12 @@ parser_check_scene(game_scene_s *scene)
 static void
 parser_add_scene(game_scene_s *scene)
 {
-	game_scene_s *test;
 	listnode *lnode;
 	uint16_t i;
 
 	parser_check_scene(scene);
 
-    if ((test = hashmap_get(game_scenes, scene->name)) != NULL)
+    if (hashmap_get(game_scenes, scene->name) != NULL)
 	{
 		log_warn_f("%s %s", i18n_parser_scenetwice, scene->name);
 	}
@@ -873,7 +868,7 @@ parser_add_scene(game_scene_s *scene)
 
 			for (i = 0; i < scene->aliases->count; i++)
 			{
-				if ((test = hashmap_get(game_scenes, lnode->data)) != NULL)
+				if (hashmap_get(game_scenes, lnode->data) != NULL)
 				{
 					log_warn_f("%s %s", i18n_parser_scenetwice, scene->name);
 				}
@@ -1075,7 +1070,6 @@ parser_game(const char *file)
 	char *tmp;
 	list *tokens;
 	size_t linecap;
-	ssize_t linelen;
 	struct stat sb;
 
 	assert(file);
@@ -1103,7 +1097,7 @@ parser_game(const char *file)
 	// Header is always the first section
 	is_header = TRUE;
 
-    while ((linelen = getline(&line, &linecap, game)) > 0)
+    while (getline(&line, &linecap, game) > 0)
 	{
 		count++;
 
@@ -1176,4 +1170,3 @@ parser_game(const char *file)
 	free(line);
 	log_info_f("%s: %i", i18n_parser_linesparsed, count);
 }
-

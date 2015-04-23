@@ -14,9 +14,7 @@
 
 #include "darray.h"
 #include "hashmap.h"
-#include "list.h"
 
-#include "../main.h"
 #include "../quit.h"
 
 // --------
@@ -227,4 +225,3 @@ list
 
 	return content;
 }
-

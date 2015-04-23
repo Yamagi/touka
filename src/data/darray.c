@@ -9,7 +9,6 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "darray.h"
 #include "../quit.h"
@@ -88,7 +87,7 @@ darray
 }
 
 void
-darray_destroy(darray *array, void (*callback)(char *msg))
+darray_destroy(darray *array, void (*callback)(void *data))
 {
 	int16_t i;
 
@@ -112,7 +111,7 @@ darray_destroy(darray *array, void (*callback)(char *msg))
 }
 
 void
-*darray_get(darray *array, uint32_t element)
+*darray_get(darray *array, int32_t element)
 {
 	assert(array);
 	assert(array->elements > element);
@@ -156,4 +155,3 @@ darray_sort(darray *array, int32_t (*callback)(const void *, const void*))
 
 	qsort(array->data, array->elements, sizeof(void *), callback);
 }
-

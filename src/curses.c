@@ -12,14 +12,11 @@
 #include <assert.h>
 #include <curses.h>
 #include <locale.h>
-#include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wchar.h>
 
 #include "curses.h"
-#include "main.h"
 #include "misc.h"
 #include "input.h"
 #include "log.h"
@@ -106,8 +103,11 @@ static char status_line[STATUSBAR];
  * Callback for the replay buffer destruction.
  */
 void
-curses_replay_callback(repl_msg_s *repl)
+curses_replay_callback(void *data)
 {
+	repl_msg_s *repl;
+	repl = data;
+
 	free(repl->msg);
 	free(repl);
 }
@@ -162,7 +162,7 @@ curses_print(uint32_t color, const char *msg)
 	char *first;
 	char *last;
 	int16_t i;
-	uint32_t x;
+	int32_t x;
 
 	if (color == TINT_GLOSSARY)
 	{
@@ -237,7 +237,7 @@ curses_print(uint32_t color, const char *msg)
 static void
 curses_resize(void)
 {
-	uint32_t y;
+	int32_t y;
 	listnode *cur;
 	repl_msg_s *rep;
 
@@ -298,7 +298,7 @@ curses_resize(void)
 static void
 curses_scroll(int32_t offset)
 {
-	uint32_t y;
+	int32_t y;
 
 	y= getcury(text);
 
@@ -459,13 +459,13 @@ curses_input(void)
 	char *utf8tmp;
 	boolean fin;
 	int16_t i;
-	int16_t ret;
+	int32_t begin;
 	int32_t chars;
 	int32_t num;
+	int32_t position;
 	int32_t start;
-	uint32_t begin;
-    uint32_t position;
-	uint32_t x, y;
+	int32_t x;
+	int32_t y;
 	wchar_t buffer[INPUTBUF];
 	wchar_t key;
 	wchar_t *widetmp;
@@ -480,7 +480,7 @@ curses_input(void)
 	wclrtoeol(input);
 	waddstr(input, curses_prompt);
 
-	while ((ret = wget_wch(input, (wint_t *)&key)) != ERR)
+	while (wget_wch(input, (wint_t *)&key) != ERR)
 	{
 		switch (key)
 		{
@@ -964,9 +964,9 @@ void
 curses_text(uint32_t color, const char *fmt, ...)
 {
 	char *msg;
+	int32_t y;
 	repl_msg_s *rep;
 	size_t len;
-	uint32_t y;
 	va_list args;
 
 	// Determine length
@@ -1025,4 +1025,3 @@ curses_text(uint32_t color, const char *fmt, ...)
         free(rep);
 	}
 }
-

@@ -17,7 +17,6 @@
 #include "game.h"
 #include "input.h"
 #include "log.h"
-#include "main.h"
 #include "misc.h"
 #include "quit.h"
 #include "save.h"
@@ -128,9 +127,6 @@ main(int argc, char *argv[])
 	{
 		curses_input();
 	}
-
-	// Terminate
-    quit_success();
 
 	// Never reached
 	return 0;

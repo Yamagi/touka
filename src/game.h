@@ -163,4 +163,3 @@ void game_scene_list(void);
 // --------
 
 #endif // GAME_H_
-

@@ -19,20 +19,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #include "curses.h"
 #include "game.h"
 #include "input.h"
-#include "main.h"
 #include "misc.h"
 #include "log.h"
 #include "quit.h"
 #include "save.h"
 
 #include "i18n/i18n.h"
-#include "data/darray.h"
-#include "data/list.h"
 
 // ---------
 
@@ -55,7 +51,7 @@ static list *history;
 static listnode *hist_position;
 
 // Current hist_position for tab completes
-static int32_t tab_position;
+static uint32_t tab_position;
 
 // Buffers the completion stub
 static char *tab_stub;
@@ -251,7 +247,7 @@ cmd_next(char *msg)
 		{
 			if (isdigit(msg[0]))
 			{
-				choice = atoi(&msg[0]);
+				choice = (uint8_t)atoi(&msg[0]);
 
 				if (!choice)
 				{
@@ -415,7 +411,6 @@ input_history_load(const char *homedir)
 	FILE *fd;
 	char *line;
 	size_t linecap;
-	ssize_t linelen;
 	struct stat sb;
 
 	assert(homedir);
@@ -458,7 +453,7 @@ input_history_load(const char *homedir)
 	line = NULL;
 	linecap = 0;
 
-    while ((linelen = getline(&line, &linecap, fd)) > 0)
+    while ((getline(&line, &linecap, fd)) > 0)
 	{
 		while (!strncmp(&line[strlen(line) - 1], "\n", strlen("\n")))
 		{
@@ -786,4 +781,3 @@ input_process(char *cmd)
 	// Empty line after each cmd-output
 	curses_text(TINT_NORM, "\n");
 }
-

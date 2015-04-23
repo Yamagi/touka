@@ -53,7 +53,7 @@ list *list_create(void);
  * lheader: List to destroy
  * callback: Optional callback function
  */
-void list_destroy(list *lheader, void (*callback)());
+void list_destroy(list *lheader, void (*callback)(void *data));
 
 /*
  * Returns the last elements data and removes
@@ -93,4 +93,3 @@ void list_unshift(list *lheader, void *data);
 // --------
 
 #endif // LIST_H_
-

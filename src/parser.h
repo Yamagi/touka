@@ -23,4 +23,3 @@ void parser_game(const char *file);
 // ---------
 
 #endif // PARSER_H_
-

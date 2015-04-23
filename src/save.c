@@ -15,17 +15,13 @@
 #include <stdint.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #include "curses.h"
 #include "game.h"
 #include "log.h"
-#include "main.h"
 #include "misc.h"
 #include "quit.h"
 
-#include "data/hashmap.h"
-#include "data/list.h"
 #include "i18n/i18n.h"
 
 // --------
@@ -548,4 +544,3 @@ save_write(char *name)
 	fflush(save);
 	fclose(save);
 }
-

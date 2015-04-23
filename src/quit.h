@@ -60,4 +60,3 @@ void quit_success(void);
 // --------
 
 #endif // QUIT_H_
-

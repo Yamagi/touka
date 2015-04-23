@@ -16,13 +16,10 @@
 #include "curses.h"
 #include "game.h"
 #include "log.h"
-#include "main.h"
 #include "misc.h"
 #include "parser.h"
 #include "quit.h"
 
-#include "data/hashmap.h"
-#include "data/list.h"
 #include "i18n/i18n.h"
 
 // --------
@@ -75,7 +72,6 @@ game_match_link(char *link)
 {
 	game_glossary_s *glossary;
 	game_room_s *room;
-	game_scene_s *scene;
 
 	uint32_t i;
 
@@ -114,7 +110,7 @@ game_match_link(char *link)
 	}
 
 	// Scene
-	if ((scene = hashmap_get(game_scenes, link)) != NULL)
+	if (hashmap_get(game_scenes, link))
 	{
 		return TINT_SCENE;
 	}
@@ -143,6 +139,7 @@ game_print_description(list *words)
 
 	assert (words);
 
+	len = 0;
 	link = NULL;
 	node = words->first;
 	memset(tmp, 0, sizeof(tmp));
@@ -203,7 +200,6 @@ game_print_description(list *words)
 				continue;
 			}
 
-			oldlen = 0;
 			len = strlen(cur) + 2;
 
 			if ((link = calloc(1, len)) == 0)
@@ -529,6 +525,10 @@ game_glossary_print(const char *key)
 		{
 			lnode = entry->aliases->first;
 		}
+		else
+		{
+			return;
+		}
 
 		curses_text(TINT_NORM, " (");
 
@@ -544,6 +544,10 @@ game_glossary_print(const char *key)
 		}
 
 		curses_text(TINT_NORM, ")");
+	}
+	else
+	{
+		return;
 	}
 
 	curses_text(TINT_NORM, ":\n");
@@ -658,6 +662,10 @@ game_room_describe(const char *key)
 		{
 			lnode = room->aliases->first;
 		}
+		else
+		{
+			return;
+		}
 
 		curses_text(TINT_NORM, " (");
 
@@ -673,6 +681,10 @@ game_room_describe(const char *key)
 		}
 
 		curses_text(TINT_NORM, ")");
+	}
+	else
+	{
+		return;
 	}
 
 	curses_text(TINT_NORM, ":\n");
@@ -1358,4 +1370,3 @@ game_quit(void)
 		hashmap_destroy(game_scenes, game_scene_destroy_callback);
 	}
 }
-

@@ -12,10 +12,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/sysctl.h>
 
-#include "log.h"
 #include "misc.h"
 #include "quit.h"
 
@@ -179,4 +176,3 @@ misc_strlcpy(char *dst, const char *src, size_t size)
 
 	return s - src - 1;
 }
-

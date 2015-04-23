@@ -84,4 +84,3 @@ list *hashmap_to_list(hashmap *map);
 // --------
 
 #endif // HASHMAP_H_
-

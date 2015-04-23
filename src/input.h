@@ -8,7 +8,7 @@
  *
  * Additionally a simple(!) history and simple tab
  * completions are provided. History and completions
- * are mutual exklusiv, starting one resets the other.
+ * are mutual exclusive, starting one resets the other.
  */
 
 #ifndef INPUT_H_
@@ -76,4 +76,3 @@ void input_process(char *input);
 // --------
 
 #endif // INPUT_H_
-
