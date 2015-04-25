@@ -672,8 +672,8 @@ input_init(const char *homedir)
 	input_register(i18n_cmdsave, i18n_cmdsavehelp, cmd_save, FALSE);
 	input_register(i18n_cmdsaveshort, i18n_cmdsavehelp, cmd_save, TRUE);
 
-	input_register(i18n_cmdscene, i18n_cmdsavehelp, cmd_scene, FALSE);
-	input_register(i18n_cmdsceneshort, i18n_cmdsavehelp, cmd_scene, TRUE);
+	input_register(i18n_cmdscene, i18n_cmdscenehelp, cmd_scene, FALSE);
+	input_register(i18n_cmdsceneshort, i18n_cmdscenehelp, cmd_scene, TRUE);
 
 	input_register(i18n_cmdversion, i18n_cmdversionhelp, cmd_version, FALSE);
 	input_register(i18n_cmdversionshort, i18n_cmdversionhelp, cmd_version, TRUE);

@@ -103,7 +103,7 @@ static char
 static void
 parser_error(void)
 {
-	log_error_f("Parser error in line %i\n", count);
+	log_error_f("%s %i\n", i18n_parser_error, count);
 
 	quit_error(PPARSERERR);
 }

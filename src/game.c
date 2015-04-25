@@ -960,7 +960,7 @@ game_scene_startscreen(void)
 	curses_text(TINT_NORM, "%s %s\n\n", i18n_start_author, game_header->author);
 
 	curses_text(TINT_NORM, "%s:\n", i18n_start_stats);
-	curses_text(TINT_NORM, " - %i %s\n", game_stats->glossary_total, i18n_glossary_entrieslisted);
+	curses_text(TINT_NORM, " - %i %s\n", game_stats->glossary_total, i18n_start_glossary);
 	curses_text(TINT_NORM, " - %i %s\n", game_stats->rooms_total, i18n_start_rooms);
 	curses_text(TINT_NORM, " - %i %s\n\n", game_stats->scenes_total, i18n_start_scenes);
 
