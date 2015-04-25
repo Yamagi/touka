@@ -7,7 +7,7 @@ endif()
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Werror -pedantic")
 
-find_library(CURSES cursesw)
+find_library(CURSES ncursesw)
 
 set (LIBRARIES
     ${CURSES})
