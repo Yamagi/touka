@@ -3,8 +3,8 @@
 # commented, giving you a feel what's possible and how things can 
 # be implemented. First you should know a few things:
 #
-# - # is the comment sign. Everything after it until the next line
-#   break is ignored.
+# - # is the comment sign. Everything after it, until the next line
+#   break, is ignored.
 #
 # - The parser is rather simple. While it mostly just works, there
 #   may be some corner cases. When in doubt have a look at Toukas

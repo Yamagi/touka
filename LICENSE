@@ -1,5 +1,5 @@
-                   The Touka Novel Engine
-                   ======================
+                        The Touka Novel Engine
+                        ======================
 
 Copyright (c) 2015 Yamagi Burmeister
 All rights reserved.
@@ -27,8 +27,8 @@ THE POSSIBILITY OF SUCH DAMAGE.
  
 -----------------------------------------------------------------------
 
-                   misc_strlcat() / misc_strlcat()
-                   ===============================
+                    misc_strlcat() / misc_strlcat()
+                    ===============================
 
 Copyright (c) 1998 Todd C. Miller <Todd.Miller@courtesan.com>
 
