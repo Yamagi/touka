@@ -34,7 +34,7 @@
  *
  * error: Error code to convert
  */
-const char*
+const char *
 quit_errcodetostr(errcode error)
 {
 	switch (error)
@@ -156,7 +156,7 @@ quit_signal_error(int32_t sig)
 	signal(SIGFPE, SIG_DFL);
 	signal(SIGABRT, SIG_DFL);
 
-    raise(sig);
+	raise(sig);
 }
 
 /*

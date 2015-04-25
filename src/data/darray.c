@@ -93,7 +93,7 @@ darray_destroy(darray *array, void (*callback)(void *data))
 
 	assert(array);
 
-    for (i = array->elements - 1; i >= 0; i--)
+	for (i = array->elements - 1; i >= 0; i--)
 	{
 		if (callback)
 		{
@@ -125,7 +125,7 @@ void
 	void *data;
 
 	assert(array);
-    assert(array->elements);
+	assert(array->elements);
 
 	data = array->data[array->elements - 1];
 	array->elements--;
@@ -148,7 +148,7 @@ darray_push(darray *array, void *data)
 }
 
 void
-darray_sort(darray *array, int32_t (*callback)(const void *, const void*))
+darray_sort(darray *array, int32_t (*callback)(const void *, const void *))
 {
 	assert(array);
 	assert(callback);

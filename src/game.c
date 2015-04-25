@@ -169,7 +169,7 @@ game_print_description(list *words)
 			}
 
 			if (!strncmp(&cur[strlen(cur) - 1], "|", 1)
-					|| !strncmp(&cur[strlen(cur) - 2], "|", 1))
+				|| !strncmp(&cur[strlen(cur) - 2], "|", 1))
 			{
 				link = strdup(cur);
 
@@ -218,7 +218,7 @@ game_print_description(list *words)
 		if (strlen(cur) >= 3)
 		{
 			if (!strncmp(&cur[strlen(cur) - 1], "|", 1)
-					|| !strncmp(&cur[strlen(cur) - 2], "|", 1))
+				|| !strncmp(&cur[strlen(cur) - 2], "|", 1))
 			{
 				if (!link)
 				{
@@ -313,7 +313,7 @@ game_print_description(list *words)
 			misc_strlcat(link, cur, len);
 			misc_strlcat(link, " ", len);
 
-            node = node->next;
+			node = node->next;
 			continue;
 		}
 
@@ -419,7 +419,7 @@ game_glossary_list(void)
 	uint16_t count;
 	uint16_t i;
 
-    data = hashmap_to_list(game_glossary);
+	data = hashmap_to_list(game_glossary);
 	list_sort(data, game_glossary_sort_callback);
 	len_entry = 0;
 
@@ -586,7 +586,7 @@ game_room_destroy_callback(void *data)
 
 	assert(data);
 
-    room = data;
+	room = data;
 
 	if (room->name)
 	{
@@ -763,7 +763,7 @@ game_rooms_list(void)
 	}
 
 	curses_text(TINT_NORM, "%-*s %-*s %s\n", len + 1, i18n_name, strlen(i18n_head_state)
-			+ 1, i18n_head_state, i18n_head_description);
+																 + 1, i18n_head_state, i18n_head_description);
 
 	for (i = 0; i < strlen(i18n_name); i++)
 	{
@@ -801,7 +801,7 @@ game_rooms_list(void)
 
 		curses_text(TINT_NORM, "%-*s", len + 2, room->name);
 
-        if (room->visited)
+		if (room->visited)
 		{
 			curses_text(TINT_NORM, "%-*s", strlen(i18n_head_state) + 2, "S");
 		}
@@ -864,7 +864,7 @@ game_scene_destroy_callback(void *data)
 		free((char *)scene->room);
 	}
 
-    if (scene->aliases)
+	if (scene->aliases)
 	{
 		list_destroy(scene->aliases, NULL);
 	}
@@ -920,11 +920,11 @@ game_scene_endscreen(void)
 
 	curses_text(TINT_NORM, "%s:\n", i18n_end_stats);
 	curses_text(TINT_NORM, " - %i %s %i %s\n", game_stats->glossary_mentioned,
-			i18n_from, game_stats->glossary_total, i18n_end_glossaryentriesseen);
+				i18n_from, game_stats->glossary_total, i18n_end_glossaryentriesseen);
 	curses_text(TINT_NORM, " - %i %s %i %s\n", game_stats->rooms_visited,
-			i18n_from, game_stats->rooms_total, i18n_end_roomsvisited);
+				i18n_from, game_stats->rooms_total, i18n_end_roomsvisited);
 	curses_text(TINT_NORM, " - %i %s %i %s\n\n", game_stats->scenes_visited,
-			i18n_from, game_stats->scenes_total, i18n_end_scenesplayed);
+				i18n_from, game_stats->scenes_total, i18n_end_scenesplayed);
 
 	curses_status(i18n_end_statusbar);
 
@@ -936,7 +936,7 @@ game_scene_endscreen(void)
 			free(curses_prompt);
 		}
 
-        if ((curses_prompt = malloc(strlen(game_header->prompt) + 3)) == NULL)
+		if ((curses_prompt = malloc(strlen(game_header->prompt) + 3)) == NULL)
 		{
 			quit_error(POUTOFMEM);
 		}
@@ -980,7 +980,7 @@ game_scene_startscreen(void)
 			free(curses_prompt);
 		}
 
-        if ((curses_prompt = malloc(strlen(game_header->prompt) + 3)) == NULL)
+		if ((curses_prompt = malloc(strlen(game_header->prompt) + 3)) == NULL)
 		{
 			quit_error(POUTOFMEM);
 		}
@@ -1048,7 +1048,7 @@ game_scene_list(void)
 	}
 
 	curses_text(TINT_NORM, "%-*s %-*s %s\n", len_scene + 1, i18n_name, len_room + 1,
-			i18n_room, i18n_head_description);
+				i18n_room, i18n_head_description);
 
 	for (i = 0; i < strlen(i18n_name); i++)
 	{
@@ -1113,7 +1113,7 @@ game_scene_next(uint8_t choice)
 	{
 		if ((current_scene = hashmap_get(game_scenes, game_header->first_scene)) == NULL)
 		{
-			log_error_f("%s: %i\n", i18n_scene_firstnotfound,  game_header->first_scene);
+			log_error_f("%s: %i\n", i18n_scene_firstnotfound, game_header->first_scene);
 			quit_error(PFIRSTSCENENOTFOUND);
 		}
 	}
@@ -1256,7 +1256,7 @@ game_scene_play(const char *key)
 
 	// Set statusbar
 	curses_status("%s: %i/%i || %s: %s", i18n_scene, game_stats->scenes_visited,
-			game_stats->scenes_total, i18n_room, room->descr);
+				  game_stats->scenes_total, i18n_room, room->descr);
 
 	// Set prompt
 	if (scene->prompt)
@@ -1266,7 +1266,7 @@ game_scene_play(const char *key)
 			free(curses_prompt);
 		}
 
-        if ((curses_prompt = malloc(strlen(scene->prompt) + 3)) == NULL)
+		if ((curses_prompt = malloc(strlen(scene->prompt) + 3)) == NULL)
 		{
 			quit_error(POUTOFMEM);
 		}
@@ -1291,7 +1291,7 @@ game_init(const char *file)
 {
 	assert(file);
 
-    log_info(i18n_game_init);
+	log_info(i18n_game_init);
 
 	if (!game_header)
 	{

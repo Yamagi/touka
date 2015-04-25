@@ -78,7 +78,7 @@ void darray_push(darray *array, void *data);
  * array: Array to sort
  * callback: Callback function passed to qsort()
  */
-void darray_sort(darray *array, int32_t (*callback)(const void*, const void*));
+void darray_sort(darray *array, int32_t (*callback)(const void *, const void *));
 
 // --------
 

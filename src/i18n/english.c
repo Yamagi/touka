@@ -69,7 +69,7 @@ const char *i18n_scene_invalidchoice = "Invalid choice";
 const char *i18n_scene_listed = "Scenes listed";
 const char *i18n_scene_next = "Advancing to the next scene";
 const char *i18n_scene_nochoice = "No choice possible";
-const char *i18n_scene_notfound= "No such scene";
+const char *i18n_scene_notfound = "No such scene";
 const char *i18n_scene_play = "Playing scene";
 const char *i18n_scene_playerschoice = "Player's choice";
 
@@ -103,7 +103,7 @@ const char *i18n_end_statusbar = "Game is finished";
 // Input
 const char *i18n_input_command = "Command";
 const char *i18n_input_cmdslisted = "Commands listed";
-const char *i18n_input_cmdnotfound ="Command not found";
+const char *i18n_input_cmdnotfound = "Command not found";
 const char *i18n_input_init = "Initializing input";
 const char *i18n_input_quit = "Shutting down input";
 

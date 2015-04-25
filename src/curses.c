@@ -242,7 +242,7 @@ curses_resize(void)
 	repl_msg_s *rep;
 
 	// Alter stdscr, otherwise pads will break
-    wresize(stdscr, LINES, COLS);
+	wresize(stdscr, LINES, COLS);
 	wclear(stdscr);
 	wnoutrefresh(stdscr);
 
@@ -300,7 +300,7 @@ curses_scroll(int32_t offset)
 {
 	int32_t y;
 
-	y= getcury(text);
+	y = getcury(text);
 
 	// No scrollback buffer until now
 	if (y < LINES - 3)
@@ -310,7 +310,7 @@ curses_scroll(int32_t offset)
 
 	// Clamp scroll up
 	if ((y - LINES + 2 - 1 - scrolled <= 0)
-			&& (offset > 0))
+		&& (offset > 0))
 	{
 		return;
 	}
@@ -400,7 +400,7 @@ curses_init(void)
 
 	log_info_f("%s: %i*%i", i18n_curses_termsize, LINES, COLS);
 
-    // Main window
+	// Main window
 	text = newpad(SCROLLBACK, COLS);
 	wbkgd(text, COLOR_PAIR(PAIR_TEXT));
 	scrollok(text, TRUE);
@@ -504,7 +504,7 @@ curses_input(void)
 				start = start < 0 ? 0 : start;
 
 				for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
-						&& buffer[start + i] != L'\0'; i++)
+							&& buffer[start + i] != L'\0'; i++)
 				{
 					setcchar(&render, &buffer[start + i], 0, 0, NULL);
 					wadd_wch(input, &render);
@@ -557,7 +557,7 @@ curses_input(void)
 					wclrtoeol(input);
 
 					for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
-							&& buffer[start + i] != L'\0'; i++)
+								&& buffer[start + i] != L'\0'; i++)
 					{
 						setcchar(&render, &buffer[start + i], 0, 0, NULL);
 						wadd_wch(input, &render);
@@ -587,7 +587,7 @@ curses_input(void)
 					wclrtoeol(input);
 
 					for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
-							&& buffer[start + i] != L'\0'; i++)
+								&& buffer[start + i] != L'\0'; i++)
 					{
 						setcchar(&render, &buffer[start + i], 0, 0, NULL);
 						wadd_wch(input, &render);
@@ -618,7 +618,7 @@ curses_input(void)
 					wclrtoeol(input);
 
 					for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
-							&& buffer[start + i] != L'\0'; i++)
+								&& buffer[start + i] != L'\0'; i++)
 					{
 						setcchar(&render, &buffer[start + i], 0, 0, NULL);
 						wadd_wch(input, &render);
@@ -686,7 +686,7 @@ curses_input(void)
 				wclrtoeol(input);
 
 				for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
-					   && buffer[start + i] != L'\0'; i++)
+							&& buffer[start + i] != L'\0'; i++)
 				{
 					setcchar(&render, &buffer[start + i], 0, 0, NULL);
 					wadd_wch(input, &render);
@@ -710,18 +710,18 @@ curses_input(void)
 				{
 					start += HSCROLLOFF;
 
-                    wmove(input, 0, curses_utf8strlen(curses_prompt));
+					wmove(input, 0, curses_utf8strlen(curses_prompt));
 					wclrtoeol(input);
 
-                    for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
-						   && buffer[start + i] != L'\0'; i++)
+					for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
+								&& buffer[start + i] != L'\0'; i++)
 					{
 						setcchar(&render, &buffer[start + i], 0, 0, NULL);
 						wadd_wch(input, &render);
 					}
 
 					// 1 for the cursor
-                    wmove(input, 0, COLS - HSCROLLOFF - 1);
+					wmove(input, 0, COLS - HSCROLLOFF - 1);
 				}
 
 				getyx(input, y, x);
@@ -763,7 +763,7 @@ curses_input(void)
 					break;
 				}
 
-                if (position == chars)
+				if (position == chars)
 				{
 					getyx(input, y, x);
 					wmove(input, y, x - 1);
@@ -850,7 +850,7 @@ curses_input(void)
 				{
 					getyx(input, y, x);
 
-                    if (x == COLS - 1)
+					if (x == COLS - 1)
 					{
 						start += HSCROLLOFF;
 
@@ -859,7 +859,7 @@ curses_input(void)
 
 						// 1 for the cursor
 						for (i = 0; i < COLS - curses_utf8strlen(curses_prompt)
-								- HSCROLLOFF - 1; i++)
+										- HSCROLLOFF - 1; i++)
 						{
 							setcchar(&render, &buffer[start + i], 0, 0, NULL);
 							wadd_wch(input, &render);
@@ -886,7 +886,7 @@ curses_input(void)
 						   simulate the expected behavior. */
 						wmove(input, y, x + 1);
 
-                        for (i = chars; i >= position; i--)
+						for (i = chars; i >= position; i--)
 						{
 							buffer[i + 1] = buffer[i];
 						}
@@ -900,7 +900,7 @@ curses_input(void)
 				break;
 		}
 
-        wnoutrefresh(input);
+		wnoutrefresh(input);
 		doupdate();
 
 		if (fin)
@@ -940,11 +940,11 @@ curses_status(const char *fmt, ...)
 		quit_error(POUTOFMEM);
 	}
 
-    va_start(args, fmt);
+	va_start(args, fmt);
 	vsnprintf(msg, len, fmt, args);
 	va_end(args);
 
-    wmove(status, 0, 0);
+	wmove(status, 0, 0);
 	wclrtoeol(status);
 
 	for (i = 0; i < COLS && msg[i] != '\0'; i++)
@@ -954,7 +954,7 @@ curses_status(const char *fmt, ...)
 
 	misc_strlcpy(status_line, msg, sizeof(status_line));
 
-    wnoutrefresh(status);
+	wnoutrefresh(status);
 	doupdate();
 
 	free(msg);
@@ -1022,6 +1022,6 @@ curses_text(uint32_t color, const char *fmt, ...)
 		rep = list_shift(repl_buf);
 
 		free(rep->msg);
-        free(rep);
+		free(rep);
 	}
 }

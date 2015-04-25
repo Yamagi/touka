@@ -48,7 +48,7 @@ log_typetostr(logtype type, char *str, size_t len)
 {
 	boolean ret;
 
-    ret = TRUE;
+	ret = TRUE;
 
 	switch (type)
 	{
@@ -98,12 +98,12 @@ log_insert(logtype type, const char *func, int32_t line, const char *fmt, ...)
 	msglen = vsnprintf(NULL, 0, fmt, args) + 256;
 	va_end(args);
 
-    if ((inpmsg = malloc(msglen)) == NULL)
+	if ((inpmsg = malloc(msglen)) == NULL)
 	{
 		perror("Couldn't allocate memory");
 	}
 
-    if ((logmsg = malloc(msglen)) == NULL)
+	if ((logmsg = malloc(msglen)) == NULL)
 	{
 		quit_error(POUTOFMEM);
 	}
@@ -179,7 +179,7 @@ log_init(const char *path, const char *name, int16_t seg)
 		misc_rmkdir(path);
 	}
 
-    // Rotate logs
+	// Rotate logs
 	for (i = seg; i >= 0; i--)
 	{
 		snprintf(newfile, sizeof(newfile), "%s/%s.%02i", path, name, i + 1);

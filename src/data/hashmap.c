@@ -179,7 +179,7 @@ void
 	{
 		array = map->data[bucket];
 
-        for (i = 0; i < array->elements; i++)
+		for (i = 0; i < array->elements; i++)
 		{
 			node = darray_get(array, i);
 

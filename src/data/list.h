@@ -81,7 +81,7 @@ void *list_shift(list *lheader);
  * *lheader: List to sort
  * callback: Callback funtio to qsort()
  */
-void list_sort(list *lheader, int32_t (*callback)(const void *, const void*));
+void list_sort(list *lheader, int32_t (*callback)(const void *, const void *));
 
 /* Creates an new element and unshifts it
  * into the list.

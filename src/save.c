@@ -247,9 +247,9 @@ save_read(char *name)
 	}
 	else
 	{
-			curses_text(TINT_NORM, "%s\n", i18n_save_filedoesnexists, name);
+		curses_text(TINT_NORM, "%s\n", i18n_save_filedoesnexists, name);
 
-			return FALSE;
+		return FALSE;
 	}
 
 	// Load it
@@ -272,7 +272,7 @@ save_read(char *name)
 	// Reset state
 	save_reset_state();
 
-    while ((linelen = getline(&line, &linecap, save)) > 0)
+	while ((linelen = getline(&line, &linecap, save)) > 0)
 	{
 		cur = line;
 
@@ -401,7 +401,7 @@ save_read(char *name)
 void
 save_write(char *name)
 {
-    FILE *save;
+	FILE *save;
 	char savefile[PATH_MAX];
 	char savename[PATH_MAX];
 	game_glossary_s *glossary;

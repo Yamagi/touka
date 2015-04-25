@@ -38,6 +38,7 @@ typedef struct input_cmd
 	boolean alias;
 	const char *help;
 	const char *name;
+
 	void (*callback)(char *msg);
 } input_cmd;
 
@@ -115,7 +116,7 @@ cmd_help(char *msg)
 	}
 
 	curses_text(TINT_NORM, "%-*s %s\n", len + 1, i18n_input_command,
-			i18n_head_description);
+				i18n_head_description);
 
 	for (i = 0; i < strlen(i18n_input_command); i++)
 	{
@@ -135,7 +136,7 @@ cmd_help(char *msg)
 	{
 		cur = darray_get(input_cmds, i);
 
-        if (cur->alias)
+		if (cur->alias)
 		{
 			continue;
 		}
@@ -155,7 +156,7 @@ cmd_info(char *msg)
 	size_t len;
 	uint16_t i;
 
-    len = strlen(i18n_info_author);
+	len = strlen(i18n_info_author);
 
 	if (len < strlen(i18n_info_date))
 	{
@@ -258,7 +259,7 @@ cmd_next(char *msg)
 
 				if (!game_scene_next(choice))
 				{
-                    return;
+					return;
 				}
 			}
 		}
@@ -331,7 +332,7 @@ cmd_scene(char *msg)
 static void
 cmd_version(char *msg)
 {
-	curses_text(TINT_NORM, "%s %s %s, (c) %s %s\n",i18n_version_thisis, APPNAME, VERSION, YEAR, AUTHOR);
+	curses_text(TINT_NORM, "%s %s %s, (c) %s %s\n", i18n_version_thisis, APPNAME, VERSION, YEAR, AUTHOR);
 	curses_text(TINT_NORM, "%s %s\n", i18n_version_buildon, __DATE__);
 }
 
@@ -374,7 +375,7 @@ input_register(const char *name, const char *help, void (*callback)(char *msg), 
 {
 	input_cmd *new;
 
-    assert(name);
+	assert(name);
 	assert(help);
 	assert(callback);
 
@@ -453,7 +454,7 @@ input_history_load(const char *homedir)
 	line = NULL;
 	linecap = 0;
 
-    while ((getline(&line, &linecap, fd)) > 0)
+	while ((getline(&line, &linecap, fd)) > 0)
 	{
 		while (!strncmp(&line[strlen(line) - 1], "\n", strlen("\n")))
 		{
@@ -762,11 +763,11 @@ input_process(char *cmd)
 	token = strsep(&cmd, " ");
 	match = FALSE;
 
-    for (i = 0; i < input_cmds->elements; i++)
+	for (i = 0; i < input_cmds->elements; i++)
 	{
 		cur = darray_get(input_cmds, i);
 
-		if(!strcmp(token, cur->name))
+		if (!strcmp(token, cur->name))
 		{
 			cur->callback(cmd);
 			match = TRUE;

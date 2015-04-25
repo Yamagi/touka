@@ -361,12 +361,12 @@ parser_check_glossary(game_glossary_s *entry)
 	if (!entry->aliases)
 	{
 		log_info_f("%s: %s (0 %s, %i %s)", i18n_parser_glossaryentry,
-				entry->name, i18n_aliases, entry->words->count, i18n_words);
+				   entry->name, i18n_aliases, entry->words->count, i18n_words);
 	}
 	else
 	{
 		log_info_f("%s: %s (%i %s, %i %s)", i18n_parser_glossaryentry,
-				entry->name, entry->aliases->count, i18n_aliases, entry->words->count, i18n_words);
+				   entry->name, entry->aliases->count, i18n_aliases, entry->words->count, i18n_words);
 	}
 }
 
@@ -400,11 +400,11 @@ parser_add_glossary(game_glossary_s *entry)
 		{
 			lnode = entry->aliases->first;
 
-			for (i = 0; i  < entry->aliases->count; i++)
+			for (i = 0; i < entry->aliases->count; i++)
 			{
 				if (hashmap_get(game_glossary, lnode->data) != NULL)
 				{
-					log_warn_f("%s %s", i18n_parser_glossarytwice,  entry->name);
+					log_warn_f("%s %s", i18n_parser_glossarytwice, entry->name);
 				}
 			}
 
@@ -584,13 +584,13 @@ parser_check_room(game_room_s *room)
 	if (!room->aliases)
 	{
 		log_info_f("%s: %s (0 %s, %i %s)", i18n_room, room->name,
-				i18n_aliases, room->words->count, i18n_words);
+				   i18n_aliases, room->words->count, i18n_words);
 	}
 	else
 	{
 		log_info_f("%s: %s (%i %s, %i %s)", i18n_room, room->name,
-				room->aliases->count, i18n_aliases, room->words->count,
-				i18n_words);
+				   room->aliases->count, i18n_aliases, room->words->count,
+				   i18n_words);
 	}
 }
 
@@ -609,7 +609,7 @@ parser_add_room(game_room_s *room)
 
 	parser_check_room(room);
 
-    if (hashmap_get(game_rooms, room->name) != NULL)
+	if (hashmap_get(game_rooms, room->name) != NULL)
 	{
 		log_warn_f("%s %s", i18n_parser_roomtwice, room->name);
 	}
@@ -825,14 +825,14 @@ parser_check_scene(game_scene_s *scene)
 	if (!scene->aliases)
 	{
 		log_info_f("%s: %s (0 %s, %i %s, %i %s)", i18n_scene, scene->name,
-				i18n_aliases, scene->next->elements, i18n_choices, scene->words->count,
-				i18n_words);
+				   i18n_aliases, scene->next->elements, i18n_choices, scene->words->count,
+				   i18n_words);
 	}
 	else
 	{
 		log_info_f("%s: %s (%i %s, %i %s, %i %s)", i18n_scene, scene->name,
-				scene->aliases->count, i18n_aliases, scene->next->elements,
-				i18n_choices, scene->words->count, i18n_words);
+				   scene->aliases->count, i18n_aliases, scene->next->elements,
+				   i18n_choices, scene->words->count, i18n_words);
 	}
 }
 
@@ -851,7 +851,7 @@ parser_add_scene(game_scene_s *scene)
 
 	parser_check_scene(scene);
 
-    if (hashmap_get(game_scenes, scene->name) != NULL)
+	if (hashmap_get(game_scenes, scene->name) != NULL)
 	{
 		log_warn_f("%s %s", i18n_parser_scenetwice, scene->name);
 	}
@@ -1097,7 +1097,7 @@ parser_game(const char *file)
 	// Header is always the first section
 	is_header = TRUE;
 
-    while (getline(&line, &linecap, game) > 0)
+	while (getline(&line, &linecap, game) > 0)
 	{
 		count++;
 
