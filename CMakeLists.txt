@@ -32,3 +32,6 @@ set(HEADERS
 
 add_executable(touka ${SOURCE_FILES} ${HEADERS})
 target_link_libraries(touka ${LIBRARIES})
+
+install(TARGETS touka RUNTIME DESTINATION bin)
+install(DIRECTORY doc/ DESTINATION share/touka)
