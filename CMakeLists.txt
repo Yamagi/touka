@@ -27,5 +27,8 @@ set(SOURCE_FILES
     src/quit.c
     src/save.c)
 
-add_executable(touka ${SOURCE_FILES})
+set(HEADERS
+    src/i18n/i18n.h)
+
+add_executable(touka ${SOURCE_FILES} ${HEADERS})
 target_link_libraries(touka ${LIBRARIES})
